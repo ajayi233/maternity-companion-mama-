@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Maternal Health Companion Design System - Culturally relevant for Ghana */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Simplified Color Palette */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    /* Primary colors - soft pink */
+    --primary: 346 77% 49%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary colors - muted green */
+    --secondary: 142 52% 65%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Card and surface colors */
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    /* Interactive elements */
+    --accent: 210 40% 98%;
+    --accent-foreground: 222.2 84% 4.9%;
+
+    /* Text hierarchy */
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    /* Emergency and alerts - friendly orange instead of red */
+    --destructive: 25 95% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --urgent: 14 83% 53%;
+    --urgent-foreground: 0 0% 100%;
+
+    /* Borders and inputs */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 346 77% 49%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Simplified gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--accent)) 100%);
+
+    /* Simplified shadows */
+    --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+    /* Transitions */
+    --transition-smooth: all 0.2s ease-in-out;
+
+    /* Border radius */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Keep light theme for maternal app - dark mode not priority */
+    --background: 351 100% 98%;
+    --foreground: 345 15% 25%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+  }
+
+  /* Mobile-first responsive utilities */
+  .mobile-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent zoom on input focus */
+  input, select, textarea {
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Accessibility for low-literacy users */
+  .text-large {
+    @apply text-lg leading-relaxed;
+  }
+
+  .text-xlarge {
+    @apply text-xl leading-relaxed;
+  }
+
+  /* Simplified utilities */
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+    min-height: 100vh;
+    min-height: 100dvh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Loading states */
+  .loading-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  /* Floating animation for emergency button */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Gentle pulse for important elements */
+  @keyframes gentle-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
+  .animate-gentle-pulse {
+    animation: gentle-pulse 2s ease-in-out infinite;
+  }
+
+  /* Interactive hover effects */
+  .hover-scale {
+    transition: transform 0.2s ease-out;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  /* Story link with underline animation */
+  .story-link {
+    position: relative;
+    display: inline-block;
+  }
+
+  .story-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: hsl(var(--primary));
+    transform-origin: bottom right;
+    transition: transform 0.3s ease-out;
+  }
+
+  .story-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  /* Enhanced card entrance animation */
+  .card-enter {
+    animation: fade-in 0.3s ease-out, scale-in 0.2s ease-out;
+  }
+
+  /* Page transition animations */
+  .page-enter {
+    animation: fade-in 0.4s ease-out;
+  }
+
+  .page-exit {
+    animation: fade-out 0.3s ease-out;
+  }
+}
