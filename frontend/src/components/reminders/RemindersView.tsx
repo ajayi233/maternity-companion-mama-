@@ -34,7 +34,7 @@ export const RemindersView = () => {
     {
       id: '2',
       title: 'Doctor Appointment',
-      description: 'Monthly checkup with Dr. Mensah',
+      description: 'Monthly checkup with Dr. Ajayi',
       time: '2:00 PM',
       type: 'appointment',
       status: 'pending',

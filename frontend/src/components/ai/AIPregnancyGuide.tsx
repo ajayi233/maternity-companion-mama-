@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Brain, Baby, Heart, Sparkles, Volume2, Calendar, MessageCircle, Mic, Send } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Brain, Baby, Heart, Sparkles, Volume2 } from "lucide-react";
 import { sendTextQuery, playAudioResponse } from "@/lib/aiService";
+import { getHomepageInsights } from "@/lib/homepageService";
+import healthImage from "@/assets/health.png";
 
 interface AIInsight {
   week: number;
@@ -13,8 +15,7 @@ interface AIInsight {
   babyDevelopment: string;
   motherChanges: string;
   recommendations: string[];
-  nutritionFocus: string[];
-  warningSigns: string[];
+  healthTip: string;
 }
 
 interface AIPregnancyGuideProps {
@@ -26,40 +27,65 @@ export const AIPregnancyGuide = ({ dueDate }: AIPregnancyGuideProps) => {
   const [aiInsight, setAiInsight] = useState<AIInsight | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const generateAIInsight = async (week: number): Promise<AIInsight> => {
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const insights: Record<number, AIInsight> = {
-      12: {
+  const generateAIInsight = async (dueDate?: string): Promise<AIInsight> => {
+    if (!dueDate) {
+      // Fallback data if no due date
+      return {
         week: 12,
-        title: "Welcome to Your Second Trimester! 🌟",
-        description: "You're entering an exciting phase! Your baby is developing rapidly, and you may start feeling more energetic as morning sickness subsides.",
-        babyDevelopment: "Your baby is now about 2.1 inches long and weighs about half an ounce. Bones are beginning to harden, and your baby can make a fist!",
-        motherChanges: "You may notice less nausea and more energy. Your uterus is growing and may start showing as a small bump.",
-        recommendations: [
-          "Continue taking prenatal vitamins with folic acid",
-          "Stay hydrated with 8-10 glasses of water daily",
-          "Start gentle prenatal exercises like walking or swimming",
-          "Schedule your second prenatal appointment"
-        ],
-        nutritionFocus: ["Lean proteins", "Leafy greens", "Whole grains", "Calcium-rich foods"],
-        warningSigns: ["Severe abdominal pain", "Heavy bleeding", "Persistent vomiting", "High fever"]
-      }
-    };
+        title: "Welcome to Your Pregnancy Journey! 🌟",
+        description: "Please update your due date to get personalized insights for your pregnancy week.",
+        babyDevelopment: "Your baby is developing beautifully. Update your due date for specific weekly information.",
+        motherChanges: "Every pregnancy is unique. Get personalized insights by setting your due date.",
+        recommendations: ["Update your due date in profile settings", "Take prenatal vitamins", "Stay hydrated", "Contact your healthcare provider"],
+        healthTip: "Regular prenatal care is essential for a healthy pregnancy."
+      };
+    }
 
-    return insights[week] || insights[12];
+    try {
+      const data = await getHomepageInsights(dueDate);
+      
+      // Convert AI recommendations string to array
+      const recommendationsArray = data.insights.ai_recommendations
+        .split(/[.!]\s+/)
+        .filter(rec => rec.trim().length > 0)
+        .map(rec => rec.trim())
+        .slice(0, 4); // Limit to 4 recommendations
+
+      return {
+        week: data.gestational_week,
+        title: `Week ${data.gestational_week} - Your Pregnancy Journey! 🌟`,
+        description: data.insights.ai_pregnancy_guide,
+        babyDevelopment: data.insights.baby_this_week,
+        motherChanges: data.insights.changes_in_body,
+        recommendations: recommendationsArray,
+        healthTip: data.insights.health_tip
+      };
+    } catch (error) {
+      console.error('Failed to fetch dynamic insights:', error);
+      // Fallback to static data on error
+      return {
+        week: 12,
+        title: "Your Pregnancy Journey! 🌟",
+        description: "We're having trouble loading your personalized insights. Please try again later.",
+        babyDevelopment: "Your baby is developing beautifully. Check back soon for updated information.",
+        motherChanges: "Your body is adapting to support your growing baby.",
+        recommendations: ["Try refreshing the page", "Check your internet connection", "Contact support if issue persists"],
+        healthTip: "Continue with your regular prenatal care routine."
+      };
+    }
   };
 
   useEffect(() => {
     const loadAIInsight = async () => {
       setIsLoading(true);
-      const insight = await generateAIInsight(currentWeek);
+      const insight = await generateAIInsight(dueDate);
       setAiInsight(insight);
+      setCurrentWeek(insight.week);
       setIsLoading(false);
     };
 
     loadAIInsight();
-  }, [currentWeek]);
+  }, [dueDate]);
 
   const [question, setQuestion] = useState("");
   const [aiResponse, setAiResponse] = useState("");
@@ -70,7 +96,7 @@ export const AIPregnancyGuide = ({ dueDate }: AIPregnancyGuideProps) => {
     
     setIsAsking(true);
     try {
-      const response = await sendTextQuery(question);
+      const response = await sendTextQuery(question, dueDate);
       setAiResponse(response.text);
       if (response.audio_base64) {
         playAudioResponse(response.audio_base64);
@@ -113,7 +139,7 @@ export const AIPregnancyGuide = ({ dueDate }: AIPregnancyGuideProps) => {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-gradient-primary shadow-lg border-0">
+      <Card className="bg-gradient-primary border-0">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -125,10 +151,7 @@ export const AIPregnancyGuide = ({ dueDate }: AIPregnancyGuideProps) => {
                 <p className="text-gray-700">Week {aiInsight.week} Insights</p>
               </div>
             </div>
-            <Badge className="bg-white/20 text-gray-800 border-white/30">
-              <Sparkles className="w-3 h-3 mr-1" />
-              AI Powered
-            </Badge>
+            {/*  */}
           </div>
         </CardHeader>
       </Card>
@@ -152,67 +175,68 @@ export const AIPregnancyGuide = ({ dueDate }: AIPregnancyGuideProps) => {
         <CardContent className="space-y-6">
           <p className="text-foreground leading-relaxed">{aiInsight.description}</p>
 
-          <div className="bg-pink-50 rounded-xl p-4 border border-pink-200">
-            <div className="flex items-center gap-2 mb-3">
-              <Baby className="w-5 h-5 text-pink-700" />
-              <h3 className="font-semibold text-pink-900">Your Baby This Week</h3>
-            </div>
-            <p className="text-pink-800 leading-relaxed">{aiInsight.babyDevelopment}</p>
-          </div>
-
-          <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
-            <div className="flex items-center gap-2 mb-3">
-              <Heart className="w-5 h-5 text-purple-700" />
-              <h3 className="font-semibold text-purple-900">Changes in Your Body</h3>
-            </div>
-            <p className="text-purple-800 leading-relaxed">{aiInsight.motherChanges}</p>
-          </div>
-
-          <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-            <h3 className="font-semibold text-blue-900 mb-3">AI Recommendations</h3>
-            <div className="space-y-2">
-              {aiInsight.recommendations.map((rec, idx) => (
-                <div key={idx} className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-blue-800">{rec}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-            <div className="flex items-center gap-2 mb-3">
-              <MessageCircle className="w-5 h-5 text-green-700" />
-              <h3 className="font-semibold text-green-900">Ask AI Assistant</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Ask about your pregnancy..."
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && askAI()}
-                  className="flex-1"
-                />
-                <Button
-                  onClick={askAI}
-                  disabled={isAsking || !question.trim()}
-                  size="sm"
-                >
-                  {isAsking ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <Send className="w-4 h-4" />
-                  )}
-                </Button>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Today's Health Tip - Left */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-5 h-5 text-yellow-600" />
+                <h3 className="font-semibold text-gray-900">Today's Health Tip</h3>
               </div>
-              {aiResponse && (
-                <div className="bg-white rounded-lg p-3 border border-green-300">
-                  <p className="text-green-900 text-sm leading-relaxed">{aiResponse}</p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <img src={healthImage} alt="Health tip" className="w-[250px] h-[250px] object-cover rounded-lg flex-shrink-0" />
+                <div className="bg-pink-50 border-l-4 border-pink-500 p-3 rounded-r-lg flex-1">
+                  <p className="text-gray-800 leading-relaxed">{aiInsight.healthTip}</p>
                 </div>
-              )}
+              </div>
+            </div>
+
+            {/* Accordion - Right */}
+            <div className="bg-white rounded-xl border border-gray-200">
+              <Accordion type="multiple" className="w-full">
+                <AccordionItem value="baby">
+                  <AccordionTrigger className="px-4">
+                    <div className="flex items-center gap-2">
+                      <Baby className="w-5 h-5 text-pink-700" />
+                      <span className="font-semibold text-gray-900">Your Baby This Week</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4">
+                    <p className="text-gray-800 leading-relaxed">{aiInsight.babyDevelopment}</p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="body">
+                  <AccordionTrigger className="px-4">
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-5 h-5 text-purple-700" />
+                      <span className="font-semibold text-gray-900">Changes in Your Body</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4">
+                    <p className="text-gray-800 leading-relaxed">{aiInsight.motherChanges}</p>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="recommendations">
+                  <AccordionTrigger className="px-4">
+                    <span className="font-semibold text-gray-900">AI Recommendations</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4">
+                    <div className="space-y-2">
+                      {aiInsight.recommendations.map((rec, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <div className="w-2 h-2 bg-pink-600 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="text-gray-800">{rec}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </div>
+
+
 
         </CardContent>
       </Card>

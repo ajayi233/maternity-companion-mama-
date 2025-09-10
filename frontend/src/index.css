@@ -13,7 +13,7 @@
     --foreground: 222.2 84% 4.9%;
 
     /* Primary colors - soft pink */
-    --primary: 346 77% 49%;
+    --primary: 330 81% 60%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary colors - muted green */
@@ -48,7 +48,7 @@
     --popover-foreground: 222.2 84% 4.9%;
 
     /* Simplified gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--accent)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.1) 0%, hsl(var(--accent)) 20%);
 
     /* Simplified shadows */
     --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);

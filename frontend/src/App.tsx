@@ -23,7 +23,9 @@ import { SymptomChecker } from "@/components/ai/SymptomChecker";
 import { MultilingualChat } from "@/components/ai/MultilingualChat";
 import { PersonalizedReminders } from "@/components/ai/PersonalizedReminders";
 import { BottomNavigation } from "@/components/layout/BottomNavigation";
+import { TopNavigation } from "@/components/layout/TopNavigation";
 import { EmergencyButton } from "@/components/dashboard/EmergencyButton";
+import { FloatingAIAssistant } from "@/components/ai/FloatingAIAssistant";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,10 @@ interface User {
   name: string;
   phone: string;
   dueDate?: string;
+  pregnancyData?: {
+    dueDate?: string;
+    isPregnant?: boolean;
+  };
 }
 
 // Main App Component with Routing
@@ -48,19 +54,43 @@ const MainApp = () => {
     const loadUser = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
         const savedUser = localStorage.getItem('mama_user');
         
         if (accessToken && savedUser) {
           try {
             const userData = JSON.parse(savedUser);
-            // Try to validate token with backend
-            const profileData = await apiService.getProfile();
-            setUser(profileData.user);
-          } catch (error) {
-            console.error('Token validation failed:', error);
-            // Clear invalid tokens
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            // Set user immediately from localStorage
+            setUser(userData);
+            
+            // Try to validate token with backend in background
+            try {
+              const profileData = await apiService.getProfile();
+              // Update user data if profile fetch succeeds
+              setUser(profileData.user);
+            } catch (profileError: any) {
+              console.log('Profile validation failed, trying refresh token:', profileError.message);
+              
+              // If profile fails and we have refresh token, try to refresh
+              if (refreshToken && profileError.message?.includes('expired')) {
+                try {
+                  await apiService.refreshToken();
+                  const profileData = await apiService.getProfile();
+                  setUser(profileData.user);
+                } catch (refreshError) {
+                  console.error('Token refresh failed:', refreshError);
+                  // Only clear tokens if refresh also fails
+                  localStorage.removeItem('accessToken');
+                  localStorage.removeItem('refreshToken');
+                  localStorage.removeItem('mama_user');
+                  setUser(null);
+                }
+              }
+              // If no refresh token or other error, keep user logged in with cached data
+              // This prevents logout on temporary network issues
+            }
+          } catch (parseError) {
+            console.error('Error parsing saved user data:', parseError);
             localStorage.removeItem('mama_user');
             setUser(null);
           }
@@ -281,8 +311,10 @@ const MainApp = () => {
   // If user is authenticated, show main app with routes
   return (
     <div className="min-h-screen">
-      <Routes>
-        <Route path="/" element={<Dashboard user={user} onNavigate={handleNavigate} onLogout={handleLogout} />} />
+      <TopNavigation activeTab={getActiveTab()} onTabChange={handleNavigate} user={user} onLogout={handleLogout} />
+      <div className="lg:pt-16">
+        <Routes>
+        <Route path="/" element={<Dashboard user={{...user, dueDate: user.pregnancyData?.dueDate || user.dueDate}} onNavigate={handleNavigate} onLogout={handleLogout} />} />
         <Route path="/reminders" element={
           <div className="pb-24">
             <RemindersView />
@@ -290,12 +322,12 @@ const MainApp = () => {
         } />
         <Route path="/chat" element={
           <div className="pb-24">
-            <TextChat />
+            <TextChat user={{...user, dueDate: user.pregnancyData?.dueDate || user.dueDate}} />
           </div>
         } />
         <Route path="/voice-chat" element={
           <div className="pb-24">
-            <LiveVoiceChat />
+            <LiveVoiceChat user={{...user, dueDate: user.pregnancyData?.dueDate || user.dueDate}} />
           </div>
         } />
         <Route path="/ai-symptom-checker" element={
@@ -329,11 +361,12 @@ const MainApp = () => {
             <ClinicLocator />
           </div>
         } />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
       <BottomNavigation activeTab={getActiveTab()} onTabChange={handleNavigate} />
       <EmergencyButton />
-
+      <FloatingAIAssistant dueDate={user.pregnancyData?.dueDate || user.dueDate} />
     </div>
   );
 };

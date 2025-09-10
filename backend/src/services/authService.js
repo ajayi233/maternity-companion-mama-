@@ -65,26 +65,49 @@ class AuthService {
   }
 
   async sendPasswordResetCode(phone) {
-    const user = await User.findOne({ phone });
-    if (!user) {
-      throw new Error('User not found');
+    try {
+      console.log('🔐 Password Reset - Phone:', phone);
+      
+      const user = await User.findOne({ phone });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      console.log('🔐 Password Reset - User found:', user._id);
+
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      console.log('🔐 Password Reset - Generated code:', code);
+      
+      const { default: PasswordReset } = await import('../models/PasswordReset.js');
+      const resetRecord = await PasswordReset.create({
+        userId: user._id,
+        code
+      });
+
+      console.log('🔐 Password Reset - Reset record created:', resetRecord._id);
+
+      const { default: notificationService } = await import('./notificationService.js');
+      const smsResult = await notificationService.sendSMS(
+        phone,
+        `Your MAMA password reset code is: ${code}. Valid for 10 minutes.`
+      );
+
+      console.log('🔐 Password Reset - SMS result:', smsResult);
+
+      if (!smsResult.success) {
+        console.error('❌ Password Reset - SMS failed:', smsResult.error);
+        // Still return success but log the SMS failure
+        return { 
+          message: 'Reset code generated but SMS delivery failed. Please try again.',
+          smsError: smsResult.error
+        };
+      }
+
+      return { message: 'Reset code sent to your phone' };
+    } catch (error) {
+      console.error('❌ Password Reset Error:', error);
+      throw error;
     }
-
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    const { default: PasswordReset } = await import('../models/PasswordReset.js');
-    await PasswordReset.create({
-      userId: user._id,
-      code
-    });
-
-    const { default: notificationService } = await import('./notificationService.js');
-    await notificationService.sendSMS(
-      phone,
-      `Your MAMA password reset code is: ${code}. Valid for 10 minutes.`
-    );
-
-    return { message: 'Reset code sent to your phone' };
   }
 
   async resetPasswordWithCode(phone, code, newPassword) {

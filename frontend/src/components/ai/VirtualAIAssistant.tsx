@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Send, Mic, MicOff, Volume2, Bot, User, Languages, Phone } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { sendTextQuery } from "@/lib/aiService";
 
 interface ChatMessage {
   id: string;
@@ -22,7 +23,14 @@ interface Language {
   flag: string;
 }
 
-export const VirtualAIAssistant = () => {
+interface VirtualAIAssistantProps {
+  user?: {
+    name: string;
+    dueDate?: string;
+  };
+}
+
+export const VirtualAIAssistant = ({ user }: VirtualAIAssistantProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("tw");
@@ -70,42 +78,13 @@ export const VirtualAIAssistant = () => {
   };
 
   const translateAndRespond = async (userMessage: string, language: string): Promise<string> => {
-    // Simulate AI translation and response
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const responses = {
-      en: {
-        nausea: "Morning sickness is common in early pregnancy. Try eating small meals and ginger tea.",
-        pain: "Some discomfort is normal, but severe pain should be checked by a doctor.",
-        exercise: "Gentle exercise like walking is great during pregnancy. Always consult your doctor first.",
-        nutrition: "Eat plenty of fruits, vegetables, and take your prenatal vitamins.",
-        default: "Thank you for your question. I'm here to help with your pregnancy journey."
-      },
-      tw: {
-        nausea: "Anɔpa yadeɛ yɛ adeɛ a ɛtaa ba nyinsɛn mfiaseɛ. Sɔ hwɛ sɛ wobɛdi nneɛma kakraa bi na woasom ginger tea.",
-        pain: "Yadeɛ bi yɛ adeɛ a ɛtaa ba, nanso yadeɛ a emu yɛ den no, ɛsɛ sɛ oduruyɛfoɔ hwɛ.",
-        exercise: "Apɔmuden te sɛ nantew yɛ papa wɔ nyinsɛn berɛ mu. Hwɛ sɛ wo dɔkta bɛka adeɛ ansa.",
-        nutrition: "Di nnuaba, nhabannua pii na nom wo prenatal vitamins.",
-        default: "Meda wo ase wɔ wo nsɛmmisa no ho. Mewɔ ha sɛ mɛboa wo wɔ wo nyinsɛn akwan no mu."
-      },
-      ga: {
-        nausea: "Anɔpa yadeɛ yɛ adeɛ fɛɛ lɛ nyɔŋmɔ mfiaseɛ. Sɔ hwɛ sɛ o bɛdi nneɛma lɔlɔi bi kɛ o som ginger tea.",
-        pain: "Yadeɛ bi yɛ adeɛ fɛɛ, nanso yadeɛ kɛ emu yɛ den no, ɛsɛ sɛ dɔkta hwɛ.",
-        exercise: "Apɔmuden joɔ te sɛ nantew yɛ papa nyɔŋmɔ berɛ mu. Hwɛ sɛ wo dɔkta ka adeɛ gbã.",
-        nutrition: "Di nnuaba, atadwe pii kɛ nom wo prenatal vitamins.",
-        default: "Meda wo ase nsɛmmisa lɛ ho. Mewɔ afii sɛ mɛboa wo nyɔŋmɔ akwan lɛ mu."
-      }
-    };
-
-    const langResponses = responses[language as keyof typeof responses] || responses.en;
-    const lowerInput = userMessage.toLowerCase();
-    
-    if (lowerInput.includes('nausea') || lowerInput.includes('sick')) return langResponses.nausea;
-    if (lowerInput.includes('pain') || lowerInput.includes('hurt')) return langResponses.pain;
-    if (lowerInput.includes('exercise') || lowerInput.includes('workout')) return langResponses.exercise;
-    if (lowerInput.includes('food') || lowerInput.includes('eat')) return langResponses.nutrition;
-    
-    return langResponses.default;
+    try {
+      const response = await sendTextQuery(userMessage, user?.dueDate);
+      return response.text;
+    } catch (error) {
+      console.error('AI response failed:', error);
+      return "I'm sorry, I'm having trouble responding right now. Please try again.";
+    }
   };
 
   const sendMessage = async () => {

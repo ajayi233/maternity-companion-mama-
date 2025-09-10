@@ -1,12 +1,16 @@
 interface TextRequest {
   input_type: 'text';
   text: string;
+  due_month?: number;
+  due_year?: number;
 }
 
 interface AudioRequest {
   input_type: 'audio';
   audio_data: string;
   audio_format: 'mp3';
+  due_month?: number;
+  due_year?: number;
 }
 
 interface TextResponse {
@@ -23,11 +27,17 @@ interface AudioResponse {
 
 const API_URL = 'https://gh47sa3nnjjkhmexbhciqgks4a0xfunk.lambda-url.us-west-2.on.aws/';
 
-export const sendTextQuery = async (text: string): Promise<TextResponse> => {
+export const sendTextQuery = async (text: string, dueDate?: string): Promise<TextResponse> => {
   const payload: TextRequest = {
     input_type: 'text',
     text: text
   };
+
+  if (dueDate) {
+    const date = new Date(dueDate);
+    payload.due_month = date.getMonth() + 1;
+    payload.due_year = date.getFullYear();
+  }
 
   const response = await fetch(API_URL, {
     method: 'POST',
@@ -44,7 +54,7 @@ export const sendTextQuery = async (text: string): Promise<TextResponse> => {
   return await response.json();
 };
 
-export const sendAudioQuery = async (audioBlob: Blob): Promise<AudioResponse> => {
+export const sendAudioQuery = async (audioBlob: Blob, dueDate?: string): Promise<AudioResponse> => {
   const arrayBuffer = await audioBlob.arrayBuffer();
   const uint8Array = new Uint8Array(arrayBuffer);
   const binaryString = Array.from(uint8Array, byte => String.fromCharCode(byte)).join('');
@@ -55,6 +65,12 @@ export const sendAudioQuery = async (audioBlob: Blob): Promise<AudioResponse> =>
     audio_data: audioBase64,
     audio_format: 'mp3'
   };
+
+  if (dueDate) {
+    const date = new Date(dueDate);
+    payload.due_month = date.getMonth() + 1;
+    payload.due_year = date.getFullYear();
+  }
 
   const response = await fetch(API_URL, {
     method: 'POST',

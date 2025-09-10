@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Play, Volume2, Clock, Star, Heart, Baby, Apple, Dumbbell, Brain } from "lucide-react";
+import { BookOpen, Play, Volume2, Clock, Star, ChevronRight, Filter, Heart, ArrowRight, Users, Award } from "lucide-react";
+import heroImage from "@/assets/pregnant-woman.png";
 
 interface Resource {
   id: string;
@@ -24,29 +24,29 @@ export const EducationalResources = () => {
     {
       id: '1',
       title: 'Healthy Eating During Pregnancy',
-      description: 'Essential nutrients and foods for you and your baby\'s development.',
+      description: 'Essential nutrients and foods for optimal development',
       type: 'article',
       category: 'nutrition',
       duration: '5 min read',
       rating: 4.8,
       icon: '🥗',
-      color: 'bg-green-500'
+      color: 'bg-emerald-500'
     },
     {
       id: '2',
       title: 'Prenatal Yoga for Beginners',
-      description: 'Gentle exercises to keep you healthy and prepare for childbirth.',
+      description: 'Gentle exercises for a healthy pregnancy',
       type: 'video',
       category: 'exercise',
       duration: '15 min',
       rating: 4.9,
       icon: '🧘♀️',
-      color: 'bg-purple-500'
+      color: 'bg-violet-500'
     },
     {
       id: '3',
       title: 'Managing Pregnancy Anxiety',
-      description: 'Techniques to stay calm and positive throughout your pregnancy.',
+      description: 'Mental wellness techniques for expectant mothers',
       type: 'audio',
       category: 'mental-health',
       duration: '12 min',
@@ -56,8 +56,8 @@ export const EducationalResources = () => {
     },
     {
       id: '4',
-      title: 'Your Baby\'s Development: Week by Week',
-      description: 'Understanding how your baby grows from conception to birth.',
+      title: 'Baby Development Guide',
+      description: 'Week-by-week pregnancy milestones',
       type: 'article',
       category: 'baby-development',
       duration: '8 min read',
@@ -67,8 +67,8 @@ export const EducationalResources = () => {
     },
     {
       id: '5',
-      title: 'Safe Exercises for Each Trimester',
-      description: 'Workout routines adapted for every stage of pregnancy.',
+      title: 'Safe Exercise by Trimester',
+      description: 'Trimester-specific workout routines',
       type: 'video',
       category: 'exercise',
       duration: '20 min',
@@ -78,8 +78,8 @@ export const EducationalResources = () => {
     },
     {
       id: '6',
-      title: 'Meditation for Expectant Mothers',
-      description: 'Guided meditation sessions for relaxation and bonding.',
+      title: 'Mindfulness & Meditation',
+      description: 'Relaxation techniques for pregnancy',
       type: 'audio',
       category: 'mental-health',
       duration: '10 min',
@@ -90,11 +90,11 @@ export const EducationalResources = () => {
   ];
 
   const categories = [
-    { id: 'all', name: 'All Resources', icon: BookOpen, count: resources.length },
-    { id: 'nutrition', name: 'Nutrition', icon: Apple, count: resources.filter(r => r.category === 'nutrition').length },
-    { id: 'exercise', name: 'Exercise', icon: Dumbbell, count: resources.filter(r => r.category === 'exercise').length },
-    { id: 'mental-health', name: 'Mental Health', icon: Brain, count: resources.filter(r => r.category === 'mental-health').length },
-    { id: 'baby-development', name: 'Baby Development', icon: Baby, count: resources.filter(r => r.category === 'baby-development').length }
+    { id: 'all', name: 'All' },
+    { id: 'nutrition', name: 'Nutrition' },
+    { id: 'exercise', name: 'Exercise' },
+    { id: 'mental-health', name: 'Wellness' },
+    { id: 'baby-development', name: 'Development' }
   ];
 
   const filteredResources = selectedCategory === 'all' 
@@ -111,191 +111,226 @@ export const EducationalResources = () => {
   };
 
   const getTypeBadgeColor = (type: string) => {
-    switch (type) {
-      case 'article': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'video': return 'bg-red-100 text-red-700 border-red-200';
-      case 'audio': return 'bg-green-100 text-green-700 border-green-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
-    }
+    return 'bg-white text-gray-600 border border-gray-300';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero pb-24 animate-fade-in">
-      <div className="px-4 space-y-4 sm:space-y-6 mobile-safe">
-        {/* Modern Header */}
-        <div className="relative overflow-hidden">
-          <div className="h-28 sm:h-32 bg-gradient-primary relative rounded-2xl">
-            <div className="absolute inset-0 bg-black/10 rounded-2xl"></div>
-            <div className="relative z-10 p-4 sm:p-6 text-white flex items-center gap-3 sm:gap-4 h-full">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                <BookOpen className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-white/40"></div>
+        <div className="relative px-6 lg:px-24 pt-16 pb-0">
+          <div className="grid lg:grid-cols-2 gap-12 items-end">
+            <div className="pb-16">
+              <div className="inline-flex items-center gap-2 bg-pink-100 rounded-full px-4 py-2 mb-6">
+                <BookOpen className="w-4 h-4 text-pink-600" />
+                <span className="text-pink-700 text-sm font-medium">Learning Hub</span>
               </div>
-              <div className="animate-slide-up">
-                <h1 className="text-xl sm:text-2xl font-bold mb-1">Educational Resources</h1>
-                <p className="text-sm sm:text-base text-white/80">Learn and grow with expert guidance</p>
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Expert Resources for Your Journey
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Access curated content from healthcare professionals, covering everything from nutrition to mental wellness during pregnancy.
+              </p>
+              <div className="flex items-center gap-8 mb-8">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-blue-500" />
+                  <span className="text-gray-700 font-medium">10,000+ mothers learning</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-green-500" />
+                  <span className="text-gray-700 font-medium">Expert-verified content</span>
+                </div>
               </div>
-              <div className="ml-auto animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                <Heart className="w-8 h-8 text-white/60" />
+              <Button className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 text-lg">
+                Start Learning
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </div>
+            <div className="relative">
+              <div className="relative z-10">
+                <img 
+                  src={heroImage} 
+                  alt="Maternal health resources" 
+                  className="w-full h-[400px] object-cover object-top rounded-t-2xl"
+                />
+              </div>
+              <div className="absolute -top-4 -right-4 w-full h-full bg-gradient-to-br from-pink-200 to-purple-200 rounded-2xl opacity-30"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-6 lg:px-24 py-12 space-y-12">
+        {/* Stats Section */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-pink-500 mb-2">{resources.length}</div>
+            <div className="text-gray-600">Resources</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-500 mb-2">{categories.length - 1}</div>
+            <div className="text-gray-600">Categories</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-500 mb-2">4.8</div>
+            <div className="text-gray-600">Avg Rating</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-purple-500 mb-2">24/7</div>
+            <div className="text-gray-600">Available</div>
+          </div>
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex items-center gap-3 overflow-x-auto pb-2">
+          <Filter className="w-5 h-5 text-gray-500 flex-shrink-0" />
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`px-6 py-3 rounded-full font-medium whitespace-nowrap transition-all duration-200 ${
+                selectedCategory === category.id
+                  ? 'bg-pink-500 text-white shadow-lg scale-105'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-pink-200'
+              }`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Resources Grid */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {filteredResources.map((resource) => (
+            <Card 
+              key={resource.id} 
+              className="group hover:shadow-md hover:bg-gray-50 transition-all duration-200 border border-gray-200 bg-white cursor-pointer"
+              onClick={() => {
+                import('sonner').then(({ toast }) => {
+                  toast.success(`Opening ${resource.title}`);
+                });
+              }}
+            >
+              <CardContent className="px-6 py-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 hidden sm:flex">
+                    <span className="text-lg">{resource.icon}</span>
+                  </div>
+                  <Badge className="bg-gray-100 text-gray-600 text-xs">
+                    {resource.type}
+                  </Badge>
+                </div>
+                <h3 className="font-medium text-gray-900 mb-2 leading-tight text-base">
+                  {resource.title}
+                </h3>
+                <p className="text-gray-600 mb-3 leading-relaxed text-sm">
+                  {resource.description}
+                </p>
+                <div className="flex items-center gap-3 text-sm text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {resource.duration}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                    {resource.rating}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Featured Content */}
+        <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-3xl p-8 lg:p-12 border border-pink-100 shadow-lg">
+          <div className="flex items-center gap-2 mb-6">
+            <Star className="w-6 h-6 text-pink-500" />
+            <span className="text-lg font-semibold text-pink-700">Featured Content</span>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                Complete Pregnancy Guide
+              </h3>
+              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                Comprehensive week-by-week guide covering nutrition, exercise, mental wellness, and baby development milestones.
+              </p>
+              <div className="flex items-center gap-6 text-sm text-gray-500 mb-6">
+                <div className="flex items-center gap-2">
+                  <Play className="w-5 h-5" />
+                  <span>Video Series</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  <span>2 hours total</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  <span>4.9 rating</span>
+                </div>
+              </div>
+              <Button size="lg" className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3">
+                Start Learning
+                <ChevronRight className="w-5 h-5 ml-2" />
+              </Button>
+            </div>
+            <div className="hidden lg:flex justify-center">
+              <div className="relative">
+                <div className="w-48 h-48 bg-gradient-to-br from-pink-500 to-purple-600 rounded-3xl flex items-center justify-center text-white shadow-2xl">
+                  <span className="text-6xl">🤱</span>
+                </div>
+                <div className="absolute -top-2 -right-2 w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <Star className="w-6 h-6 text-white fill-white" />
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Category Tabs */}
-        <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 mb-4 sm:mb-6 bg-white/50 backdrop-blur-sm border border-white/20 h-auto p-1 gap-1">
-              {categories.map((category) => {
-                const Icon = category.icon;
-                return (
-                  <TabsTrigger 
-                    key={category.id} 
-                    value={category.id} 
-                    className="data-[state=active]:bg-primary data-[state=active]:text-white flex flex-col gap-1 py-2 sm:py-3 px-1 sm:px-2 min-h-[60px] sm:min-h-[auto]"
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-xs font-medium">{category.name}</span>
-                    <Badge variant="secondary" className="text-xs px-1 py-0">
-                      {category.count}
-                    </Badge>
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-
-            <TabsContent value={selectedCategory} className="space-y-4">
-              <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
-                {filteredResources.map((resource, index) => (
-                  <div
-                    key={resource.id}
-                    className="bg-gradient-card rounded-2xl p-4 sm:p-6 shadow-lg border-0 hover:shadow-xl transition-all duration-200 animate-slide-up group"
-                    style={{ animationDelay: `${0.1 * index}s` }}
-                  >
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 ${resource.color} rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform duration-200`}>
-                        <span className="text-lg sm:text-xl">{resource.icon}</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <h3 className="font-bold text-foreground text-base sm:text-lg leading-tight">
-                            {resource.title}
-                          </h3>
-                          <Badge className={`text-xs font-medium ${getTypeBadgeColor(resource.type)} flex items-center gap-1`}>
-                            {getTypeIcon(resource.type)}
-                            {resource.type}
-                          </Badge>
-                        </div>
-                        <p className="text-muted-foreground mb-3 leading-relaxed">
-                          {resource.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {resource.duration}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                              {resource.rating}
-                            </div>
-                          </div>
-                          <Button
-                            variant="gradient"
-                            size="sm"
-                            className="group-hover:scale-105 transition-transform duration-200 w-full sm:w-auto"
-                            onClick={() => {
-                              import('sonner').then(({ toast }) => {
-                                toast.success(`Opening ${resource.title}`, {
-                                  description: `${resource.type === 'article' ? 'Reading' : resource.type === 'video' ? 'Watching' : 'Listening to'} ${resource.title}...`,
-                                  duration: 2000,
-                                });
-                              });
-                            }}
-                          >
-                            {resource.type === 'article' ? 'Read' : resource.type === 'video' ? 'Watch' : 'Listen'}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {filteredResources.length === 0 && (
-                <div className="text-center py-12 bg-gradient-card rounded-2xl shadow-lg">
-                  <BookOpen className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
-                  <h3 className="text-xl font-bold text-foreground mb-2">
-                    No resources found
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Try selecting a different category.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        {/* Featured Section */}
-        <div className="animate-slide-up" style={{ animationDelay: '0.4s' }}>
-          <Card className="bg-gradient-card shadow-lg border-0">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl font-bold">
-                <Star className="w-6 h-6 text-yellow-500" />
-                Featured This Week
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-white/50 backdrop-blur-sm rounded-xl p-5 border border-white/20">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                    <span className="text-2xl">🤱</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-1">
-                      Preparing for Breastfeeding
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Complete guide to successful breastfeeding journey
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Play className="w-4 h-4" />
-                      Video Series
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      45 min total
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      4.9
-                    </div>
-                  </div>
-                  <Button 
-                    variant="gradient" 
-                    size="lg" 
-                    className="w-full sm:w-auto"
-                    onClick={() => {
-                      import('sonner').then(({ toast }) => {
-                        toast.success('Starting Featured Content', {
-                          description: 'Opening Preparing for Breastfeeding series...',
-                          duration: 2000,
-                        });
-                      });
-                    }}
-                  >
-                    Start Learning
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-16 py-12">
+        <div className="px-6 lg:px-24">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-xl font-bold text-pink-600">MAMA</span>
+              </div>
+              <p className="text-gray-600 leading-relaxed">Your trusted maternal health companion across Ghana.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-4">Features</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>AI Health Assistant</li>
+                <li>Appointment Reminders</li>
+                <li>Clinic Locator</li>
+                <li>Health Resources</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-4">Support</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>Help Center</li>
+                <li>Contact Us</li>
+                <li>Privacy Policy</li>
+                <li>Terms of Service</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-4">Emergency</h4>
+              <p className="text-gray-600 mb-2">Ghana Ambulance Service</p>
+              <p className="text-2xl font-bold text-pink-600">193</p>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 mt-8 pt-6 text-center">
+            <p className="text-gray-600">© 2024 MAMA. Made with ❤️ for mothers in Ghana.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
