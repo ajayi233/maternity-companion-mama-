@@ -25,6 +25,41 @@ variable "availability_zones" {
   type        = list(string)
 }
 
+variable "backend_image" {
+  description = "Backend Docker image URI"
+  type        = string
+}
+
+variable "mongodb_uri" {
+  description = "MongoDB connection URI"
+  type        = string
+  sensitive   = true
+}
+
+variable "jwt_secret" {
+  description = "JWT secret key"
+  type        = string
+  sensitive   = true
+}
+
+variable "jwt_refresh_secret" {
+  description = "JWT refresh secret key"
+  type        = string
+  sensitive   = true
+}
+
+variable "mnotify_api_key" {
+  description = "Mnotify API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "google_maps_api_key" {
+  description = "Google Maps API key for frontend"
+  type        = string
+  sensitive   = true
+}
+
 variable "aws_account_id" {
   description = "AWS Account ID"
   type        = string

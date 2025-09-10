@@ -13,14 +13,7 @@ output "public_subnet_ids" {
   value       = aws_subnet.public[*].id
 }
 
-output "private_subnet_ids" {
-  description = "List of private subnet IDs"
-  value       = aws_subnet.private[*].id
-}
-
-output "private_dns_namespace_id" {
-  value = aws_service_discovery_private_dns_namespace.internal.id
-}
+# Removed private subnets and service discovery for simplified deployment
 
 # output "frontend_bucket_name" {
 #   description = "Name of the frontend S3 bucket"
