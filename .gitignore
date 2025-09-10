@@ -10,6 +10,9 @@
 # Terraform modules cache
 .terraform.d/
 
+# Dependencies
+node_modules/
+
 # AWS
 .aws/
 
