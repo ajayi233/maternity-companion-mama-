@@ -113,19 +113,19 @@ export const AIPregnancyGuide = ({ dueDate }: AIPregnancyGuideProps) => {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-gradient-primary text-white shadow-lg border-0">
+      <Card className="bg-gradient-primary shadow-lg border-0">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                <Brain className="w-6 h-6 text-white" />
+                <Brain className="w-6 h-6 text-gray-800" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold text-white">AI Pregnancy Guide</CardTitle>
-                <p className="text-white/80">Week {aiInsight.week} Insights</p>
+                <CardTitle className="text-xl font-bold text-gray-800">AI Pregnancy Guide</CardTitle>
+                <p className="text-gray-700">Week {aiInsight.week} Insights</p>
               </div>
             </div>
-            <Badge className="bg-white/20 text-white border-white/30">
+            <Badge className="bg-white/20 text-gray-800 border-white/30">
               <Sparkles className="w-3 h-3 mr-1" />
               AI Powered
             </Badge>
