@@ -15,71 +15,7 @@ MAMA is a comprehensive maternal health companion application designed to suppor
 
 ## System Architecture
 
-```mermaid
-graph TB
-    subgraph "External Services"
-        MONGO[(MongoDB Atlas)]
-        MNOTIFY[MNotify SMS API]
-        GMAPS[Google Maps API]
-    end
-
-    subgraph "DNS & CDN Layer"
-        R53[Route53 DNS]
-        CF[CloudFront Distribution]
-        CERT[ACM Certificate]
-    end
-
-    subgraph "AWS Infrastructure"
-        subgraph "VPC"
-            subgraph "Public Subnets"
-                PUB1[Public Subnet 1]
-                PUB2[Public Subnet 2]
-            end
-            IGW[Internet Gateway]
-        end
-
-        subgraph "Load Balancing"
-            ALB[Application Load Balancer]
-            TG[Target Group]
-        end
-
-        subgraph "Container Platform"
-            ECS[ECS Fargate Service]
-            ECR[ECR Repository]
-            TASK[Task Definition]
-        end
-
-        subgraph "Storage & Config"
-            S3[S3 Bucket]
-            SSM[Parameter Store]
-            CW[CloudWatch Logs]
-        end
-    end
-
-    subgraph "Users"
-        MOBILE[Mobile Users]
-        WEB[Web Users]
-    end
-
-    MOBILE --> R53
-    WEB --> R53
-    R53 --> CF
-    R53 --> ALB
-    CF --> S3
-    ALB --> TG
-    TG --> ECS
-    ECS --> ECR
-    ECS --> SSM
-    ECS --> CW
-    ECS --> MONGO
-    ECS --> MNOTIFY
-    ECS --> GMAPS
-
-    style MONGO fill:#e8f5e8
-    style CF fill:#fff3e0
-    style ECS fill:#e1f5fe
-    style ALB fill:#f3e5f5
-```
+![System Architecture](Sys-Arch.png)
 
 ### Technology Stack
 
