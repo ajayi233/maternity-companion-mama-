@@ -80,7 +80,7 @@ cd ../../../
 
 **Step 3.2: Update terraform.tfvars with actual image URI**
 ```hcl
-backend_image = "ACCOUNT_ID.dkr.ecr.us-west-2.amazonaws.com/mama-app-dev-backend:latest"
+backend_image = "ACCOUNT_ID.dkr.ecr.-west-2.amazonaws.com/mama-app-dev-backend:latest"
 ```
 
 **Step 3.3: Uncomment ECS module in main.tf**
@@ -150,13 +150,14 @@ terraform apply
 **Step 4.5: Deploy frontend**
 ```bash
 cd ../../../
-ALB_DNS=$(cd iac/environments/dev && terraform output -raw alb_dns_name)
-./scripts/deploy-frontend.sh $ALB_DNS
+./scripts/deploy-frontend.sh
 ```
 
+*Note: No parameters needed - uses custom domain `https://api.auto-hive.site/api`*
+
 ## Verification
-- **Backend Health**: `http://<alb-dns>/api/health`
-- **Frontend**: `https://<cloudfront-domain>`
+- **Backend Health**: `https://api.auto-hive.site/api/health`
+- **Frontend**: `https://auto-hive.site` or `https://d22zv3iyoc3zl5.cloudfront.net/`
 - **Logs**: Check CloudWatch logs for any issues
 
 ## Rollback Strategy
@@ -177,4 +178,8 @@ terraform output -raw alb_dns_name
 
 # Get CloudFront URL
 terraform output -raw frontend_url
+
+# Test custom domains
+curl https://api.auto-hive.site/api/health
+open https://auto-hive.site
 ```

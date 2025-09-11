@@ -26,7 +26,7 @@ module "parameter_store" {
     "mnotify-sender-id"            = "mama-app"
     "mnotify-base-url"             = "https://api.mnotify.com/api"
     "sms-simulation-mode"          = "false"
-    "cors-origin"                  = "*"
+    "cors-origin"                  = "https://d22zv3iyoc3zl5.cloudfront.net,https://auto-hive.site,https://www.auto-hive.site"
     "password-reset-expires-minutes" = "10"
     "cookie-expires-in"            = "7"
   }

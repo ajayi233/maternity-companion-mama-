@@ -13,3 +13,10 @@ variable "alb_dns_name" {
   type        = string
   default     = ""
 }
+
+# Provider for CloudFront certificates (must be us-east-1)
+provider "aws" {
+  alias   = "us_east_1"
+  region  = "us-east-1"
+  profile = "cloud-crew-profile"
+}

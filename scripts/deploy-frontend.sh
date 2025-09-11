@@ -14,15 +14,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Check if ALB URL is provided
-if [ -z "$1" ]; then
-    echo -e "${RED}❌ Error: ALB URL is required${NC}"
-    echo -e "${YELLOW}Usage: $0 <alb-dns-name>${NC}"
-    echo -e "${YELLOW}Example: $0 mama-app-dev-alb-123456789.us-west-2.elb.amazonaws.com${NC}"
-    exit 1
-fi
-
-ALB_URL="http://$1/api"
+# Use custom domain for API - no parameters needed
+API_URL="https://api.auto-hive.site/api"
 S3_BUCKET=$(cd iac/environments/dev && terraform output -raw s3_bucket_name 2>/dev/null || echo "")
 CLOUDFRONT_ID=$(cd iac/environments/dev && terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
 
@@ -33,7 +26,7 @@ if [ -z "$S3_BUCKET" ]; then
 fi
 
 echo -e "${GREEN}🚀 Deploying frontend to S3 and CloudFront${NC}"
-echo -e "${YELLOW}📡 API URL: ${ALB_URL}${NC}"
+echo -e "${YELLOW}📡 API URL: ${API_URL}${NC}"
 echo -e "${YELLOW}🪣 S3 Bucket: ${S3_BUCKET}${NC}"
 
 # Get frontend config from Parameter Store
@@ -53,8 +46,8 @@ echo -e "${YELLOW}🏗️  Building frontend with configuration from Parameter S
 export VITE_APP_NAME="$VITE_APP_NAME"
 export VITE_APP_VERSION="$VITE_APP_VERSION"
 export VITE_APP_DESCRIPTION="$VITE_APP_DESCRIPTION"
-# Use ALB directly for API calls
-export VITE_API_BASE_URL="${ALB_URL}"
+# Use custom domain for API calls
+export VITE_API_BASE_URL="${API_URL}"
 export VITE_API_VERSION="$VITE_API_VERSION"
 export VITE_GOOGLE_MAPS_API_KEY="$VITE_GOOGLE_MAPS_API_KEY"
 export NODE_ENV="production"
