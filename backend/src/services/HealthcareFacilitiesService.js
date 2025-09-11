@@ -2,7 +2,7 @@ import { getJson } from "serpapi";
 
 class HealthcareFacilitiesService {
   constructor() {
-    this.apiKey = process.env.SERPAPI_KEY || "42693bae9212393505f2e7a2a14059a6231c0aaa6e62c87dac8b4bd7345e47b4";
+    this.apiKey = process.env.SERPAPI_KEY;
     this.defaultLocation = process.env.DEFAULT_LOCATION || "Ahodwo, Ashanti Region, Ghana";
   }
 
@@ -90,12 +90,16 @@ class HealthcareFacilitiesService {
    * @returns {Promise<Array>} Array of formatted facility objects
    */
   async getHealthcareFacilities(userCoords, location = null) {
+    if (!this.apiKey) {
+      throw new Error('SERPAPI_KEY environment variable is required');
+    }
+    
     const searchLocation = location || this.defaultLocation;
     
     return new Promise((resolve, reject) => {
       getJson({
         engine: "google_local",
-        q: "Pharmacy,Hospital,Clinic", // Static query as requested
+        q: "Pharmacy,Hospital,Clinic",
         location: searchLocation,
         api_key: this.apiKey
       }, (json) => {
@@ -104,13 +108,12 @@ class HealthcareFacilitiesService {
           return;
         }
 
-        if (!json || !json.local_results || !json.local_results.places) {
-          console.log(`No results found in ${searchLocation}`);
+        if (!json || !json.local_results || json.local_results.length === 0) {
           resolve([]);
           return;
         }
 
-        const facilities = json.local_results.places.map(place => {
+        const facilities = json.local_results.map(place => {
           const { services, specialties } = this.parseServicesAndSpecialties(place.description);
           const distance = place.gps_coordinates 
             ? this.calculateDistance(

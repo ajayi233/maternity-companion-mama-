@@ -1,5 +1,7 @@
-import HealthcareFacilitiesService from '../services/HealthcareFaciltiesService.js';
+import HealthcareFacilitiesService from '../services/HealthcareFacilitiesService.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 class HealthcareFacilitiesController {
   constructor() {
     this.healthcareService = new HealthcareFacilitiesService();
@@ -17,8 +19,6 @@ class HealthcareFacilitiesController {
         latitude: 6.662732043,
         longitude: -1.623101234
       };
-
-      console.log("Testing healthcare facilities endpoint...");
       
       const facilities = await this.healthcareService.getHealthcareFacilities(testCoords);
       

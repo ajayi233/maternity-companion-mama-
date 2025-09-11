@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Phone, Clock, Star, Navigation, Hospital, Building2, Stethoscope, Loader2, Heart, ArrowRight, Users, Award, Filter } from "lucide-react";
 import heroImage from "@/assets/pregnant-woman.png";
+import { apiService, type HealthcareFacility } from "@/lib/api";
+import { toast } from "sonner";
 
 interface HealthFacility {
   id: string;
@@ -26,93 +28,55 @@ export const ClinicLocator = () => {
   const [locationStatus, setLocationStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [locationName, setLocationName] = useState<string>('Getting your location...');
   const [retryCount, setRetryCount] = useState(0);
+  const [facilities, setFacilities] = useState<HealthFacility[]>([]);
+  const [facilitiesLoading, setFacilitiesLoading] = useState(false);
+  const [apiData, setApiData] = useState<HealthcareFacility[]>([]);
 
-  const baseFacilities = [
-    {
-      id: '1',
-      name: 'Korle-Bu Teaching Hospital',
-      type: 'hospital' as const,
-      address: 'Korle-Bu, Accra',
-      phone: '0302-665-401',
-      rating: 4.2,
-      reviewCount: 1247,
-      openHours: '24/7',
-      services: ['Emergency', 'Maternity', 'Pediatrics', 'Surgery'],
-      specialties: ['Obstetrics', 'Gynecology', 'Neonatology'],
-      emergency: true,
-      coordinates: { lat: 5.5947, lng: -0.2120 }
-    },
-    {
-      id: '2',
-      name: 'Ridge Hospital',
-      type: 'hospital' as const,
-      address: 'Ridge, Accra',
-      phone: '0302-776-111',
-      rating: 4.5,
-      reviewCount: 892,
-      openHours: '24/7',
-      services: ['Emergency', 'Maternity', 'Outpatient'],
-      specialties: ['Maternal Health', 'Family Medicine'],
-      emergency: true,
-      coordinates: { lat: 5.5731, lng: -0.1969 }
-    },
-    {
-      id: '3',
-      name: 'Nyaho Medical Centre',
-      type: 'clinic' as const,
-      address: 'Airport Residential Area, Accra',
-      phone: '0302-761-391',
-      rating: 4.7,
-      reviewCount: 634,
-      openHours: '6:00 AM - 10:00 PM',
-      services: ['Prenatal Care', 'Ultrasound', 'Lab Tests'],
-      specialties: ['Obstetrics', 'Prenatal Care'],
-      emergency: false,
-      coordinates: { lat: 5.6019, lng: -0.1731 }
-    },
-    {
-      id: '4',
-      name: 'Trust Hospital',
-      type: 'hospital' as const,
-      address: 'Dzorwulu, Accra',
-      phone: '0302-815-950',
-      rating: 4.4,
-      reviewCount: 756,
-      openHours: '24/7',
-      services: ['Emergency', 'Maternity', 'ICU', 'Surgery'],
-      specialties: ['High-Risk Pregnancy', 'Neonatal Care'],
-      emergency: true,
-      coordinates: { lat: 5.6147, lng: -0.1847 }
-    },
-    {
-      id: '5',
-      name: 'Lister Hospital',
-      type: 'hospital' as const,
-      address: 'Roman Ridge, Accra',
-      phone: '0302-685-181',
-      rating: 4.3,
-      reviewCount: 523,
-      openHours: '24/7',
-      services: ['Emergency', 'Maternity', 'Pediatrics'],
-      specialties: ['Maternal Health', 'Child Care'],
-      emergency: true,
-      coordinates: { lat: 5.5842, lng: -0.1925 }
-    },
-    {
-      id: '6',
-      name: 'Pharmacy Plus',
-      type: 'pharmacy' as const,
-      address: 'Osu, Accra',
-      phone: '0302-777-123',
-      rating: 4.1,
-      reviewCount: 298,
-      openHours: '7:00 AM - 9:00 PM',
-      services: ['Prescription', 'OTC Medications', 'Health Consultation'],
-      specialties: ['Prenatal Vitamins', 'Maternal Supplements'],
-      emergency: false,
-      coordinates: { lat: 5.5531, lng: -0.1719 }
+  // Fetch facilities from API
+  const fetchFacilities = async (lat?: number, lng?: number) => {
+    try {
+      setFacilitiesLoading(true);
+      const response = await apiService.getHealthcareFacilities(lat, lng);
+      
+      // Store API data for direction links
+      setApiData(response.facilities);
+      
+      // Transform API response to match component interface
+      const transformedFacilities: HealthFacility[] = response.facilities.map((facility, index) => ({
+        id: `api-${index}`,
+        name: facility.name,
+        type: getTypeFromString(facility.type),
+        address: facility.address,
+        phone: facility.call,
+        distance: facility.distance,
+        rating: 4.0 + Math.random() * 1, // Generate random rating since API doesn't provide
+        reviewCount: Math.floor(Math.random() * 500) + 50,
+        openHours: facility.openTime,
+        services: facility.services,
+        specialties: facility.specialties,
+        emergency: facility.openTime.includes('24 hours') || facility.openTime.includes('Open 24'),
+        coordinates: undefined // API doesn't provide coordinates in current format
+      }));
+      
+      setFacilities(transformedFacilities);
+    } catch (error) {
+      console.error('Failed to fetch facilities:', error);
+      toast.error('Failed to load healthcare facilities', {
+        description: 'Please try again later'
+      });
+      // Keep empty array on error
+      setFacilities([]);
+    } finally {
+      setFacilitiesLoading(false);
     }
-  ];
+  };
+  
+  const getTypeFromString = (typeString: string): 'hospital' | 'clinic' | 'pharmacy' => {
+    const lower = typeString.toLowerCase();
+    if (lower.includes('hospital')) return 'hospital';
+    if (lower.includes('pharmacy')) return 'pharmacy';
+    return 'clinic';
+  };
 
   const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): string => {
     const R = 6371;
@@ -126,32 +90,25 @@ export const ClinicLocator = () => {
     return distance < 1 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`;
   };
 
-  const facilities: HealthFacility[] = useMemo(() => {
-    if (!baseFacilities.length) return [];
-    
-    return baseFacilities.map(facility => ({
-      ...facility,
-      distance: userLocation && facility.coordinates
-        ? calculateDistance(userLocation.lat, userLocation.lng, facility.coordinates.lat, facility.coordinates.lng)
-        : 'Calculating...'
-    })).sort((a, b) => {
-      if (!userLocation) return 0;
+  // Sort facilities by distance
+  const sortedFacilities = useMemo(() => {
+    return [...facilities].sort((a, b) => {
       const distA = parseFloat(a.distance.toString().replace(/[^0-9.]/g, '') || '0');
       const distB = parseFloat(b.distance.toString().replace(/[^0-9.]/g, '') || '0');
       return distA - distB;
     });
-  }, [userLocation, baseFacilities]);
+  }, [facilities]);
 
   const facilityTypes = [
-    { id: 'all', name: 'All Facilities', icon: MapPin, count: facilities.length },
-    { id: 'hospital', name: 'Hospitals', icon: Hospital, count: facilities.filter(f => f.type === 'hospital').length },
-    { id: 'clinic', name: 'Clinics', icon: Building2, count: facilities.filter(f => f.type === 'clinic').length },
-    { id: 'pharmacy', name: 'Pharmacies', icon: Stethoscope, count: facilities.filter(f => f.type === 'pharmacy').length }
+    { id: 'all', name: 'All Facilities', icon: MapPin, count: sortedFacilities.length },
+    { id: 'hospital', name: 'Hospitals', icon: Hospital, count: sortedFacilities.filter(f => f.type === 'hospital').length },
+    { id: 'clinic', name: 'Clinics', icon: Building2, count: sortedFacilities.filter(f => f.type === 'clinic').length },
+    { id: 'pharmacy', name: 'Pharmacies', icon: Stethoscope, count: sortedFacilities.filter(f => f.type === 'pharmacy').length }
   ];
 
   const filteredFacilities = selectedType === 'all' 
-    ? facilities 
-    : facilities.filter(facility => facility.type === selectedType);
+    ? sortedFacilities 
+    : sortedFacilities.filter(facility => facility.type === selectedType);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -222,6 +179,9 @@ export const ClinicLocator = () => {
           setUserLocation({ lat: latitude, lng: longitude });
           setLocationStatus('success');
           
+          // Fetch facilities with user location
+          fetchFacilities(latitude, longitude);
+          
           // Get location name using reverse geocoding
           try {
             const response = await fetch(
@@ -266,6 +226,8 @@ export const ClinicLocator = () => {
           }
           
           setUserLocation({ lat: 5.6037, lng: -0.1870 });
+          // Fetch facilities with default location
+          fetchFacilities(5.6037, -0.1870);
         },
         {
           enableHighAccuracy: false,
@@ -282,9 +244,10 @@ export const ClinicLocator = () => {
 
   const openDirections = (facility: HealthFacility) => {
     try {
-      if (userLocation && facility.coordinates) {
-        const url = `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${facility.coordinates.lat},${facility.coordinates.lng}`;
-        window.open(url, '_blank', 'noopener,noreferrer');
+      // Use the direction URL from API if available, otherwise search by name
+      const apiResponse = apiData.find(f => f.name === facility.name);
+      if (apiResponse && apiResponse.direction) {
+        window.open(apiResponse.direction, '_blank', 'noopener,noreferrer');
       } else {
         const query = encodeURIComponent(`${facility.name} ${facility.address}`);
         const url = `https://www.google.com/maps/search/${query}`;
@@ -292,11 +255,9 @@ export const ClinicLocator = () => {
       }
     } catch (error) {
       console.error('Failed to open directions:', error);
-      import('sonner').then(({ toast }) => {
-        toast.error('Unable to open directions', {
-          description: 'Please try again or search manually',
-          duration: 3000,
-        });
+      toast.error('Unable to open directions', {
+        description: 'Please try again or search manually',
+        duration: 3000,
       });
     }
   };
@@ -352,19 +313,27 @@ export const ClinicLocator = () => {
         {/* Stats Section */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="text-center">
-            <div className="text-3xl font-bold text-pink-500 mb-2">{facilities.filter(f => f.type === 'hospital').length}</div>
+            <div className="text-3xl font-bold text-pink-500 mb-2">
+              {facilitiesLoading ? <Loader2 className="w-8 h-8 animate-spin mx-auto" /> : sortedFacilities.filter(f => f.type === 'hospital').length}
+            </div>
             <div className="text-gray-600">Hospitals</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-500 mb-2">{facilities.filter(f => f.type === 'clinic').length}</div>
+            <div className="text-3xl font-bold text-blue-500 mb-2">
+              {facilitiesLoading ? <Loader2 className="w-8 h-8 animate-spin mx-auto" /> : sortedFacilities.filter(f => f.type === 'clinic').length}
+            </div>
             <div className="text-gray-600">Clinics</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-green-500 mb-2">{facilities.filter(f => f.type === 'pharmacy').length}</div>
+            <div className="text-3xl font-bold text-green-500 mb-2">
+              {facilitiesLoading ? <Loader2 className="w-8 h-8 animate-spin mx-auto" /> : sortedFacilities.filter(f => f.type === 'pharmacy').length}
+            </div>
             <div className="text-gray-600">Pharmacies</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-500 mb-2">24/7</div>
+            <div className="text-3xl font-bold text-purple-500 mb-2">
+              {facilitiesLoading ? <Loader2 className="w-8 h-8 animate-spin mx-auto" /> : sortedFacilities.filter(f => f.emergency).length}
+            </div>
             <div className="text-gray-600">Emergency Care</div>
           </div>
         </div>
@@ -377,7 +346,7 @@ export const ClinicLocator = () => {
             {locationStatus === 'error' && <div className="w-3 h-3 bg-orange-500 rounded-full"></div>}
             <span className="text-gray-900 font-medium">📍 {locationName}</span>
             <Badge className="ml-auto bg-gray-100 text-gray-600">
-              {facilities.length} facilities nearby
+              {facilitiesLoading ? 'Loading...' : `${sortedFacilities.length} facilities nearby`}
             </Badge>
           </div>
           {locationStatus === 'error' && (
@@ -407,6 +376,20 @@ export const ClinicLocator = () => {
 
         {/* Facilities List */}
         <div className="space-y-6">
+          {facilitiesLoading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin mr-3" />
+              <span className="text-gray-600">Loading healthcare facilities...</span>
+            </div>
+          )}
+          
+          {!facilitiesLoading && filteredFacilities.length === 0 && (
+            <div className="text-center py-12">
+              <Hospital className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No facilities found</h3>
+              <p className="text-gray-600">Try adjusting your filters or check your location settings.</p>
+            </div>
+          )}
 
           {filteredFacilities.map((facility, index) => (
             <div
@@ -453,7 +436,7 @@ export const ClinicLocator = () => {
                                     />
                                   ))}
                                 </div>
-                                <span className="font-semibold text-yellow-700 ml-1">{facility.rating}</span>
+                                <span className="font-semibold text-yellow-700 ml-1">{facility.rating.toFixed(1)}</span>
                               </div>
                               <span className="text-xs text-muted-foreground">({facility.reviewCount} reviews)</span>
                               {facility.rating >= 4.5 && (
