@@ -13,6 +13,10 @@
 
 MAMA is a comprehensive maternal health companion application designed to support expectant mothers in Ghana with AI-powered guidance, health tracking, and emergency services.
 
+## System Architecture
+
+![System Architecture](Sys-Arch.png)
+
 ### Technology Stack
 
 | Component | Technology | Documentation |
@@ -69,8 +73,23 @@ frontend/
 └── package.json
 ```
 
-### Development Commands
+### Configuration
 
+**Frontend Environment (.env)**
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
+```
+
+### Key Features
+- **Responsive Design**: Mobile-first approach for Ghana's mobile-heavy market
+- **AI Chat Interface**: Real-time chat with maternal health AI assistant
+- **Pregnancy Tracking**: Week-by-week pregnancy progress monitoring
+- **Clinic Locator**: Google Maps integration for nearby healthcare facilities
+- **Emergency Services**: Quick access to emergency contacts and services
+- **Multilingual Support**: English and local Ghanaian languages
+
+### Development Commands
 ```bash
 # Development server
 npm run dev
@@ -81,176 +100,14 @@ npm run build
 # Preview production build
 npm run preview
 
+# Type checking
+npm run type-check
+
 # Lint code
 npm run lint
-```
 
-### Key Features
-- **Responsive Design**: Mobile-first approach for Ghana's mobile-heavy market
-- **AI Chat Interface**: Real-time chat with maternal health AI assistant
-- **Pregnancy Tracking**: Week-by-week pregnancy progress graph TB
-    subgraph "External Services"
-        MONGO[(MongoDB Atlas)]
-        MNOTIFY[MNotify SMS API]
-        GMAPS[Google Maps API]
-    end
-
-    subgraph "DNS & CDN Layer"
-        R53[Route53 DNS]
-        CF[CloudFront Distribution<br/>auto-hive.site]
-        CERT[ACM Certificate<br/>SSL/TLS]
-    end
-
-    subgraph "AWS Account"
-        subgraph "VPC - mama-app-dev-vpc"
-            subgraph "Public Subnets (Multi-AZ)"
-                PUB1[Public Subnet 1<br/>10.0.0.0/24]
-                PUB2[Public Subnet 2<br/>10.0.1.0/24]
-            end
-            
-            IGW[Internet Gateway]
-            RT[Route Table<br/>Public Routes]
-        end
-
-        subgraph "Load Balancing"
-            ALB[Application Load Balancer<br/>mama-app-dev-alb]
-            TG[Target Group<br/>Port 5000]
-            ALBSG[ALB Security Group<br/>80/443 → World<br/>5000 → ECS]
-        end
-
-        subgraph "Container Platform"
-            subgraph "ECS Cluster - mama-app-dev-cluster"
-                ECSSVC[ECS Service<br/>mama-app-dev-backend]
-                TASK[ECS Task Definition<br/>Fargate + Fargate Spot]
-                CONTAINER[Backend Container<br/>Node.js Express App<br/>Port 5000]
-            end
-            ECSSG[ECS Security Group<br/>5000 ← ALB<br/>443 → Internet]
-        end
-
-        subgraph "Container Registry"
-            ECR[ECR Repository<br/>mama-app-dev-backend<br/>Image Scanning Enabled]
-        end
-
-        subgraph "Static Hosting"
-            S3[S3 Bucket<br/>Frontend Assets<br/>React SPA]
-            OAC[Origin Access Control<br/>CloudFront → S3]
-        end
-
-        subgraph "Configuration & Secrets"
-            SSM[Parameter Store]
-            subgraph "Parameters"
-                SECRETS[Secrets<br/>- MongoDB URI<br/>- JWT Secrets<br/>- MNotify API Key<br/>- Google Maps Key]
-                CONFIG[Configuration<br/>- App Settings<br/>- CORS Origins<br/>- Rate Limits]
-            end
-        end
-
-        subgraph "Identity & Access"
-            subgraph "IAM Roles"
-                EXEC_ROLE[ECS Execution Role<br/>- ECR Access<br/>- CloudWatch Logs<br/>- Parameter Store]
-                TASK_ROLE[ECS Task Role<br/>- Application Permissions]
-            end
-        end
-
-        subgraph "Monitoring & Logging"
-            CW[CloudWatch]
-            LOGS[Log Groups<br/>/ecs/mama-app-dev-backend]
-            METRICS[Container Insights<br/>CPU/Memory Metrics]
-        end
-
-        subgraph "State Management"
-            S3STATE[S3 Bucket<br/>Terraform State]
-            DYNAMO[DynamoDB Table<br/>State Locking]
-        end
-    end
-
-    subgraph "Users"
-        MOBILE[Mobile Users<br/>Ghana]
-        WEB[Web Users]
-    end
-
-    %% External connections
-    MOBILE --> R53
-    WEB --> R53
-    R53 --> CF
-    R53 --> ALB
-
-    %% CDN to S3
-    CF --> S3
-    CF --> CERT
-    S3 --> OAC
-
-    %% Load balancer flow
-    ALB --> TG
-    TG --> ECSSVC
-    ALB --> ALBSG
-
-    %% ECS flow
-    ECSSVC --> TASK
-    TASK --> CONTAINER
-    CONTAINER --> ECSSG
-    TASK --> ECR
-
-    %% Configuration flow
-    CONTAINER --> SSM
-    SSM --> SECRETS
-    SSM --> CONFIG
-
-    %% IAM flow
-    TASK --> EXEC_ROLE
-    TASK --> TASK_ROLE
-    EXEC_ROLE --> ECR
-    EXEC_ROLE --> SSM
-    EXEC_ROLE --> LOGS
-
-    %% Monitoring flow
-    CONTAINER --> LOGS
-    ECSSVC --> METRICS
-    LOGS --> CW
-    METRICS --> CW
-
-    %% Network flow
-    IGW --> PUB1
-    IGW --> PUB2
-    RT --> PUB1
-    RT --> PUB2
-    ALB --> PUB1
-    ALB --> PUB2
-    ECSSVC --> PUB1
-    ECSSVC --> PUB2
-
-    %% External API connections
-    CONTAINER -.-> MONGO
-    CONTAINER -.-> MNOTIFY
-    CONTAINER -.-> GMAPS
-
-    %% State management
-    S3STATE -.-> DYNAMO
-
-    %% Styling
-    classDef external fill:#ff9999
-    classDef aws fill:#ff9900,color:#fff
-    classDef container fill:#326ce5,color:#fff
-    classDef storage fill:#3f8fbf,color:#fff
-    classDef security fill:#dd344c,color:#fff
-    classDef network fill:#7aa116,color:#fff
-
-    class MONGO,MNOTIFY,GMAPS external
-    class ALB,CF,ECR,S3,SSM,CW aws
-    class ECSSVC,TASK,CONTAINER container
-    class S3STATE,DYNAMO,LOGS storage
-    class ALBSG,ECSSG,EXEC_ROLE,TASK_ROLE,OAC security
-    class IGW,RT,PUB1,PUB2 network
-monitoring
-- **Clinic Locator**: Google Maps integration for nearby healthcare facilities
-- **Emergency Services**: Quick access to emergency contacts and services
-- **Multilingual Support**: English and local Ghanaian languages
-
-### Environment Configuration
-
-Create `.env` file:
-```bash
-VITE_API_BASE_URL=http://localhost:5000/api
-VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
+# Run tests
+npm run test
 ```
 
 ### Component Guidelines
@@ -312,25 +169,10 @@ backend/
 | POST | `/api/emergency/alert` | Send emergency alert |
 | POST | `/api/chat/message` | AI chat interaction |
 
-### Development Commands
+### Configuration
 
-```bash
-# Development server with hot reload
-npm run dev
-
-# Production server
-npm start
-
-# Run tests
-npm test
-
-# Lint code
-npm run lint
-```
-
-### Environment Variables
-
-```bash
+**Backend Environment (.env)**
+```env
 # Database
 MONGODB_URI=mongodb://localhost:27017/mama-app
 
@@ -351,6 +193,25 @@ RATE_LIMIT_MAX_REQUESTS=100
 
 # CORS
 CORS_ORIGIN=http://localhost:3000
+```
+
+### Development Commands
+
+```bash
+# Development server with hot reload
+npm run dev
+
+# Production server
+npm start
+
+# Run tests
+npm test
+
+# Lint code
+npm run lint
+
+# Check for security vulnerabilities
+npm audit
 ```
 
 ### Key Features
@@ -641,7 +502,7 @@ mobile/
 
 ### Configuration
 Environment and setup details
-```
+
 
 ---
 
@@ -663,3 +524,4 @@ Environment and setup details
 **Built with ❤️ for maternal health in Ghana**
 
 *Empowering expectant mothers with AI-powered health guidance and support.*
+
