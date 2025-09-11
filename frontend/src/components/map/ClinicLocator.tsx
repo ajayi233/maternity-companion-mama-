@@ -485,7 +485,7 @@ export const ClinicLocator = () => {
                         )}
 
                       {/* Action Buttons */}
-                      <div className="flex gap-3">
+                      <div className="flex gap-2">
                         <Button
                           size="sm"
                           onClick={() => openDirections(facility)}
@@ -502,6 +502,13 @@ export const ClinicLocator = () => {
                         >
                           <Phone className="w-4 h-4 mr-2" />
                           Call
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => window.open('/emergency', '_blank')}
+                          className="bg-red-500 hover:bg-red-600 text-white flex-1"
+                        >
+                          🚨 Emergency
                         </Button>
                       </div>
                       </div>
