@@ -29,9 +29,8 @@ app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log('👋 SIGTERM received, shutting down gracefully');
-  mongoose.connection.close(() => {
-    process.exit(0);
-  });
+  await mongoose.connection.close();
+  process.exit(0);
 });
