@@ -118,15 +118,35 @@ class ApiService {
     return this.handleResponse<{ user: any }>(response);
   }
 
-  async checkPhoneExists(phone: string) {
-    const response = await fetch(`${API_BASE_URL}/auth/check-phone`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone })
+  async getHealthcareFacilities(latitude?: number, longitude?: number, location?: string) {
+    const params = new URLSearchParams();
+    if (latitude) params.append('latitude', latitude.toString());
+    if (longitude) params.append('longitude', longitude.toString());
+    if (location) params.append('location', location);
+
+    const response = await fetch(`${API_BASE_URL}/healthcare/facilities?${params}`, {
+      headers: this.getAuthHeaders()
     });
 
-    return this.handleResponse(response);
+    return this.handleResponse<{
+      facilitiesCount: number;
+      facilities: HealthcareFacility[];
+      userLocation: { latitude: number; longitude: number };
+      searchLocation: string;
+    }>(response);
   }
+}
+
+export interface HealthcareFacility {
+  name: string;
+  address: string;
+  distance: string;
+  openTime: string;
+  services: string[];
+  specialties: string[];
+  direction: string;
+  call: string;
+  type: string;
 }
 
 export const apiService = new ApiService();

@@ -8,6 +8,7 @@ import { securityMiddleware } from './middleware/security.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import authRoutes from './routes/auth.js';
 import cronService from './services/cronService.js';
+import healthcareRoutes from './routes/healthcareRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -46,6 +47,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/healthcare', healthcareRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

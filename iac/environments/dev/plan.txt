@@ -1,0 +1,195 @@
+[0m[1mmodule.cloudfront.random_string.bucket_suffix: Refreshing state... [id=rwonvez6][0m
+[0m[1mmodule.cloudfront.aws_acm_certificate.cloudfront: Refreshing state... [id=arn:aws:acm:us-east-1:578641869747:certificate/8beea7cc-0dcf-481c-9e2e-6ece1be54542][0m
+[0m[1mdata.aws_caller_identity.current: Reading...[0m[0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.frontend_config["node-env"]: Refreshing state... [id=/mama-app/dev/frontend/node-env][0m
+[0m[1mmodule.cloudfront.data.aws_route53_zone.main: Reading...[0m[0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.frontend_config["app-version"]: Refreshing state... [id=/mama-app/dev/frontend/app-version][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.frontend_config["app-name"]: Refreshing state... [id=/mama-app/dev/frontend/app-name][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.frontend_config["api-version"]: Refreshing state... [id=/mama-app/dev/frontend/api-version][0m
+[0m[1mmodule.ecr.aws_ecr_repository.backend: Refreshing state... [id=mama-app-dev-backend][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.frontend_config["app-description"]: Refreshing state... [id=/mama-app/dev/frontend/app-description][0m
+[0m[1mmodule.iam.aws_iam_role.ecs_task_execution_role: Refreshing state... [id=mama-app-dev-ecs-execution-role][0m
+[0m[1mdata.aws_caller_identity.current: Read complete after 0s [id=578641869747][0m
+[0m[1mmodule.alb.data.aws_route53_zone.main: Reading...[0m[0m
+[0m[1mdata.aws_region.current: Reading...[0m[0m
+[0m[1mdata.aws_region.current: Read complete after 0s [id=us-west-2][0m
+[0m[1mmodule.cloudfront.aws_s3_bucket.frontend: Refreshing state... [id=mama-app-dev-frontend-rwonvez6][0m
+[0m[1mmodule.iam.aws_iam_role.ecs_task_role: Refreshing state... [id=mama-app-dev-ecs-task-role][0m
+[0m[1mmodule.cloudfront.data.aws_route53_zone.main: Read complete after 1s [id=Z08961503KX5QZR9XILHV][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.frontend_secrets["google-maps-api-key"]: Refreshing state... [id=/mama-app/dev/frontend/google-maps-api-key][0m
+[0m[1mmodule.alb.data.aws_route53_zone.main: Read complete after 2s [id=Z08961503KX5QZR9XILHV][0m
+[0m[1mmodule.alb.aws_acm_certificate.alb: Refreshing state... [id=arn:aws:acm:us-west-2:578641869747:certificate/97d05238-6507-4f5a-9b3e-783cb8d2b1ef][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.secrets["backend/jwt-secret"]: Refreshing state... [id=/mama-app/dev/backend/jwt-secret][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.secrets["backend/mnotify-api-key"]: Refreshing state... [id=/mama-app/dev/backend/mnotify-api-key][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.secrets["backend/mongodb-uri"]: Refreshing state... [id=/mama-app/dev/backend/mongodb-uri][0m
+[0m[1mmodule.cloudfront.aws_cloudfront_origin_access_control.frontend: Refreshing state... [id=E1BFX726CY3AM2][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.secrets["backend/jwt-refresh-secret"]: Refreshing state... [id=/mama-app/dev/backend/jwt-refresh-secret][0m
+[0m[1mmodule.iam.aws_iam_policy.ecr_policy: Refreshing state... [id=arn:aws:iam::578641869747:policy/mama-app-dev-ecr-policy][0m
+[0m[1mmodule.shared.aws_vpc.main: Refreshing state... [id=vpc-006313380dac8d09b][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["port"]: Refreshing state... [id=/mama-app/dev/backend/port][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["mnotify-sender-id"]: Refreshing state... [id=/mama-app/dev/backend/mnotify-sender-id][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["sms-simulation-mode"]: Refreshing state... [id=/mama-app/dev/backend/sms-simulation-mode][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["password-reset-expires-minutes"]: Refreshing state... [id=/mama-app/dev/backend/password-reset-expires-minutes][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["jwt-refresh-expires-in"]: Refreshing state... [id=/mama-app/dev/backend/jwt-refresh-expires-in][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["mnotify-base-url"]: Refreshing state... [id=/mama-app/dev/backend/mnotify-base-url][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["rate-limit-max-requests"]: Refreshing state... [id=/mama-app/dev/backend/rate-limit-max-requests][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["node-env"]: Refreshing state... [id=/mama-app/dev/backend/node-env][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["cors-origin"]: Refreshing state... [id=/mama-app/dev/backend/cors-origin][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["bcrypt-rounds"]: Refreshing state... [id=/mama-app/dev/backend/bcrypt-rounds][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["rate-limit-window-ms"]: Refreshing state... [id=/mama-app/dev/backend/rate-limit-window-ms][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["cookie-expires-in"]: Refreshing state... [id=/mama-app/dev/backend/cookie-expires-in][0m
+[0m[1mmodule.parameter_store.aws_ssm_parameter.backend_config["jwt-expires-in"]: Refreshing state... [id=/mama-app/dev/backend/jwt-expires-in][0m
+[0m[1mmodule.iam.aws_iam_role_policy_attachment.ecs_task_execution_role_policy: Refreshing state... [id=mama-app-dev-ecs-execution-role-20250911084937066200000002][0m
+[0m[1mmodule.cloudfront.aws_route53_record.cloudfront_cert_validation["www.auto-hive.site"]: Refreshing state... [id=Z08961503KX5QZR9XILHV__2df004bd6cdaf6fed7f93c699f219f28.www.auto-hive.site._CNAME][0m
+[0m[1mmodule.cloudfront.aws_route53_record.cloudfront_cert_validation["auto-hive.site"]: Refreshing state... [id=Z08961503KX5QZR9XILHV__0e0f59b33ee1d85eb7bf0adda8f0264e.auto-hive.site._CNAME][0m
+[0m[1mmodule.ecr.aws_ecr_lifecycle_policy.backend: Refreshing state... [id=mama-app-dev-backend][0m
+[0m[1mmodule.iam.aws_iam_role_policy_attachment.ecs_ecr_policy: Refreshing state... [id=mama-app-dev-ecs-execution-role-20250911084937563500000003][0m
+[0m[1mmodule.alb.aws_route53_record.cert_validation["api.auto-hive.site"]: Refreshing state... [id=Z08961503KX5QZR9XILHV__c3768da44866770114a8aa468e40e051.api.auto-hive.site._CNAME][0m
+[0m[1mmodule.iam.aws_iam_policy.parameter_store_policy: Refreshing state... [id=arn:aws:iam::578641869747:policy/mama-app-dev-parameter-store-policy][0m
+[0m[1mmodule.cloudfront.aws_acm_certificate_validation.cloudfront: Refreshing state... [id=2025-09-11 08:49:51.619 +0000 UTC][0m
+[0m[1mmodule.alb.aws_acm_certificate_validation.alb: Refreshing state... [id=2025-09-11 08:49:52.403 +0000 UTC][0m
+[0m[1mmodule.iam.aws_iam_role_policy_attachment.ecs_parameter_store_policy: Refreshing state... [id=mama-app-dev-ecs-execution-role-20250911084938829600000005][0m
+[0m[1mmodule.cloudfront.aws_s3_bucket_public_access_block.frontend: Refreshing state... [id=mama-app-dev-frontend-rwonvez6][0m
+[0m[1mmodule.cloudfront.aws_s3_bucket_website_configuration.frontend: Refreshing state... [id=mama-app-dev-frontend-rwonvez6][0m
+[0m[1mmodule.cloudfront.aws_cloudfront_distribution.frontend: Refreshing state... [id=E2UQQFBIXTFB9Q][0m
+[0m[1mmodule.shared.aws_internet_gateway.main: Refreshing state... [id=igw-0ac5e3417b65fd2a3][0m
+[0m[1mmodule.shared.aws_subnet.public[1]: Refreshing state... [id=subnet-058330047f77e778c][0m
+[0m[1mmodule.shared.aws_subnet.public[0]: Refreshing state... [id=subnet-09e65e2fd3d45162e][0m
+[0m[1mmodule.alb.aws_lb_target_group.backend: Refreshing state... [id=arn:aws:elasticloadbalancing:us-west-2:578641869747:targetgroup/mama-app-dev-backend-tg/a9e02e8074e85f7b][0m
+[0m[1mmodule.alb.aws_security_group.alb: Refreshing state... [id=sg-0d7fee580ce7f92f2][0m
+[0m[1mmodule.cloudfront.aws_route53_record.root: Refreshing state... [id=Z08961503KX5QZR9XILHV_auto-hive.site_A][0m
+[0m[1mmodule.cloudfront.aws_route53_record.www: Refreshing state... [id=Z08961503KX5QZR9XILHV_www.auto-hive.site_A][0m
+[0m[1mmodule.cloudfront.aws_s3_bucket_policy.frontend: Refreshing state... [id=mama-app-dev-frontend-rwonvez6][0m
+[0m[1mmodule.shared.aws_route_table.public: Refreshing state... [id=rtb-0e59de1e16eaacda6][0m
+[0m[1mmodule.ecs.aws_cloudwatch_log_group.backend: Refreshing state... [id=/ecs/mama-app-dev-backend][0m
+[0m[1mmodule.ecs.aws_ecs_cluster.main: Refreshing state... [id=arn:aws:ecs:us-west-2:578641869747:cluster/mama-app-dev-cluster][0m
+[0m[1mmodule.ecs.aws_security_group.ecs_tasks: Refreshing state... [id=sg-05581745ee873bed5][0m
+[0m[1mmodule.alb.aws_lb.main: Refreshing state... [id=arn:aws:elasticloadbalancing:us-west-2:578641869747:loadbalancer/app/mama-app-dev-alb/925feee65ad9bf18][0m
+[0m[1mmodule.shared.aws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-030ad3439b7e39231][0m
+[0m[1mmodule.shared.aws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-017f273709518a3b8][0m
+[0m[1mmodule.ecs.aws_ecs_task_definition.backend: Refreshing state... [id=mama-app-dev-backend][0m
+[0m[1mmodule.ecs.aws_ecs_service.backend: Refreshing state... [id=arn:aws:ecs:us-west-2:578641869747:service/mama-app-dev-cluster/mama-app-dev-backend][0m
+[0m[1mmodule.alb.aws_route53_record.api: Refreshing state... [id=Z08961503KX5QZR9XILHV_api.auto-hive.site_A][0m
+[0m[1mmodule.alb.aws_lb_listener.backend: Refreshing state... [id=arn:aws:elasticloadbalancing:us-west-2:578641869747:listener/app/mama-app-dev-alb/925feee65ad9bf18/5822a8c211b4aaec][0m
+[0m[1mmodule.alb.aws_lb_listener.https: Refreshing state... [id=arn:aws:elasticloadbalancing:us-west-2:578641869747:listener/app/mama-app-dev-alb/925feee65ad9bf18/906bf63b99a29c8f][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [33m~[0m update in-place[0m
+[31m-[0m/[32m+[0m destroy and then create replacement[0m
+
+Terraform will perform the following actions:
+
+[1m  # module.ecs.aws_ecs_service.backend[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_ecs_service" "backend" {
+        id                                 = "arn:aws:ecs:us-west-2:578641869747:service/mama-app-dev-cluster/mama-app-dev-backend"
+        name                               = "mama-app-dev-backend"
+        tags                               = {
+            "Environment" = "dev"
+            "ManagedBy"   = "Terraform"
+            "Project"     = "mama-app"
+        }
+      [33m~[0m[0m task_definition                    = "arn:aws:ecs:us-west-2:578641869747:task-definition/mama-app-dev-backend:16" -> (known after apply)
+        [90m# (16 unchanged attributes hidden)[0m[0m
+
+        [90m# (6 unchanged blocks hidden)[0m[0m
+    }
+
+[1m  # module.ecs.aws_ecs_task_definition.backend[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecs_task_definition" "backend" {
+      [33m~[0m[0m arn                      = "arn:aws:ecs:us-west-2:578641869747:task-definition/mama-app-dev-backend:16" -> (known after apply)
+      [33m~[0m[0m arn_without_revision     = "arn:aws:ecs:us-west-2:578641869747:task-definition/mama-app-dev-backend" -> (known after apply)
+      [33m~[0m[0m container_definitions    = jsonencode(
+          [33m~[0m[0m [
+              [33m~[0m[0m {
+                  [31m-[0m[0m mountPoints      = []
+                    name             = "backend"
+                  [33m~[0m[0m portMappings     = [
+                      [33m~[0m[0m {
+                          [31m-[0m[0m hostPort      = 5000
+                            [90m# (2 unchanged attributes hidden)[0m[0m
+                        },
+                    ]
+                  [33m~[0m[0m secrets          = [
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "BCRYPT_ROUNDS"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/bcrypt-rounds"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "COOKIE_EXPIRES_IN"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/cookie-expires-in"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "CORS_ORIGIN"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/cors-origin"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "JWT_EXPIRES_IN"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/jwt-expires-in"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "JWT_REFRESH_EXPIRES_IN"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/jwt-refresh-expires-in"
+                        },
+                        {
+                            name      = "JWT_REFRESH_SECRET"
+                            valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/jwt-refresh-secret"
+                        },
+                        [90m# (1 unchanged element hidden)[0m[0m
+                        {
+                            name      = "MNOTIFY_API_KEY"
+                            valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/mnotify-api-key"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "MNOTIFY_BASE_URL"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/mnotify-base-url"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "MNOTIFY_SENDER_ID"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/mnotify-sender-id"
+                        },
+                        {
+                            name      = "MONGODB_URI"
+                            valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/mongodb-uri"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "PASSWORD_RESET_EXPIRES_MINUTES"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/password-reset-expires-minutes"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "RATE_LIMIT_MAX_REQUESTS"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/rate-limit-max-requests"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "RATE_LIMIT_WINDOW_MS"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/rate-limit-window-ms"
+                        },
+                      [32m+[0m[0m {
+                          [32m+[0m[0m name      = "SMS_SIMULATION_MODE"
+                          [32m+[0m[0m valueFrom = "arn:aws:ssm:us-west-2:578641869747:parameter/mama-app/dev/backend/sms-simulation-mode"
+                        },
+                    ]
+                  [31m-[0m[0m systemControls   = []
+                  [31m-[0m[0m volumesFrom      = []
+                    [90m# (4 unchanged attributes hidden)[0m[0m
+                },
+            ] [31m# forces replacement[0m[0m
+        )
+      [33m~[0m[0m enable_fault_injection   = false -> (known after apply)
+      [33m~[0m[0m id                       = "mama-app-dev-backend" -> (known after apply)
+      [33m~[0m[0m revision                 = 16 -> (known after apply)
+        tags                     = {
+            "Environment" = "dev"
+            "ManagedBy"   = "Terraform"
+            "Project"     = "mama-app"
+        }
+        [90m# (12 unchanged attributes hidden)[0m[0m
+    }
+
+[1mPlan:[0m 1 to add, 1 to change, 1 to destroy.
+[0m[90m
+─────────────────────────────────────────────────────────────────────────────[0m
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
+Releasing state lock. This may take a few moments...

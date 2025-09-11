@@ -6,7 +6,7 @@ RUN addgroup -g 1001 -S appgroup && \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install
 
 COPY . .
 
