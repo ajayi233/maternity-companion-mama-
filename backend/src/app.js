@@ -39,7 +39,7 @@ app.use(generalLimiter);
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    message: 'CI/CD MAMA Backend API is running',
+    message: 'MAMA Backend API is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV
   });

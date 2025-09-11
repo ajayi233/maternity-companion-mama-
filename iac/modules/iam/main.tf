@@ -280,3 +280,9 @@ resource "aws_iam_role_policy_attachment" "ecs_parameter_store_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = aws_iam_policy.parameter_store_policy.arn
 }
+
+# Attach Parameter Store policy to GitHub Actions role
+resource "aws_iam_role_policy_attachment" "github_actions_parameter_store_policy" {
+  role       = aws_iam_role.github_actions_role.name
+  policy_arn = aws_iam_policy.parameter_store_policy.arn
+}
