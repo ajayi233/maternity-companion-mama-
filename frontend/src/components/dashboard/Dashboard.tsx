@@ -65,7 +65,7 @@ export const Dashboard = ({ user, onNavigate, onLogout }: DashboardProps) => {
               </div>
               
               <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900 leading-tight">
-                Welcome to MAMA! 🤱
+                Melcome to MAMA! 🤱
               </h1>
               
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
