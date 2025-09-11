@@ -81,40 +81,43 @@ resource "aws_cloudfront_distribution" "frontend" {
       }
     }
 
+     # Allows immediate cache bypass for dynamic content, fetching fresh data from S3 when needed.
     min_ttl     = 0
-    # default_ttl = 0
-    # max_ttl     = 0
+    # Caches objects for 1 hour by default if no Cache-Control header is set, balancing freshness and performance.
     default_ttl = 3600
+    # Caps caching at 24 hours, ensuring content is refreshed daily even with longer origin cache headers.
     max_ttl     = 86400
   }
 
-  # Remove API proxy - use direct ALB calls
-  # ordered_cache_behavior {
-  #   path_pattern     = "/api/*"
-  #   allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-  #   cached_methods   = ["GET", "HEAD", "OPTIONS"]
-  #   target_origin_id = "ALB-backend"
-  #   compress         = true
-  #   viewer_protocol_policy = "allow-all"
-  #   
-  #   forwarded_values {
-  #     query_string = true
-  #     headers      = ["*"]
-  #     cookies {
-  #       forward = "all"
-  #     }
-  #   }
-  #   
-  #   min_ttl     = 0
-  #   default_ttl = 0
-  #   max_ttl     = 0
-  # }
+  
 
+  # custom_error_response {
+  #   error_code         = 404
+  #   response_code      = 200
+  #   response_page_path = "/index.html"
+  # }
+  # Problem, if Client tries accessing a valid endpoint directly on our frotend,
+# it returns 403(Access denied), preventing user from accessing the endpoint
+# it makes because its literally  serving static files with s3, and our
+# s3 bucket is only accessible through cloudfront only as the bucket itself aint
+# publicly accessible so inorder to handle this well
+
+# in case you try accessing an endpoint and even though it exists but 
+# you aint allowed to access it, we will just route you to index.html cus that 
+# is the entry point to our app from Angular and from here angular will take care of the routing semlessly
+# without us doing anything
+
+  # Configures custom error handling for specific HTTP error codes.
   custom_error_response {
-    error_code         = 404
+    # Targets the 403 (Forbidden) error code for custom handling.
+    error_code         = 403
+    # Returns a 200 (OK) status code to the client for a seamless user experience.
     response_code      = 200
+    # Serves the index.html page for 404 errors, ideal for single-page applications (SPAs).
     response_page_path = "/index.html"
   }
+
+ 
 
   restrictions {
     geo_restriction {
