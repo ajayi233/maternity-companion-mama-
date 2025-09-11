@@ -14,6 +14,7 @@ import clinicRoutes from './routes/clinicRoutes.js';
 import reminderRoutes from './routes/reminderRoutes.js';
 import emergencyRoutes from './routes/emergencyRoutes.js';
 import resourceRoutes from './routes/resourceRoutes.js';
+import healthcareRoutes from './routes/healthcareRoutes.js';
 
 dotenv.config();
 
@@ -66,6 +67,7 @@ app.use('/api/clinics', clinicRoutes);
 app.use('/api/reminders', reminderRoutes);
 app.use('/api/emergency', emergencyRoutes);
 app.use('/api/resources', resourceRoutes);
+app.use('/api/healthcare', healthcareRoutes);
 
 
 
