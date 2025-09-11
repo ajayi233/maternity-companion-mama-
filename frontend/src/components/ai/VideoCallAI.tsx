@@ -34,21 +34,21 @@ export const VideoCallAI = () => {
 
   const aiResponses = {
     en: [
-      "Hello! I'm Dr. Ama, your AI midwife. How are you feeling today?",
+      "Hello! I'm Dr. Ajayi, your AI midwife. How are you feeling today?",
       "That's completely normal during pregnancy. Let me explain what's happening.",
       "I recommend you drink plenty of water and get some rest.",
       "Would you like me to show you some gentle exercises?",
       "Your baby is developing well. Do you have any concerns?"
     ],
     tw: [
-      "Akwaaba! Me yɛ Dr. Ama, wo AI awogyefoɔ. Ɛte sɛn ɛnnɛ?",
+      "Akwaaba! Me yɛ Dr. Ajayi, wo AI awogyefoɔ. Ɛte sɛn ɛnnɛ?",
       "Ɛyɛ adeɛ a ɛtaa ba nyinsɛn berɛ mu. Ma menkyerɛ wo deɛ ɛrekɔ so.",
       "Mekamfo sɛ wonom nsuo pii na woahome.",
       "Wobɛpɛ sɛ mekyerɛ wo apɔmuden bi a ɛnyɛ den?",
       "Wo ba no rekɔ so yiye. Wowɔ nsɛmmisa bi?"
     ],
     ga: [
-      "Akwaaba! Mi yɛ Dr. Ama, wo AI midwife. Ɛte sɛn lɛ?",
+      "Akwaaba! Mi yɛ Dr. Ajayi, wo AI midwife. Ɛte sɛn lɛ?",
       "Ɛyɛ adeɛ fɛɛ lɛ nyɔŋmɔ berɛ mu. Ma mi kyerɛ wo nɛ ɛkɔ so.",
       "Mi kamfo sɛ o nom nsuo pii kɛ o home.",
       "O bɛpɛ sɛ mi kyerɛ wo apɔmuden bi kɛ ɛnyɛ den?",
@@ -140,7 +140,7 @@ export const VideoCallAI = () => {
       voice.lang.startsWith('en') && 
       (voice.name.toLowerCase().includes('female') || 
        voice.name.toLowerCase().includes('woman') ||
-       voice.name.toLowerCase().includes('samantha') ||
+       voice.name.toLowerCase().includes('sAjayintha') ||
        voice.name.toLowerCase().includes('karen') ||
        voice.name.toLowerCase().includes('susan') ||
        voice.name.toLowerCase().includes('zira') ||
@@ -206,7 +206,7 @@ export const VideoCallAI = () => {
             <div className="w-24 h-24 mx-auto bg-primary rounded-full flex items-center justify-center mb-6">
               <div className="text-center">
                 <div className="text-4xl mb-2">👩‍⚕️</div>
-                <div className="text-xs font-bold text-white">Dr. AMA</div>
+                <div className="text-xs font-bold text-white">Dr. Ajayi</div>
               </div>
             </div>
             
@@ -262,7 +262,7 @@ export const VideoCallAI = () => {
             <span className="text-lg">👩‍⚕️</span>
           </div>
           <div>
-            <div className="font-semibold">Dr. Ama - AI Midwife</div>
+            <div className="font-semibold">Dr. Ajayi - AI Midwife</div>
             <div className="text-sm text-white/70">{formatTime(callDuration)}</div>
           </div>
         </div>
@@ -278,7 +278,7 @@ export const VideoCallAI = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
           <div className="text-center">
             <div className={`text-8xl mb-4 ${isAISpeaking ? 'animate-bounce' : ''}`}>👩‍⚕️</div>
-            <div className="text-white text-xl font-semibold mb-2">Dr. Ama</div>
+            <div className="text-white text-xl font-semibold mb-2">Dr. Ajayi</div>
             <div className="text-white/80">AI Midwife</div>
             
             {/* AI Speaking Indicator */}
@@ -321,7 +321,7 @@ export const VideoCallAI = () => {
                   <span className="text-sm">👩‍⚕️</span>
                 </div>
                 <div className="flex-1">
-                  <div className="font-medium mb-1">Dr. Ama</div>
+                  <div className="font-medium mb-1">Dr. Ajayi</div>
                   <div className="text-white/90">{aiMessage}</div>
                 </div>
               </div>

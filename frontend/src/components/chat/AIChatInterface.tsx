@@ -210,7 +210,7 @@ export const AIChatInterface = () => {
                   variant="ghost"
                   size="sm"
                   className={`absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 h-8 w-8 p-0 rounded-lg ${
-                    isListening ? 'text-red-500 bg-red-50 animate-pulse' : 'text-muted-foreground hover:bg-white/50'
+                    isListening ? 'text-pink-500 bg-pink-50 animate-pulse' : 'text-muted-foreground hover:bg-white/50'
                   }`}
                   onClick={toggleListening}
                 >

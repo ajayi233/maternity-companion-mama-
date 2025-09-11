@@ -9,20 +9,56 @@ class MnotifyService {
 
   async sendSMS(recipient, message) {
     try {
+      console.log('🔧 SMS Debug - API Key:', this.apiKey ? 'Present' : 'Missing');
+      console.log('🔧 SMS Debug - Sender ID:', this.senderId);
+      console.log('🔧 SMS Debug - Base URL:', this.baseUrl);
+      console.log('🔧 SMS Debug - Recipient:', recipient);
+      console.log('🔧 SMS Debug - Message:', message);
+
+      const formattedRecipient = this.formatGhanaianNumber(recipient);
+      console.log('🔧 SMS Debug - Formatted Recipient:', formattedRecipient);
+
+      // Check if in simulation mode
+      if (process.env.SMS_SIMULATION_MODE === 'true' || !this.apiKey || this.apiKey === 'your_valid_mnotify_api_key_here') {
+        console.log('🎭 SMS SIMULATION MODE - Message would be sent to:', formattedRecipient);
+        console.log('📱 SMS SIMULATION - Message content:', message);
+        
+        return {
+          success: true,
+          messageId: `simulation-${Date.now()}`,
+          status: 'simulated',
+          cost: 0,
+          response: {
+            message: 'SMS simulated successfully',
+            recipient: formattedRecipient,
+            content: message
+          }
+        };
+      }
+
+      if (!this.apiKey) {
+        throw new Error('MNOTIFY_API_KEY is not configured');
+      }
+
       const payload = {
-        recipient: [recipient],
+        recipient: [formattedRecipient],
         sender: this.senderId,
         message: message,
         is_schedule: false,
         schedule_date: ''
       };
 
+      console.log('🔧 SMS Debug - Payload:', JSON.stringify(payload, null, 2));
+
       const response = await axios.post(`${this.baseUrl}/sms/quick`, payload, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 30000 // 30 second timeout
       });
+
+      console.log('✅ SMS Success - Response:', response.data);
 
       return {
         success: true,
@@ -32,11 +68,22 @@ class MnotifyService {
         response: response.data
       };
     } catch (error) {
-      console.error('Mnotify SMS Error:', error.response?.data || error.message);
+      console.error('❌ Mnotify SMS Error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers
+        }
+      });
+      
       return {
         success: false,
         error: error.response?.data?.message || error.message,
-        status: 'failed'
+        status: 'failed',
+        details: error.response?.data
       };
     }
   }

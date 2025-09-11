@@ -27,14 +27,7 @@ class ApiService {
     
     if (!response.ok) {
       if (response.status === 401 && (data.message?.includes('expired') || data.message?.includes('Token expired'))) {
-        try {
-          await this.refreshToken();
-          throw new Error('TOKEN_EXPIRED');
-        } catch (refreshError) {
-          this.clearTokens();
-          window.location.href = '/';
-          throw new Error('Session expired. Please login again.');
-        }
+        throw new Error('Token expired');
       }
       throw new Error(data.message || `Request failed with status ${response.status}`);
     }

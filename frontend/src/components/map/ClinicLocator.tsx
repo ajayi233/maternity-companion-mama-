@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Phone, Clock, Star, Navigation, Hospital, Building2, Stethoscope, Loader2 } from "lucide-react";
+import { MapPin, Phone, Clock, Star, Navigation, Hospital, Building2, Stethoscope, Loader2, Heart, ArrowRight, Users, Award, Filter } from "lucide-react";
+import heroImage from "@/assets/pregnant-woman.png";
 
 interface HealthFacility {
   id: string;
@@ -301,88 +302,123 @@ export const ClinicLocator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero pb-24 animate-fade-in">
-      <div className="px-4 space-y-4 sm:space-y-6 mobile-safe">
-        {/* Modern Header */}
-        <div className="relative overflow-hidden">
-          <div className="h-28 sm:h-32 bg-gradient-primary relative rounded-2xl">
-            <div className="absolute inset-0 bg-black/10 rounded-2xl"></div>
-            <div className="relative z-10 p-4 sm:p-6 text-white flex items-center gap-3 sm:gap-4 h-full">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                <MapPin className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-white/40"></div>
+        <div className="relative px-0 lg:px-24 pt-16 pb-0">
+          <div className="grid lg:grid-cols-2 gap-12 items-end">
+            <div className="pb-16 px-6 lg:px-0">
+              <div className="inline-flex items-center gap-2 bg-pink-100 rounded-full px-4 py-2 mb-6">
+                <MapPin className="w-4 h-4 text-pink-600" />
+                <span className="text-pink-700 text-sm font-medium">Healthcare Locator</span>
               </div>
-              <div className="animate-slide-up">
-                <h1 className="text-xl sm:text-2xl font-bold mb-1">Healthcare Locator</h1>
-                <p className="text-sm sm:text-base text-white/80">Find nearby clinics and hospitals</p>
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                Find Quality Healthcare Near You
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Locate trusted hospitals, clinics, and pharmacies across Ghana. Get directions, contact information, and reviews all in one place.
+              </p>
+              <div className="flex items-center gap-8 mb-8">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-blue-500" />
+                  <span className="text-gray-700 font-medium">{facilities.length}+ verified facilities</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-green-500" />
+                  <span className="text-gray-700 font-medium">Real-time locations</span>
+                </div>
               </div>
-              <div className="ml-auto animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                <Navigation className="w-8 h-8 text-white/60" />
-              </div>
+              <Button className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 text-lg">
+                Find Nearby Facilities
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
             </div>
+            <div className="relative flex justify-center lg:block">
+              <div className="relative z-10 w-full">
+                <img 
+                  src={heroImage} 
+                  alt="Healthcare facilities locator" 
+                  className="w-full h-[400px] object-cover object-center lg:object-top rounded-t-2xl"
+                />
+              </div>
+              <div className="absolute -top-4 -right-4 w-full h-full bg-gradient-to-br from-pink-200 to-purple-200 rounded-2xl opacity-30"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-6 lg:px-24 py-12 space-y-12">
+        {/* Stats Section */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-pink-500 mb-2">{facilities.filter(f => f.type === 'hospital').length}</div>
+            <div className="text-gray-600">Hospitals</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-500 mb-2">{facilities.filter(f => f.type === 'clinic').length}</div>
+            <div className="text-gray-600">Clinics</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-500 mb-2">{facilities.filter(f => f.type === 'pharmacy').length}</div>
+            <div className="text-gray-600">Pharmacies</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-purple-500 mb-2">24/7</div>
+            <div className="text-gray-600">Emergency Care</div>
           </div>
         </div>
 
         {/* Location Status */}
-        <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <div className="bg-gradient-card rounded-2xl p-4 shadow-lg border-0">
-            <div className="flex items-center gap-3">
-              {locationStatus === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}
-              {locationStatus === 'success' && <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>}
-              {locationStatus === 'error' && <div className="w-3 h-3 bg-orange-500 rounded-full"></div>}
-              <span className="text-foreground font-medium">📍 {locationName}</span>
-              <Badge variant="secondary" className="ml-auto">
-                {facilities.length} facilities nearby
-              </Badge>
-            </div>
-            {locationStatus === 'error' && (
-              <div className="mt-2 text-xs text-orange-600 bg-orange-50/50 rounded-lg p-2">
-                Using default location. Grant location access for accurate distances.
-              </div>
-            )}
-            {userLocation && (
-              <div className="mt-2 text-xs text-blue-600 bg-blue-50/50 rounded-lg p-2">
-                📍 Your coordinates: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
-              </div>
-            )}
+        <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+          <div className="flex items-center gap-3 mb-2">
+            {locationStatus === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}
+            {locationStatus === 'success' && <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>}
+            {locationStatus === 'error' && <div className="w-3 h-3 bg-orange-500 rounded-full"></div>}
+            <span className="text-gray-900 font-medium">📍 {locationName}</span>
+            <Badge className="ml-auto bg-gray-100 text-gray-600">
+              {facilities.length} facilities nearby
+            </Badge>
           </div>
+          {locationStatus === 'error' && (
+            <div className="text-sm text-orange-600 bg-orange-50 rounded-lg p-3">
+              Using default location. Grant location access for accurate distances.
+            </div>
+          )}
         </div>
 
-        {/* Facility Type Tabs */}
-        <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
-          <Tabs value={selectedType} onValueChange={setSelectedType} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-4 sm:mb-6 bg-white/50 backdrop-blur-sm border border-white/20 h-auto p-1">
-              {facilityTypes.map((type) => {
-                const Icon = type.icon;
-                return (
-                  <TabsTrigger 
-                    key={type.id} 
-                    value={type.id} 
-                    className="data-[state=active]:bg-primary data-[state=active]:text-white flex flex-col gap-1 py-2 sm:py-3 px-1 sm:px-2 min-h-[60px] sm:min-h-[auto]"
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-xs font-medium">{type.name}</span>
-                    <Badge variant="secondary" className="text-xs px-1 py-0">
-                      {type.count}
-                    </Badge>
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
+        {/* Filter Pills */}
+        <div className="flex items-center gap-3 overflow-x-auto pb-2">
+          <Filter className="w-5 h-5 text-gray-500 flex-shrink-0" />
+          {facilityTypes.map((type) => (
+            <button
+              key={type.id}
+              onClick={() => setSelectedType(type.id)}
+              className={`px-6 py-3 rounded-full font-medium whitespace-nowrap transition-all duration-200 ${
+                selectedType === type.id
+                  ? 'bg-pink-500 text-white shadow-lg scale-105'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-pink-200'
+              }`}
+            >
+              {type.name} ({type.count})
+            </button>
+          ))}
+        </div>
 
-            <TabsContent value={selectedType} className="space-y-4">
-              <div className="space-y-4">
-                {filteredFacilities.map((facility, index) => (
-                  <div
-                    key={facility.id}
-                    className="bg-gradient-card rounded-2xl p-4 sm:p-6 shadow-lg border-0 hover:shadow-xl transition-all duration-200 animate-slide-up group"
-                    style={{ animationDelay: `${0.1 * index}s` }}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 sm:w-14 sm:h-14 ${getTypeColor(facility.type)} rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform duration-200`}>
-                        <span className="text-xl sm:text-2xl">{getTypeIcon(facility.type)}</span>
-                      </div>
-                      
-                      <div className="flex-1">
+        {/* Facilities List */}
+        <div className="space-y-6">
+
+          {filteredFacilities.map((facility, index) => (
+            <div
+              key={facility.id}
+              className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200 group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl">{getTypeIcon(facility.type)}</span>
+                </div>
+                
+                <div className="flex-1">
                         <div className="flex items-start justify-between gap-2 mb-3">
                           <div>
                             <h3 className="font-bold text-foreground text-base sm:text-lg leading-tight mb-1">
@@ -465,38 +501,75 @@ export const ClinicLocator = () => {
                           </div>
                         )}
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                          <Button
-                            variant="gradient"
-                            size="sm"
-                            onClick={() => openDirections(facility)}
-                            className="flex-1"
-                          >
-                            <Navigation className="w-4 h-4 mr-2" />
-                            Directions
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => makeCall(facility.phone)}
-                            className="flex-1"
-                          >
-                            <Phone className="w-4 h-4 mr-2" />
-                            Call
-                          </Button>
-                        </div>
+                      {/* Action Buttons */}
+                      <div className="flex gap-3">
+                        <Button
+                          size="sm"
+                          onClick={() => openDirections(facility)}
+                          className="bg-pink-500 hover:bg-pink-600 text-white flex-1"
+                        >
+                          <Navigation className="w-4 h-4 mr-2" />
+                          Directions
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => makeCall(facility.phone)}
+                          className="bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 flex-1"
+                        >
+                          <Phone className="w-4 h-4 mr-2" />
+                          Call
+                        </Button>
+                      </div>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
+          ))}
         </div>
-
-
       </div>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-16 py-12">
+        <div className="px-6 lg:px-24">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-xl font-bold text-pink-600">MAMA</span>
+              </div>
+              <p className="text-gray-600 leading-relaxed">Your trusted maternal health companion across Ghana.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-4">Features</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>AI Health Assistant</li>
+                <li>Appointment Reminders</li>
+                <li>Clinic Locator</li>
+                <li>Health Resources</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-4">Support</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>Help Center</li>
+                <li>Contact Us</li>
+                <li>Privacy Policy</li>
+                <li>Terms of Service</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-gray-900 mb-4">Emergency</h4>
+              <p className="text-gray-600 mb-2">Ghana Ambulance Service</p>
+              <p className="text-2xl font-bold text-pink-600">193</p>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 mt-8 pt-6 text-center">
+            <p className="text-gray-600">© 2024 MAMA. Made with ❤️ for mothers in Ghana.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

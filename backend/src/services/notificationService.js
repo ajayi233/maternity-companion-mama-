@@ -18,12 +18,34 @@ class NotificationService {
   }
 
   async sendSMS(phoneNumber, message, language = 'en') {
-    const { default: mnotifyService } = await import('./mnotifyService.js');
-    
-    const formattedNumber = mnotifyService.formatGhanaianNumber(phoneNumber);
-    const translatedMessage = this.translateMessage(message, language);
-    
-    return await mnotifyService.sendSMS(formattedNumber, translatedMessage);
+    try {
+      console.log('📱 NotificationService - Sending SMS to:', phoneNumber);
+      
+      const { default: mnotifyService } = await import('./mnotifyService.js');
+      
+      const formattedNumber = mnotifyService.formatGhanaianNumber(phoneNumber);
+      const translatedMessage = this.translateMessage(message, language);
+      
+      console.log('📱 NotificationService - Formatted number:', formattedNumber);
+      console.log('📱 NotificationService - Translated message:', translatedMessage);
+      
+      const result = await mnotifyService.sendSMS(formattedNumber, translatedMessage);
+      
+      if (result.success) {
+        console.log('✅ SMS sent successfully:', result.messageId);
+      } else {
+        console.error('❌ SMS failed:', result.error);
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('❌ NotificationService SMS Error:', error);
+      return {
+        success: false,
+        error: error.message,
+        status: 'failed'
+      };
+    }
   }
 
   translateMessage(message, language) {

@@ -14,7 +14,14 @@ interface Message {
   audioBase64?: string;
 }
 
-export const TextChat = () => {
+interface TextChatProps {
+  user?: {
+    name: string;
+    dueDate?: string;
+  };
+}
+
+export const TextChat = ({ user }: TextChatProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -49,7 +56,7 @@ export const TextChat = () => {
     setIsLoading(true);
 
     try {
-      const response = await sendTextQuery(inputText.trim());
+      const response = await sendTextQuery(inputText.trim(), user?.dueDate);
       
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),

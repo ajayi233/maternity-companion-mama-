@@ -280,7 +280,7 @@ export const MultilingualChat = () => {
                   size="sm"
                   onClick={startVoiceInput}
                   className={`absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 p-0 ${
-                    isListening ? 'text-red-500 animate-pulse' : 'text-muted-foreground'
+                    isListening ? 'text-pink-500 animate-pulse' : 'text-muted-foreground'
                   }`}
                 >
                   <Mic className="w-4 h-4" />

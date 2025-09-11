@@ -35,7 +35,7 @@ export const EmergencyButton = () => {
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          className="fixed bottom-24 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 border-4 border-white/20"
+          className="fixed bottom-24 right-6 z-[110] w-16 h-16 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 border-4 border-white/20 pointer-events-auto"
           aria-label="Emergency help"
         >
           <div className="relative">
@@ -45,7 +45,7 @@ export const EmergencyButton = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-80 p-0 bg-gradient-card border-0 shadow-2xl" 
+        className="w-80 p-0 bg-white border-0 shadow-2xl z-[115]" 
         side="left" 
         sideOffset={20}
       >

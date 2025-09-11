@@ -97,7 +97,7 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
   return (
     <div className="min-h-screen bg-white flex">
       {/* Left Side - Testimonial Section */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 p-12 flex-col justify-center relative overflow-hidden">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 p-12 flex-col justify-center items-center relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-pink-200/30 to-purple-200/30 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-rose-200/30 to-pink-200/30 rounded-full blur-3xl"></div>
         
@@ -150,7 +150,7 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
       </div>
 
       {/* Right Side - Register Form */}
-      <div className="flex-1 flex items-center justify-center p-8 lg:p-12">
+      <div className="flex-1 flex items-center justify-center px-12 py-8 lg:px-16 lg:py-12">
         <div className="w-full max-w-md">
           {/* Mobile Header */}
           <div className="lg:hidden text-center mb-8">

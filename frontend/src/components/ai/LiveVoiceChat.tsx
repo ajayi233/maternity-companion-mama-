@@ -5,7 +5,14 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Mic, MicOff, Volume2, VolumeX, Phone, Send, Globe, MessageSquare, ChevronUp, ChevronDown, User, Bot } from "lucide-react";
 import { sendAudioQuery, playAudioResponse } from "@/lib/aiService";
 
-export const LiveVoiceChat = () => {
+interface LiveVoiceChatProps {
+  user?: {
+    name: string;
+    dueDate?: string;
+  };
+}
+
+export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
   const [isListening, setIsListening] = useState(false);
   const [isAISpeaking, setIsAISpeaking] = useState(false);
 
@@ -197,7 +204,7 @@ export const LiveVoiceChat = () => {
       console.log('User transcript:', userTranscript);
       
       // Send actual audio to Lambda function
-      const response = await sendAudioQuery(audioBlob);
+      const response = await sendAudioQuery(audioBlob, user?.dueDate);
       console.log('Lambda response:', response);
       
       setIsProcessing(false);
@@ -416,7 +423,7 @@ export const LiveVoiceChat = () => {
             <div className="text-6xl">🤱</div>
           </div>
           <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-            <div className="text-white text-xl font-semibold">Dr. Ama - AI Midwife</div>
+            <div className="text-white text-xl font-semibold">Dr. Ajayi - AI Midwife</div>
             <div className="text-white/90 text-sm flex items-center justify-center gap-1 mt-1">
               <Globe className="w-4 h-4" />
               Multi-language AI Assistant
@@ -431,7 +438,7 @@ export const LiveVoiceChat = () => {
               <div className="flex justify-center">
                 <Volume2 className="w-8 h-8 text-green-400 animate-pulse" />
               </div>
-              <div className="text-white font-bold">Dr. Ama is speaking...</div>
+              <div className="text-white font-bold">Dr. Ajayi is speaking...</div>
               {aiResponse && (
                 <div className="text-white text-sm italic max-w-xs font-medium">"{aiResponse}"</div>
               )}
@@ -479,7 +486,7 @@ export const LiveVoiceChat = () => {
             <>
               <Button
                 onClick={stopListening}
-                className="bg-red-500 hover:bg-red-600 text-white w-16 h-16 rounded-full"
+                className="bg-pink-500 hover:bg-pink-600 text-white w-16 h-16 rounded-full"
               >
                 <MicOff className="w-8 h-8" />
               </Button>
@@ -518,7 +525,7 @@ export const LiveVoiceChat = () => {
         <div className="text-center">
           <div className="bg-black/20 backdrop-blur-sm rounded-lg p-3 border border-white/20">
             <div className="text-white text-sm font-medium">
-              {isListening ? "Press the red button to stop, green to send" : "Press the blue microphone to start speaking"}
+              {isListening ? "Press the pink button to stop, green to send" : "Press the blue microphone to start speaking"}
             </div>
             <div className="text-white/90 text-xs mt-1">Purple button shows conversation history</div>
             {error && (

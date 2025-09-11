@@ -68,7 +68,7 @@ export const QuickActions = ({ onNavigate }: QuickActionsProps) => {
   ];
 
   return (
-    <Card className="shadow-card border-border">
+    <Card className="shadow-card border-border relative z-50">
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-foreground">Quick Actions</CardTitle>
       </CardHeader>
@@ -80,7 +80,7 @@ export const QuickActions = ({ onNavigate }: QuickActionsProps) => {
               key={action.id}
               variant={action.id === 'emergency' ? 'emergency' : 'default'}
               size="lg"
-              className="h-20 flex-col gap-2 text-center"
+              className="h-20 flex-col gap-2 text-center relative z-50 pointer-events-auto"
               onClick={action.action}
             >
               <Icon className="w-6 h-6" />
