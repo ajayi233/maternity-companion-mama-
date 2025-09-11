@@ -34,15 +34,22 @@ resource "aws_ecs_task_definition" "backend" {
         }
       ]
 
-      environment = concat(
+      environment = [
+        {
+          name  = "NODE_ENV"
+          value = "production"
+        },
+        {
+          name  = "PORT"
+          value = "5000"
+        }
+      ]
+
+      secrets = concat(
         [
-          {
-            name  = "NODE_ENV"
-            value = "production"
-          },
-          {
-            name  = "PORT"
-            value = "5000"
+          for secret_name in var.backend_secrets : {
+            name      = upper(replace(secret_name, "-", "_"))
+            valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter/${var.project_name}/${var.environment}/backend/${secret_name}"
           }
         ],
         [
@@ -52,13 +59,6 @@ resource "aws_ecs_task_definition" "backend" {
           }
         ]
       )
-
-      secrets = [
-        for secret_name in var.backend_secrets : {
-          name      = upper(replace(replace(secret_name, "backend/", ""), "-", "_"))
-          valueFrom = "arn:aws:ssm:${var.region}:${var.account_id}:parameter/${var.project_name}/${var.environment}/${secret_name}"
-        }
-      ]
 
       logConfiguration = {
         logDriver = "awslogs"
@@ -137,7 +137,7 @@ resource "aws_ecs_service" "backend" {
   network_configuration {
     security_groups  = [aws_security_group.ecs_tasks.id]
     subnets          = var.subnet_ids
-    assign_public_ip = true  # Required for public subnets to access Parameter Store
+    assign_public_ip = true
   }
 
   load_balancer {

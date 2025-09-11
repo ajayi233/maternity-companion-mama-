@@ -26,7 +26,7 @@ module "parameter_store" {
     "mnotify-sender-id"            = "mama-app"
     "mnotify-base-url"             = "https://api.mnotify.com/api"
     "sms-simulation-mode"          = "false"
-    "cors-origin"                  = "https://d22zv3iyoc3zl5.cloudfront.net,https://auto-hive.site,https://www.auto-hive.site"
+    "cors-origin"                  = "https://auto-hive.site"
     "password-reset-expires-minutes" = "10"
     "cookie-expires-in"            = "7"
   }
@@ -95,7 +95,7 @@ module "ecs" {
   execution_role_arn   = module.iam.ecs_task_execution_role_arn
   task_role_arn        = module.iam.ecs_task_role_arn
   backend_image        = var.backend_image
-  backend_secrets      = ["backend/mongodb-uri", "backend/jwt-secret", "backend/jwt-refresh-secret", "backend/mnotify-api-key"]
+  backend_secrets      = ["mongodb-uri", "jwt-secret", "jwt-refresh-secret", "mnotify-api-key"]
   backend_config       = ["jwt-expires-in", "jwt-refresh-expires-in", "bcrypt-rounds", "rate-limit-window-ms", "rate-limit-max-requests", "mnotify-sender-id", "mnotify-base-url", "sms-simulation-mode", "cors-origin", "password-reset-expires-minutes", "cookie-expires-in"]
   target_group_arn     = module.alb.target_group_arn
   alb_security_group_id = module.alb.alb_security_group_id

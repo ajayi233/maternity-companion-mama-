@@ -68,7 +68,7 @@ variable "backend_secrets" {
 }
 
 variable "backend_config" {
-  description = "List of config parameter names for backend"
+  description = "List of config names for backend"
   type        = list(string)
   default     = []
 }
@@ -87,11 +87,3 @@ variable "alb_listener_arn" {
   description = "ALB listener ARN"
   type        = string
 }
-
-
-#I have seen that you changed the deploy-frontend to inject various env vars
-
-#what about the backend, does the ecs have all the env vars needed for it to also work seamlessly?
-
-#The frontend too has an env file, how will that be handled?
-#and are all the secrets needed for the app to work for the backend in paremeter store

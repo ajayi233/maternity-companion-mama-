@@ -13,7 +13,6 @@ resource "aws_ssm_parameter" "secrets" {
   }
 }
 
-# Backend configuration (non-secret)
 resource "aws_ssm_parameter" "backend_config" {
   for_each = var.backend_config
 
@@ -28,7 +27,6 @@ resource "aws_ssm_parameter" "backend_config" {
   }
 }
 
-# Frontend configuration (non-secret)
 resource "aws_ssm_parameter" "frontend_config" {
   for_each = var.frontend_config
 
@@ -43,7 +41,6 @@ resource "aws_ssm_parameter" "frontend_config" {
   }
 }
 
-# Frontend secrets
 resource "aws_ssm_parameter" "frontend_secrets" {
   for_each = var.frontend_secrets
 
@@ -57,3 +54,4 @@ resource "aws_ssm_parameter" "frontend_secrets" {
     ManagedBy   = "Terraform"
   }
 }
+

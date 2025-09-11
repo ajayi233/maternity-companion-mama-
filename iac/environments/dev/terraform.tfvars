@@ -14,6 +14,6 @@ backend_image = "578641869747.dkr.ecr.us-west-2.amazonaws.com/mama-app-dev-backe
 mongodb_uri         = "mongodb+srv://ajayidaniel:deathnote@cluster49.gvrhw.mongodb.net/mama-app?retryWrites=true&w=majority&appName=Cluster49"
 jwt_secret         = "SOME_SECRET"
 jwt_refresh_secret = "some_secret_token"
-mnotify_api_key    = "your_valid_mnotify_api_key_here"
-google_maps_api_key = "your_google_maps_api_key_here"
+mnotify_api_key    = "some_random_api_key"
+google_maps_api_key = "some_random_key"
 aws_account_id     = "578641869747"

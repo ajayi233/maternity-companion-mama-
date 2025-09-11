@@ -54,6 +54,8 @@ variable "mnotify_api_key" {
   sensitive   = true
 }
 
+
+
 variable "google_maps_api_key" {
   description = "Google Maps API key for frontend"
   type        = string
