@@ -26,6 +26,7 @@ import { BottomNavigation } from "@/components/layout/BottomNavigation";
 import { TopNavigation } from "@/components/layout/TopNavigation";
 import { EmergencyButton } from "@/components/dashboard/EmergencyButton";
 import { FloatingAIAssistant } from "@/components/ai/FloatingAIAssistant";
+import { EmergencyContact } from "@/components/emergency/EmergencyContact";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -345,6 +346,7 @@ const MainApp = () => {
             <ClinicLocator />
           </div>
         } />
+        <Route path="/emergency" element={<EmergencyContact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
