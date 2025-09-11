@@ -54,46 +54,26 @@ const MainApp = () => {
     const loadUser = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
         const savedUser = localStorage.getItem('mama_user');
+        
+        console.log('Auth check:', { 
+          hasToken: !!accessToken, 
+          hasUser: !!savedUser 
+        });
         
         if (accessToken && savedUser) {
           try {
             const userData = JSON.parse(savedUser);
-            // Set user immediately from localStorage
             setUser(userData);
-            
-            // Try to validate token with backend in background
-            try {
-              const profileData = await apiService.getProfile();
-              // Update user data if profile fetch succeeds
-              setUser(profileData.user);
-            } catch (profileError: any) {
-              console.log('Profile validation failed, trying refresh token:', profileError.message);
-              
-              // If profile fails and we have refresh token, try to refresh
-              if (refreshToken && profileError.message?.includes('expired')) {
-                try {
-                  await apiService.refreshToken();
-                  const profileData = await apiService.getProfile();
-                  setUser(profileData.user);
-                } catch (refreshError) {
-                  console.error('Token refresh failed:', refreshError);
-                  // Only clear tokens if refresh also fails
-                  localStorage.removeItem('accessToken');
-                  localStorage.removeItem('refreshToken');
-                  localStorage.removeItem('mama_user');
-                  setUser(null);
-                }
-              }
-              // If no refresh token or other error, keep user logged in with cached data
-              // This prevents logout on temporary network issues
-            }
+            console.log('User loaded from localStorage:', userData.name);
           } catch (parseError) {
             console.error('Error parsing saved user data:', parseError);
+            localStorage.removeItem('accessToken');
             localStorage.removeItem('mama_user');
             setUser(null);
           }
+        } else {
+          console.log('No saved authentication found');
         }
       } catch (error) {
         console.error('Error loading user session:', error);
@@ -121,6 +101,8 @@ const MainApp = () => {
     try {
       const data = await apiService.login({ phone: phone.trim(), password });
       setUser(data.user);
+      localStorage.setItem('accessToken', data.token);
+      localStorage.setItem('mama_user', JSON.stringify(data.user));
       navigate('/');
       
       import('sonner').then(({ toast }) => {
@@ -163,6 +145,8 @@ const MainApp = () => {
       });
       
       setUser(data.user);
+      localStorage.setItem('accessToken', data.token);
+      localStorage.setItem('mama_user', JSON.stringify(data.user));
       navigate('/');
       
       import('sonner').then(({ toast }) => {
@@ -249,7 +233,7 @@ const MainApp = () => {
     console.log('Auth state:', { user: !!user, isLoading, pathname: location.pathname });
   }, [user, isLoading, location.pathname]);
 
-  // Show loading screen only briefly
+  // Show loading screen briefly
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">

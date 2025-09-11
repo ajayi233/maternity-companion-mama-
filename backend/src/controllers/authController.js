@@ -9,6 +9,16 @@ export const register = async (req, res, next) => {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
+    // Check if phone number already exists
+    const existingUser = await User.findOne({ phone: req.body.phone });
+    if (existingUser) {
+      return res.status(400).json({ 
+        success: false, 
+        phoneExists: true,
+        message: 'Phone number already registered' 
+      });
+    }
+
     const result = await authService.registerUser(req.body);
     
     const options = {
@@ -22,6 +32,7 @@ export const register = async (req, res, next) => {
       .cookie('token', result.token, options)
       .json({
         success: true,
+        phoneExists: false,
         token: result.token,
         user: result.user
       });
@@ -77,13 +88,13 @@ export const sendPasswordResetCode = async (req, res, next) => {
 
 export const resetPasswordWithCode = async (req, res, next) => {
   try {
-    const { phone, code, newPassword } = req.body;
+    const { resetToken, password } = req.body;
     
-    if (!phone || !code || !newPassword) {
-      return res.status(400).json({ success: false, error: 'Phone, code, and new password are required' });
+    if (!resetToken || !password) {
+      return res.status(400).json({ success: false, error: 'Reset code and new password are required' });
     }
 
-    const result = await authService.resetPasswordWithCode(phone, code, newPassword);
+    const result = await authService.resetPasswordWithToken(resetToken, password);
     res.status(200).json({ success: true, message: result.message });
   } catch (error) {
     next(error);

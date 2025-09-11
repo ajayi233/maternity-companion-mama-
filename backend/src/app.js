@@ -7,9 +7,13 @@ import cookieParser from 'cookie-parser';
 import { securityMiddleware } from './middleware/security.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import authRoutes from './routes/auth.js';
+import cronService from './services/cronService.js';
 
 // Load environment variables
 dotenv.config();
+
+// Start cron jobs
+cronService.start();
 
 const app = express();
 

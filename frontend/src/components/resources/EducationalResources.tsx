@@ -2,116 +2,142 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Play, Volume2, Clock, Star, ChevronRight, Filter, Heart, ArrowRight, Users, Award } from "lucide-react";
+import {
+  BookOpen,
+  Play,
+  Volume2,
+  Clock,
+  Star,
+  ChevronRight,
+  Filter,
+  Heart,
+  ArrowRight,
+  Users,
+  Award,
+} from "lucide-react";
 import heroImage from "@/assets/pregnant-woman.png";
 
 interface Resource {
   id: string;
   title: string;
   description: string;
-  type: 'article' | 'video' | 'audio';
-  category: 'nutrition' | 'exercise' | 'mental-health' | 'baby-development';
+  type: "article" | "video" | "audio";
+  category: "nutrition" | "exercise" | "mental-health" | "baby-development";
   duration: string;
   rating: number;
   icon: string;
   color: string;
+  url: string;
 }
 
 export const EducationalResources = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const resources: Resource[] = [
     {
-      id: '1',
-      title: 'Healthy Eating During Pregnancy',
-      description: 'Essential nutrients and foods for optimal development',
-      type: 'article',
-      category: 'nutrition',
-      duration: '5 min read',
+      id: "1",
+      title: "Nutrition During Pregnancy",
+      description:
+        "Find out how to eat a healthy diet in pregnancy, including plenty of fruit and vegetables, and cutting down on sugar and saturated fat.",
+      type: "article",
+      category: "nutrition",
+      duration: "5 min read",
       rating: 4.8,
-      icon: '🥗',
-      color: 'bg-emerald-500'
+      icon: "🥗",
+      color: "bg-emerald-500",
+      url: "https://www.hopkinsmedicine.org/health/wellness-and-prevention/nutrition-during-pregnancy",
     },
     {
-      id: '2',
-      title: 'Prenatal Yoga for Beginners',
-      description: 'Gentle exercises for a healthy pregnancy',
-      type: 'video',
-      category: 'exercise',
-      duration: '15 min',
+      id: "2",
+      title: "10 minute PRENATAL YOGA for Beginners (Safe for ALL Trimesters)",
+      description: "Gentle exercises for a healthy pregnancy",
+      type: "video",
+      category: "exercise",
+      duration: "11 min",
       rating: 4.9,
-      icon: '🧘♀️',
-      color: 'bg-violet-500'
+      icon: "🧘♀️",
+      color: "bg-violet-500",
+      url: "https://youtu.be/4NwQKXpWN_A",
     },
     {
-      id: '3',
-      title: 'Managing Pregnancy Anxiety',
-      description: 'Mental wellness techniques for expectant mothers',
-      type: 'audio',
-      category: 'mental-health',
-      duration: '12 min',
+      id: "3",
+      title: "01 Managing anxious thoughts in pregnancy | Guided practice",
+      description: "Mental wellness techniques for expectant mothers",
+      type: "audio",
+      category: "mental-health",
+      duration: "14 min",
       rating: 4.7,
-      icon: '🧠',
-      color: 'bg-blue-500'
+      icon: "🧠",
+      color: "bg-blue-500",
+      url: "https://youtu.be/vfQOYhzdDEU",
     },
     {
-      id: '4',
-      title: 'Baby Development Guide',
-      description: 'Week-by-week pregnancy milestones',
-      type: 'article',
-      category: 'baby-development',
-      duration: '8 min read',
+      id: "4",
+      title: "Baby Development Guide",
+      description: "A Week-by-Week Guide to Your Babys First Year Milestones",
+      type: "article",
+      category: "baby-development",
+      duration: "8 min read",
       rating: 4.9,
-      icon: '👶',
-      color: 'bg-pink-500'
+      icon: "👶",
+      color: "bg-pink-500",
+      url: "https://www.parents.com/baby/development/growth/baby-development-week-by-week/#toc-12-month-baby-milestones",
     },
     {
-      id: '5',
-      title: 'Safe Exercise by Trimester',
-      description: 'Trimester-specific workout routines',
-      type: 'video',
-      category: 'exercise',
-      duration: '20 min',
+      id: "5",
+      title: "Pregnancy: A Month-By-Month Guide | 3D Animation",
+      description: "A comprehensive video guide on pregnancy stages",
+      type: "video",
+      category: "exercise",
+      duration: "4 min",
       rating: 4.6,
-      icon: '💪',
-      color: 'bg-orange-500'
+      icon: "💪",
+      color: "bg-orange-500",
+      url: "https://youtu.be/8BH7WFmRs-E",
     },
     {
-      id: '6',
-      title: 'Mindfulness & Meditation',
-      description: 'Relaxation techniques for pregnancy',
-      type: 'audio',
-      category: 'mental-health',
-      duration: '10 min',
+      id: "6",
+      title: "Mindfulness & Meditation",
+      description:
+        "7 mins Daily Pregnancy Meditation for Positivity, Calmness & Connecting with Your Baby | Bharti Goel",
+      type: "video",
+      category: "mental-health",
+      duration: "7 min",
       rating: 4.8,
-      icon: '🕯️',
-      color: 'bg-indigo-500'
-    }
+      icon: "🕯️",
+      color: "bg-indigo-500",
+      url: "https://youtu.be/Km0CsOjF_Fw",
+    },
   ];
 
   const categories = [
-    { id: 'all', name: 'All' },
-    { id: 'nutrition', name: 'Nutrition' },
-    { id: 'exercise', name: 'Exercise' },
-    { id: 'mental-health', name: 'Wellness' },
-    { id: 'baby-development', name: 'Development' }
+    { id: "all", name: "All" },
+    { id: "nutrition", name: "Nutrition" },
+    { id: "exercise", name: "Exercise" },
+    { id: "mental-health", name: "Wellness" },
+    { id: "baby-development", name: "Development" },
   ];
 
-  const filteredResources = selectedCategory === 'all' 
-    ? resources 
-    : resources.filter(resource => resource.category === selectedCategory);
+  const filteredResources =
+    selectedCategory === "all"
+      ? resources
+      : resources.filter((resource) => resource.category === selectedCategory);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'article': return <BookOpen className="w-4 h-4" />;
-      case 'video': return <Play className="w-4 h-4" />;
-      case 'audio': return <Volume2 className="w-4 h-4" />;
-      default: return <BookOpen className="w-4 h-4" />;
+      case "article":
+        return <BookOpen className="w-4 h-4" />;
+      case "video":
+        return <Play className="w-4 h-4" />;
+      case "audio":
+        return <Volume2 className="w-4 h-4" />;
+      default:
+        return <BookOpen className="w-4 h-4" />;
     }
   };
 
   const getTypeBadgeColor = (type: string) => {
-    return 'bg-white text-gray-600 border border-gray-300';
+    return "bg-white text-gray-600 border border-gray-300";
   };
 
   return (
@@ -124,22 +150,29 @@ export const EducationalResources = () => {
             <div className="pb-16">
               <div className="inline-flex items-center gap-2 bg-pink-100 rounded-full px-4 py-2 mb-6">
                 <BookOpen className="w-4 h-4 text-pink-600" />
-                <span className="text-pink-700 text-sm font-medium">Learning Hub</span>
+                <span className="text-pink-700 text-sm font-medium">
+                  Learning Hub
+                </span>
               </div>
               <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
                 Expert Resources for Your Journey
               </h1>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Access curated content from healthcare professionals, covering everything from nutrition to mental wellness during pregnancy.
+                Access curated content from healthcare professionals, covering
+                everything from nutrition to mental wellness during pregnancy.
               </p>
               <div className="flex items-center gap-8 mb-8">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-blue-500" />
-                  <span className="text-gray-700 font-medium">10,000+ mothers learning</span>
+                  <span className="text-gray-700 font-medium">
+                    10,000+ mothers learning
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700 font-medium">Expert-verified content</span>
+                  <span className="text-gray-700 font-medium">
+                    Expert-verified content
+                  </span>
                 </div>
               </div>
               <Button className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 text-lg">
@@ -149,9 +182,9 @@ export const EducationalResources = () => {
             </div>
             <div className="relative">
               <div className="relative z-10">
-                <img 
-                  src={heroImage} 
-                  alt="Maternal health resources" 
+                <img
+                  src={heroImage}
+                  alt="Maternal health resources"
                   className="w-full h-[400px] object-cover object-top rounded-t-2xl"
                 />
               </div>
@@ -165,11 +198,15 @@ export const EducationalResources = () => {
         {/* Stats Section */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="text-center">
-            <div className="text-3xl font-bold text-pink-500 mb-2">{resources.length}</div>
+            <div className="text-3xl font-bold text-pink-500 mb-2">
+              {resources.length}
+            </div>
             <div className="text-gray-600">Resources</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-500 mb-2">{categories.length - 1}</div>
+            <div className="text-3xl font-bold text-blue-500 mb-2">
+              {categories.length - 1}
+            </div>
             <div className="text-gray-600">Categories</div>
           </div>
           <div className="text-center">
@@ -191,8 +228,8 @@ export const EducationalResources = () => {
               onClick={() => setSelectedCategory(category.id)}
               className={`px-6 py-3 rounded-full font-medium whitespace-nowrap transition-all duration-200 ${
                 selectedCategory === category.id
-                  ? 'bg-pink-500 text-white shadow-lg scale-105'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-pink-200'
+                  ? "bg-pink-500 text-white shadow-lg scale-105"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-pink-200"
               }`}
             >
               {category.name}
@@ -203,13 +240,11 @@ export const EducationalResources = () => {
         {/* Resources Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {filteredResources.map((resource) => (
-            <Card 
-              key={resource.id} 
+            <Card
+              key={resource.id}
               className="group hover:shadow-md hover:bg-gray-50 transition-all duration-200 border border-gray-200 bg-white cursor-pointer"
               onClick={() => {
-                import('sonner').then(({ toast }) => {
-                  toast.success(`Opening ${resource.title}`);
-                });
+                window.open(resource.url, "_blank");
               }}
             >
               <CardContent className="px-6 py-4">
@@ -246,7 +281,9 @@ export const EducationalResources = () => {
         <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-3xl p-8 lg:p-12 border border-pink-100 shadow-lg">
           <div className="flex items-center gap-2 mb-6">
             <Star className="w-6 h-6 text-pink-500" />
-            <span className="text-lg font-semibold text-pink-700">Featured Content</span>
+            <span className="text-lg font-semibold text-pink-700">
+              Featured Content
+            </span>
           </div>
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
@@ -254,7 +291,8 @@ export const EducationalResources = () => {
                 Complete Pregnancy Guide
               </h3>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Comprehensive week-by-week guide covering nutrition, exercise, mental wellness, and baby development milestones.
+                Comprehensive week-by-week guide covering nutrition, exercise,
+                mental wellness, and baby development milestones.
               </p>
               <div className="flex items-center gap-6 text-sm text-gray-500 mb-6">
                 <div className="flex items-center gap-2">
@@ -270,7 +308,10 @@ export const EducationalResources = () => {
                   <span>4.9 rating</span>
                 </div>
               </div>
-              <Button size="lg" className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3">
+              <Button
+                size="lg"
+                className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3"
+              >
                 Start Learning
                 <ChevronRight className="w-5 h-5 ml-2" />
               </Button>
@@ -300,7 +341,9 @@ export const EducationalResources = () => {
                 </div>
                 <span className="text-xl font-bold text-pink-600">MAMA</span>
               </div>
-              <p className="text-gray-600 leading-relaxed">Your trusted maternal health companion across Ghana.</p>
+              <p className="text-gray-600 leading-relaxed">
+                Your trusted maternal health companion across Ghana.
+              </p>
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Features</h4>
@@ -327,7 +370,9 @@ export const EducationalResources = () => {
             </div>
           </div>
           <div className="border-t border-gray-200 mt-8 pt-6 text-center">
-            <p className="text-gray-600">© 2024 MAMA. Made with ❤️ for mothers in Ghana.</p>
+            <p className="text-gray-600">
+              © 2024 MAMA. Made with ❤️ for mothers in Ghana.
+            </p>
           </div>
         </div>
       </footer>

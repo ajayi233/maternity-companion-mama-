@@ -48,7 +48,7 @@ export const ResetPasswordForm = ({ phone, onPasswordReset, onBackToForgot }: Re
     } catch (error: any) {
       import('sonner').then(({ toast }) => {
         toast.error('Password reset failed', {
-          description: error.message || 'Please check your reset code',
+          description: 'Please check your reset code',
           duration: 3000,
         });
       });
@@ -218,13 +218,23 @@ export const ResetPasswordForm = ({ phone, onPasswordReset, onBackToForgot }: Re
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={() => {
-                import('sonner').then(({ toast }) => {
-                  toast.success('Verification code resent!', {
-                    description: `Code sent to ${phone}`,
-                    duration: 3000,
+              onClick={async () => {
+                try {
+                  await apiService.forgotPassword(phone);
+                  import('sonner').then(({ toast }) => {
+                    toast.success('Verification code resent!', {
+                      description: `Code sent to ${phone}`,
+                      duration: 3000,
+                    });
                   });
-                });
+                } catch (error) {
+                  import('sonner').then(({ toast }) => {
+                    toast.error('Failed to resend code', {
+                      description: 'Please try again',
+                      duration: 3000,
+                    });
+                  });
+                }
               }}
               className="text-pink-600 hover:text-pink-700 font-medium"
             >

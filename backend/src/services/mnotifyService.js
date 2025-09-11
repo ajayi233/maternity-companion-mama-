@@ -1,10 +1,19 @@
+import 'dotenv/config';
 import axios from 'axios';
 
 class MnotifyService {
   constructor() {
+    console.log('🔧 Environment check - MNOTIFY_API_KEY:', process.env.MNOTIFY_API_KEY ? 'Present' : 'Missing');
+    console.log('🔧 Environment check - All SMS env vars:', {
+      MNOTIFY_API_KEY: process.env.MNOTIFY_API_KEY ? 'Present' : 'Missing',
+      MNOTIFY_BASE_URL: process.env.MNOTIFY_BASE_URL,
+      SMS_SIMULATION_MODE: false
+    });
+    
     this.apiKey = process.env.MNOTIFY_API_KEY;
-    this.senderId = process.env.MNOTIFY_SENDER_ID || 'MAMA';
+    this.senderId = 'MAMA APP';
     this.baseUrl = process.env.MNOTIFY_BASE_URL || 'https://api.mnotify.com/api';
+    this.url = this.baseUrl + '/sms/quick?key=' + this.apiKey;
   }
 
   async sendSMS(recipient, message) {
@@ -18,25 +27,7 @@ class MnotifyService {
       const formattedRecipient = this.formatGhanaianNumber(recipient);
       console.log('🔧 SMS Debug - Formatted Recipient:', formattedRecipient);
 
-      // Check if in simulation mode
-      if (process.env.SMS_SIMULATION_MODE === 'true' || !this.apiKey || this.apiKey === 'your_valid_mnotify_api_key_here') {
-        console.log('🎭 SMS SIMULATION MODE - Message would be sent to:', formattedRecipient);
-        console.log('📱 SMS SIMULATION - Message content:', message);
-        
-        return {
-          success: true,
-          messageId: `simulation-${Date.now()}`,
-          status: 'simulated',
-          cost: 0,
-          response: {
-            message: 'SMS simulated successfully',
-            recipient: formattedRecipient,
-            content: message
-          }
-        };
-      }
-
-      if (!this.apiKey) {
+      if (!this.apiKey || this.apiKey === 'your_valid_mnotify_api_key_here') {
         throw new Error('MNOTIFY_API_KEY is not configured');
       }
 
@@ -50,9 +41,8 @@ class MnotifyService {
 
       console.log('🔧 SMS Debug - Payload:', JSON.stringify(payload, null, 2));
 
-      const response = await axios.post(`${this.baseUrl}/sms/quick`, payload, {
+      const response = await axios.post(this.url, payload, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json'
         },
         timeout: 30000 // 30 second timeout
@@ -98,9 +88,8 @@ class MnotifyService {
         schedule_date: ''
       };
 
-      const response = await axios.post(`${this.baseUrl}/sms/quick`, payload, {
+      const response = await axios.post(this.url, payload, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json'
         }
       });
@@ -130,9 +119,8 @@ class MnotifyService {
         schedule_date: scheduleDate
       };
 
-      const response = await axios.post(`${this.baseUrl}/sms/quick`, payload, {
+      const response = await axios.post(this.url, payload, {
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json'
         }
       });

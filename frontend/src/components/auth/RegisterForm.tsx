@@ -37,6 +37,32 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
       });
       return;
     }
+
+    // Validate due date
+    const selectedDate = new Date(formData.dueDate);
+    const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const maxDate = new Date(Date.now() + 280 * 24 * 60 * 60 * 1000);
+    
+    if (selectedDate < oneWeekFromNow) {
+      import('sonner').then(({ toast }) => {
+        toast.error('Invalid due date', {
+          description: 'Due date must be at least 1 week from today.',
+          duration: 4000,
+        });
+      });
+      return;
+    }
+
+    if (selectedDate > maxDate) {
+      import('sonner').then(({ toast }) => {
+        toast.error('Invalid due date', {
+          description: 'Due date seems too far in the future. Please check the date.',
+          duration: 4000,
+        });
+      });
+      return;
+    }
+
     setCurrentStep(2);
   };
 
@@ -55,16 +81,26 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
     
     setLoading(true);
     
-    // Simulate registration process
-    setTimeout(() => {
-      onRegister({
+    try {
+      await onRegister({
         name: formData.name,
         phone: formData.phone,
         password: formData.password,
         dueDate: formData.dueDate
       });
+    } catch (error: any) {
+      if (error.message.includes('Phone number already registered')) {
+        import('sonner').then(({ toast }) => {
+          toast.error('Phone number already registered', {
+            description: 'This phone number is already in use. Please sign in instead.',
+            duration: 4000,
+          });
+        });
+        setCurrentStep(1); // Go back to step 1 to change phone number
+      }
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -214,6 +250,8 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => handleInputChange("dueDate", e.target.value)}
+                  min={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  max={new Date(Date.now() + 280 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
                   className="h-12 border-gray-200 focus:border-pink-500 focus:ring-pink-500 rounded-xl"
                   required
                 />
@@ -273,17 +311,9 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
                   variant="gradient"
                   className="flex-1 h-12 font-semibold rounded-xl"
                   disabled={loading}
-                  onClick={async () => {
-                    await apiService.register({
-                      name: formData.name,
-                      phone: formData.phone,
-                      password: formData.password,
-                      dueDate: formData.dueDate,
-                    });
-                  }}
                 >
                   {loading ? "Creating..." : "Create Account"}
-              </Button>
+                </Button>
 
               </div>
             </form>

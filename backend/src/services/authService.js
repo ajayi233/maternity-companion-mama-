@@ -22,11 +22,19 @@ class AuthService {
     });
 
     // Send welcome SMS
+    console.log('📱 Sending welcome SMS to:', phone);
     const { default: notificationService } = await import('./notificationService.js');
-    await notificationService.sendSMS(
+    const smsResult = await notificationService.sendSMS(
       phone,
       `Welcome to MAMA! Your maternal health companion is ready to support your pregnancy journey.`
     );
+    console.log('📱 Welcome SMS result:', smsResult);
+    
+    if (!smsResult.success) {
+      console.error('❌ Welcome SMS failed:', smsResult.error);
+    } else {
+      console.log('✅ Welcome SMS sent successfully');
+    }
 
     return {
       user: this.sanitizeUser(user),
@@ -137,6 +145,38 @@ class AuthService {
     const { default: notificationService } = await import('./notificationService.js');
     await notificationService.sendSMS(
       phone,
+      `Your MAMA password has been successfully reset. If this wasn't you, contact support immediately.`
+    );
+
+    return { message: 'Password reset successful' };
+  }
+
+  async resetPasswordWithToken(resetToken, newPassword) {
+    const { default: PasswordReset } = await import('../models/PasswordReset.js');
+    const resetRecord = await PasswordReset.findOne({
+      code: resetToken,
+      isUsed: false,
+      expiresAt: { $gt: new Date() }
+    }).populate('userId');
+
+    if (!resetRecord) {
+      throw new Error('Invalid or expired reset code');
+    }
+
+    const user = await User.findById(resetRecord.userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    resetRecord.isUsed = true;
+    await resetRecord.save();
+
+    const { default: notificationService } = await import('./notificationService.js');
+    await notificationService.sendSMS(
+      user.phone,
       `Your MAMA password has been successfully reset. If this wasn't you, contact support immediately.`
     );
 

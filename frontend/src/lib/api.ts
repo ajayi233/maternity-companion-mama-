@@ -35,30 +35,6 @@ class ApiService {
     return data.data || data;
   }
 
-  async refreshToken(): Promise<void> {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
-      this.clearTokens();
-      throw new Error('No refresh token available');
-    }
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken })
-      });
-
-      const data = await this.handleResponse<{ accessToken: string; refreshToken: string }>(response);
-      
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-    } catch (error) {
-      this.clearTokens();
-      throw error;
-    }
-  }
-
   private clearTokens(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -79,15 +55,8 @@ class ApiService {
 
     const data = await this.handleResponse<{
       user: any;
-      accessToken: string;
-      refreshToken: string;
+      token: string;
     }>(response);
-
-    if (data.accessToken && data.refreshToken) {
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-      localStorage.setItem('mama_user', JSON.stringify(data.user));
-    }
 
     return data;
   }
@@ -101,15 +70,8 @@ class ApiService {
 
     const data = await this.handleResponse<{
       user: any;
-      accessToken: string;
-      refreshToken: string;
+      token: string;
     }>(response);
-
-    if (data.accessToken && data.refreshToken) {
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-      localStorage.setItem('mama_user', JSON.stringify(data.user));
-    }
 
     return data;
   }
@@ -126,7 +88,7 @@ class ApiService {
 
   async resetPassword(resetToken: string, password: string) {
     const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
-      method: 'PUT',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ resetToken, password })
     });
@@ -154,6 +116,16 @@ class ApiService {
     });
 
     return this.handleResponse<{ user: any }>(response);
+  }
+
+  async checkPhoneExists(phone: string) {
+    const response = await fetch(`${API_BASE_URL}/auth/check-phone`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+
+    return this.handleResponse(response);
   }
 }
 

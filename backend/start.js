@@ -5,6 +5,14 @@ import app from './src/app.js';
 // Load environment variables
 dotenv.config();
 
+// Debug environment variables
+console.log('🔧 Environment Debug:');
+console.log('- MNOTIFY_API_KEY:', process.env.MNOTIFY_API_KEY ? 'Present' : 'Missing');
+console.log('- MNOTIFY_BASE_URL:', process.env.MNOTIFY_BASE_URL || 'Missing');
+console.log('- SMS_SIMULATION_MODE:', process.env.SMS_SIMULATION_MODE || 'Missing');
+console.log('- NODE_ENV:', process.env.NODE_ENV);
+console.log('- PORT:', process.env.PORT);
+
 // Connect to MongoDB
 const connectDB = async () => {
   try {
