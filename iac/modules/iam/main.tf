@@ -85,6 +85,170 @@ resource "aws_iam_role_policy_attachment" "ecs_ecr_policy" {
   policy_arn = aws_iam_policy.ecr_policy.arn
 }
 
+# OIDC Provider for GitHub Actions
+resource "aws_iam_openid_connect_provider" "github_actions" {
+  url = "https://token.actions.githubusercontent.com"
+  
+  client_id_list = [
+    "sts.amazonaws.com"
+  ]
+  
+  thumbprint_list = [
+    "6938fd4d98bab03faadb97b34396831e3780aea1",
+    "1c58a3a8518e8759bf075b76b750d4f2df264fcd"
+  ]
+  
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# GitHub Actions Role
+resource "aws_iam_role" "github_actions_role" {
+  name = "${var.project_name}-${var.environment}-github-actions-role"
+  
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.github_actions.arn
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+          }
+          StringLike = {
+            "token.actions.githubusercontent.com:sub" = [
+              for repo in var.github_repositories : "repo:${repo}:*"
+            ]
+          }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# ECR Policy for GitHub Actions
+resource "aws_iam_policy" "github_actions_ecr_policy" {
+  name = "${var.project_name}-${var.environment}-github-actions-ecr-policy"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:PutImage",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:DescribeRepositories"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# ECS Policy for GitHub Actions
+resource "aws_iam_policy" "github_actions_ecs_policy" {
+  name = "${var.project_name}-${var.environment}-github-actions-ecs-policy"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecs:DescribeServices",
+          "ecs:UpdateService",
+          "ecs:RegisterTaskDefinition",
+          "ecs:DescribeTaskDefinition"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# S3 and CloudFront Policy for GitHub Actions
+resource "aws_iam_policy" "github_actions_frontend_policy" {
+  name = "${var.project_name}-${var.environment}-github-actions-frontend-policy"
+  
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          var.frontend_bucket_arn,
+          "${var.frontend_bucket_arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudfront:CreateInvalidation"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# Attach policies to GitHub Actions role
+resource "aws_iam_role_policy_attachment" "github_actions_ecr_policy" {
+  role       = aws_iam_role.github_actions_role.name
+  policy_arn = aws_iam_policy.github_actions_ecr_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_ecs_policy" {
+  role       = aws_iam_role.github_actions_role.name
+  policy_arn = aws_iam_policy.github_actions_ecs_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_frontend_policy" {
+  role       = aws_iam_role.github_actions_role.name
+  policy_arn = aws_iam_policy.github_actions_frontend_policy.arn
+}
+
 # Policy for Parameter Store access
 resource "aws_iam_policy" "parameter_store_policy" {
   name = "${var.project_name}-${var.environment}-parameter-store-policy"

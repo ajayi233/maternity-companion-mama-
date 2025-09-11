@@ -27,14 +27,14 @@ aws ecr get-login-password --region ${REGION} --profile ${PROFILE} | docker logi
 # Build and push backend
 echo -e "${YELLOW}🏗️  Building backend image (using existing ECR repo: ${BACKEND_REPO})...${NC}"
 
-cd backend
+cd ../backend
 docker build -t ${BACKEND_REPO}:latest .
 docker tag ${BACKEND_REPO}:latest ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${BACKEND_REPO}:latest
 
 echo -e "${YELLOW}📤 Pushing backend image...${NC}"
 docker push ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${BACKEND_REPO}:latest
 
-cd ..
+cd ../scripts
 
 echo -e "${GREEN}✅ Backend build and push completed!${NC}"
 echo -e "${GREEN}Backend image: ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${BACKEND_REPO}:latest${NC}"

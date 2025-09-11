@@ -62,7 +62,19 @@ variable "google_maps_api_key" {
   sensitive   = true
 }
 
+variable "serpapi_key" {
+  description = "SerpAPI key for healthcare facilities"
+  type        = string
+  sensitive   = true
+}
+
 variable "aws_account_id" {
   description = "AWS Account ID"
   type        = string
+}
+
+variable "github_repositories" {
+  description = "List of GitHub repositories for OIDC access"
+  type        = list(string)
+  default     = []
 }

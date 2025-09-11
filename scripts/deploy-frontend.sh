@@ -16,8 +16,8 @@ NC='\033[0m' # No Color
 
 # Use custom domain for API - no parameters needed
 API_URL="https://api.auto-hive.site/api"
-S3_BUCKET=$(cd iac/environments/dev && terraform output -raw s3_bucket_name 2>/dev/null || echo "")
-CLOUDFRONT_ID=$(cd iac/environments/dev && terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+S3_BUCKET=$(cd ../iac/environments/dev && terraform output -raw s3_bucket_name 2>/dev/null || echo "")
+CLOUDFRONT_ID=$(cd ../iac/environments/dev && terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
 
 if [ -z "$S3_BUCKET" ]; then
     echo -e "${RED}❌ Error: Could not get S3 bucket name from Terraform outputs${NC}"
@@ -38,7 +38,7 @@ VITE_API_VERSION=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}
 VITE_GOOGLE_MAPS_API_KEY=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/frontend/google-maps-api-key" --with-decryption --profile ${PROFILE} --query 'Parameter.Value' --output text 2>/dev/null || echo "")
 
 # Build frontend with environment variables
-cd frontend
+cd ../frontend
 echo -e "${YELLOW}📦 Installing frontend dependencies...${NC}"
 npm install
 
@@ -63,7 +63,7 @@ if [ ! -z "$CLOUDFRONT_ID" ]; then
     aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_ID} --paths "/*" --profile ${PROFILE}
 fi
 
-cd ..
+cd ../scripts
 
 echo -e "${GREEN}✅ Frontend deployment completed!${NC}"
-echo -e "${GREEN}🌐 Frontend URL: https://$(cd iac/environments/dev && terraform output -raw cloudfront_domain_name)${NC}"
+echo -e "${GREEN}🌐 Frontend URL: https://$(cd ../iac/environments/dev && terraform output -raw cloudfront_domain_name)${NC}"

@@ -40,3 +40,8 @@ output "cloudfront_distribution_id" {
   description = "CloudFront distribution ID"
   value       = module.cloudfront.cloudfront_distribution_id
 }
+
+output "github_actions_role_arn" {
+  description = "ARN of the GitHub Actions IAM role for OIDC"
+  value       = module.iam.github_actions_role_arn
+}
