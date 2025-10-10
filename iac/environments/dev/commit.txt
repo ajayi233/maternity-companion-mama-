@@ -1,0 +1,357 @@
+diff --git a/README.md b/README.md
+index 6cce906..2a35f89 100644
+--- a/README.md
++++ b/README.md
+@@ -265,20 +265,35 @@ Production-ready AWS infrastructure for the MAMA platform built with Terraform f
+ 
+ - **Cloud Provider**: AWS
+ - **Infrastructure as Code**: Terraform
+-- **Container Orchestration**: ECS Fargate
+-- **Load Balancing**: Application Load Balancer
++- **Compute**: EC2 (t3.micro) with Elastic IP
++- **Configuration Management**: Ansible
++- **Container Orchestration**: Docker Compose
++- **Reverse Proxy**: Nginx with SSL termination
++- **SSL/TLS**: Let's Encrypt (Certbot)
+ - **CDN**: CloudFront
+ - **Secrets Management**: AWS Parameter Store
+ - **Monitoring**: CloudWatch
+ 
++### Cost Optimization
++
++- **Previous Setup**: ECS Fargate + ALB (~$35-45/month)
++- **Current Setup**: EC2 + Ansible (~$10-12/month)
++- **Savings**: ~$25-35/month (60-80% reduction)
++
+ ### Quick Start
+ 
+ **Get your infrastructure running in 30 minutes:**
+ 
+ 1. [**Prerequisites**](#prerequisites) - Install required tools
+ 2. [**Bootstrap**](#bootstrap-setup) - Initialize Terraform state
+-3. [**Deploy**](#deployment-phases) - Launch infrastructure
+-4. [**Verify**](#verification) - Test everything works
++3. [**Deploy Infrastructure**](#deployment-phases) - Launch EC2 infrastructure
++4. [**Configure with Ansible**](#ansible-setup) - Setup server configuration
++5. [**Verify**](#verification) - Test everything works
++
++### 📚 Documentation
++
++- **[DevOps README](devops/README.md)** - Quick reference and commands
++- **[Ansible Setup Guide](devops/ANSIBLE_SETUP_GUIDE.md)** - Complete configuration management
+ 
+ ### 🚀 Deployment Quick Reference
+ 
+@@ -496,6 +511,35 @@ terraform output
+ 
+ # Test endpoints
+ curl https://api.auto-hive.site/api/health  # Backend
++```
++
++### Ansible Setup
++
++After deploying the EC2 infrastructure, use Ansible for configuration management:
++
++```bash
++# Install Ansible
++pip install ansible
++
++# Setup server configuration
++cd scripts
++./ansible-deploy.sh setup
++
++# Deploy application updates
++./ansible-deploy.sh deploy
++
++# Check status
++./ansible-deploy.sh status
++```
++
++**Benefits of Ansible over user-data scripts:**
++- ✅ **Idempotent deployments** - Run multiple times safely
++- ✅ **Easy updates** - Deploy new versions with single command
++- ✅ **Environment consistency** - Same configuration every time
++- ✅ **Rollback capability** - Easy to revert changes
++- ✅ **Audit trail** - Track all configuration changes
++
++For complete Ansible documentation, see [devops/ANSIBLE_SETUP_GUIDE.md](devops/ANSIBLE_SETUP_GUIDE.md).
+ curl https://auto-hive.site                # Frontend
+ ```
+ 
+diff --git a/devops/README.md b/devops/README.md
+index a5c2b28..8e59f67 100644
+--- a/devops/README.md
++++ b/devops/README.md
+@@ -1,38 +1,105 @@
+-# DevOps Quick Reference
++# DevOps Infrastructure Management
+ 
+-This is a simplified reference for the DevOps/Cloud infrastructure. 
++This directory contains all DevOps and infrastructure management tools for the MAMA App.
+ 
+-**For complete documentation, see the main [README.md](../README.md#devopscloud) in the project root.**
++## 📁 Directory Structure
+ 
+-## Quick Commands
++```
++devops/
++├── ansible/                    # Configuration management
++│   ├── ansible.cfg            # Ansible configuration
++│   ├── requirements.yml       # Ansible collections
++│   ├── inventory/             # Server inventory
++│   ├── playbooks/             # Deployment playbooks
++│   └── roles/                 # Reusable Ansible roles
++├── README.md                  # This file
++└── ANSIBLE_SETUP_GUIDE.md     # Complete Ansible documentation
++```
++
++## 🚀 Quick Commands
+ 
++### Infrastructure Deployment
+ ```bash
+ # Bootstrap infrastructure
+-cd iac/state-bootstrap && terraform init && terraform apply
++cd ../iac/state-bootstrap && terraform init && terraform apply
++
++# Deploy EC2 infrastructure
++cd ../iac/environments/dev
++terraform init && terraform apply
++
++# Setup server with Ansible
++cd ../../scripts
++./ansible-deploy.sh setup
++```
+ 
+-# Deploy in phases
+-cd ../environments/dev
+-terraform init && terraform apply  # Foundation
+-# Uncomment modules one by one and apply
++### Application Deployment
++```bash
++# Deploy application updates
++./ansible-deploy.sh deploy
++
++# Check status
++./ansible-deploy.sh status
++
++# View logs
++./ansible-deploy.sh logs
++```
+ 
+-# Build and deploy
++### Build and Deploy
++```bash
++# Build and push Docker images
+ ./scripts/build-and-push.sh
++
++# Deploy frontend
+ ./scripts/deploy-frontend.sh
+ 
+ # Verify deployment
+-curl https://api.auto-hive.site/api/health
++curl https://api.auto-hive.site/health
+ ```
+ 
+-## Useful Commands
++## 🔧 DevOps Tools
++
++### **Terraform** (`../iac/`)
++- Infrastructure as Code
++- AWS resource provisioning
++- Environment management
++
++### **Ansible** (`ansible/`)
++- Configuration management
++- Application deployment
++- Server automation
++
++### **Docker**
++- Container orchestration
++- Application packaging
++- ECR integration
++
++## 📚 Documentation
++
++- **[Ansible Setup Guide](ANSIBLE_SETUP_GUIDE.md)** - Complete Ansible configuration management
++- **[Main README](../README.md#devopscloud)** - Full infrastructure setup instructions
++
++## 🛠️ Useful Commands
++
+ ```bash
+ # Get AWS Account ID
+ aws sts get-caller-identity --query Account --output text
+ 
+-# Get outputs
+-terraform output
++# Get Terraform outputs
++cd ../iac/environments/dev && terraform output
++
++# Check Ansible connectivity
++cd ansible && ansible mama_backend -m ping
++
++# View application logs
++cd ../scripts && ./ansible-deploy.sh logs
++```
++
++## 🎯 Architecture
+ 
+-# Check logs
+-aws logs tail /ecs/mama-app-dev --follow
++**Current Setup: EC2 + Ansible + Docker**
++```
++Frontend (CloudFront) → EC2 Instance → Nginx → Backend Container
++api.auto-hive.site → Elastic IP → EC2 → Docker Compose → Node.js App
+ ```
+ 
+-**See [main README](../README.md#devopscloud) for detailed setup instructions.**
+\ No newline at end of file
++**Cost Optimization**: ~$25-35/month savings compared to ECS + ALB setup.
+\ No newline at end of file
+diff --git a/iac/environments/dev/main.tf b/iac/environments/dev/main.tf
+index 2e9212c..6e49f9b 100644
+--- a/iac/environments/dev/main.tf
++++ b/iac/environments/dev/main.tf
+@@ -24,6 +24,7 @@ module "parameter_store" {
+      "bcrypt-rounds"                = "12"
+      "rate-limit-window-ms"         = "900000"
+      "rate-limit-max-requests"      = "100"
++     "api-rate-limit"               = "100"
+      "mnotify-sender-id"            = "MAMA AI APP"
+      "mnotify-base-url"             = "https://api.mnotify.com/api"
+      "sms-simulation-mode"          = "false"
+@@ -79,43 +80,29 @@ module "shared" {
+   availability_zones = var.availability_zones
+ }
+ 
+-# ALB
+-module "alb" {
+-  source = "../../modules/alb"
+-
+-  project_name      = var.project_name
+-  environment       = var.environment
+-  vpc_id            = module.shared.vpc_id
+-  public_subnet_ids = module.shared.public_subnet_ids
+-}
+-
+-# ECS with Spot instances
+-module "ecs" {
+-  source = "../../modules/ecs"
+-  project_name         = var.project_name
+-  environment          = var.environment
+-  region               = data.aws_region.current.name
+-  account_id           = data.aws_caller_identity.current.account_id
+-  vpc_id               = module.shared.vpc_id
+-  subnet_ids           = module.shared.public_subnet_ids
+-  execution_role_arn   = module.iam.ecs_task_execution_role_arn
+-  task_role_arn        = module.iam.ecs_task_role_arn
+-  backend_image        = var.backend_image
+-  backend_config       = ["jwt-expires-in", "jwt-refresh-expires-in", "bcrypt-rounds", "rate-limit-window-ms", "rate-limit-max-requests", "mnotify-sender-id", "mnotify-base-url", "sms-simulation-mode", "cors-origin", "password-reset-expires-minutes", "cookie-expires-in", "default-location"]
+-  backend_secrets      = ["mongodb-uri", "jwt-secret", "jwt-refresh-secret", "mnotify-api-key", "serpapi-key"]
+-  target_group_arn     = module.alb.target_group_arn
+-  alb_security_group_id = module.alb.alb_security_group_id
+-  alb_listener_arn     = module.alb.target_group_arn
++# EC2 Instance for Backend (replaces ECS + ALB)
++module "ec2" {
++  source = "../../modules/ec2"
++  
++  project_name    = var.project_name
++  environment     = var.environment
++  region          = data.aws_region.current.name
++  account_id      = data.aws_caller_identity.current.account_id
++  vpc_id          = module.shared.vpc_id
++  subnet_id       = module.shared.public_subnet_ids[0]
++  ami_id          = var.ami_id
++  instance_type   = var.instance_type
++  key_pair_name   = var.key_pair_name
+ 
+   depends_on = [module.parameter_store]
+ }
+ 
+-# # # CloudFront for frontend
++# CloudFront for frontend (no longer needs ALB DNS)
+ module "cloudfront" {
+   source = "../../modules/cloudfront"
+ 
+   project_name = var.project_name
+   environment  = var.environment
+-  alb_dns_name = module.alb.alb_dns_name
++  # alb_dns_name removed - frontend will connect directly to EC2 via api.auto-hive.site
+ }
+ 
+diff --git a/iac/environments/dev/outputs.tf b/iac/environments/dev/outputs.tf
+index 1e14b31..270a289 100644
+--- a/iac/environments/dev/outputs.tf
++++ b/iac/environments/dev/outputs.tf
+@@ -3,21 +3,25 @@ output "ecr_repository_url" {
+   value       = module.ecr.repository_url
+ }
+ 
+-# Uncomment after ALB module is deployed
+-output "alb_dns_name" {
+-  description = "ALB DNS name for backend API"
+-  value       = module.alb.alb_dns_name
++# EC2 outputs (replaces ALB/ECS)
++output "ec2_public_ip" {
++  description = "EC2 instance public IP"
++  value       = module.ec2.public_ip
++}
++
++output "ec2_elastic_ip" {
++  description = "Elastic IP address for backend"
++  value       = module.ec2.elastic_ip
+ }
+ 
+ output "backend_url" {
+   description = "Backend API URL"
+-  value       = "http://${module.alb.alb_dns_name}/api"
++  value       = "https://api.auto-hive.site"
+ }
+ 
+-# Uncomment after ECS module is deployed
+-output "ecs_cluster_name" {
+-  description = "ECS cluster name"
+-  value       = module.ecs.cluster_name
++output "ec2_instance_id" {
++  description = "EC2 instance ID"
++  value       = module.ec2.instance_id
+ }
+ 
+ # CloudFront outputs - uncomment after CloudFront module is deployed
+diff --git a/iac/environments/dev/variables.tf b/iac/environments/dev/variables.tf
+index 1fe8f36..2a72010 100644
+--- a/iac/environments/dev/variables.tf
++++ b/iac/environments/dev/variables.tf
+@@ -25,10 +25,7 @@ variable "availability_zones" {
+   type        = list(string)
+ }
+ 
+-variable "backend_image" {
+-  description = "Backend Docker image URI"
+-  type        = string
+-}
++# backend_image removed - Ansible handles Docker image configuration
+ 
+ variable "mongodb_uri" {
+   description = "MongoDB connection URI"
+@@ -78,3 +75,21 @@ variable "github_repositories" {
+   type        = list(string)
+   default     = []
+ }
++
++# EC2 Configuration Variables
++variable "ami_id" {
++  description = "AMI ID for EC2 instance"
++  type        = string
++}
++
++variable "instance_type" {
++  description = "EC2 instance type"
++  type        = string
++  default     = "t3.micro"
++}
++
++variable "key_pair_name" {
++  description = "EC2 Key Pair name for SSH access"
++  type        = string
++  default     = "mama-app-key"
++}

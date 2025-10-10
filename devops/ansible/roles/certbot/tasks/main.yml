@@ -1,0 +1,84 @@
+---
+# Certbot Installation and SSL Certificate Management
+- name: Install Certbot
+  apt:
+    name:
+      - certbot
+      - python3-certbot-nginx
+    state: present
+  tags: [certbot, install]
+
+- name: Create certbot renewal script
+  template:
+    src: renew-certs.sh.j2
+    dest: "{{ app_directory }}/renew-certs.sh"
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+  tags: [certbot, scripts]
+
+- name: Create SSL certificate (if not exists)
+  command: >
+    certbot certonly 
+    --webroot 
+    --webroot-path={{ app_directory }}/webroot 
+    --email {{ certbot_email }} 
+    --agree-tos 
+    --no-eff-email 
+    --non-interactive 
+    -d {{ app_domain }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ app_domain }}/fullchain.pem"
+  register: certbot_result
+  tags: [certbot, certificates]
+
+- name: Set up automatic certificate renewal
+  cron:
+    name: "Renew SSL certificates"
+    minute: "0"
+    hour: "3"
+    day: "1"
+    month: "*/2"
+    job: "{{ app_directory }}/renew-certs.sh"
+    user: root
+  tags: [certbot, cron]
+
+- name: Verify certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ app_domain }}/fullchain.pem"
+  register: cert_file
+  tags: [certbot, verify]
+
+- name: Update Nginx configuration with SSL (if certificate was created)
+  template:
+    src: ../../nginx/templates/mama-app.conf.j2
+    dest: /etc/nginx/sites-available/mama-app
+    backup: yes
+  vars:
+    ssl_certificates_exist: true
+  notify: restart nginx
+  when: certbot_result.changed or cert_file.stat.exists
+  tags: [certbot, nginx_update]
+
+- name: Display certificate information
+  debug:
+    msg: |
+      SSL Certificate Status:
+      - Certificate exists: {{ cert_file.stat.exists }}
+      - Domain: {{ app_domain }}
+      - Email: {{ certbot_email }}
+      - Renewal: Every 2 months at 3 AM
+  tags: [certbot, verify]
+
+- name: Check certificate expiration
+  command: openssl x509 -in "/etc/letsencrypt/live/{{ app_domain }}/fullchain.pem" -noout -dates
+  register: cert_dates
+  when: cert_file.stat.exists
+  changed_when: false
+  tags: [certbot, verify]
+
+- name: Display certificate expiration
+  debug:
+    msg: "Certificate expiration info: {{ cert_dates.stdout_lines }}"
+  when: cert_file.stat.exists
+  tags: [certbot, verify]

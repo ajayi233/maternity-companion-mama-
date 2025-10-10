@@ -1,0 +1,69 @@
+---
+# MAMA App Deployment Playbook
+- name: Deploy MAMA App to EC2
+  hosts: mama_backend
+  become: yes
+  gather_facts: yes
+
+  vars:
+    app_dir: "{{ app_directory }}"
+
+  tasks:
+    - name: Login to ECR
+      shell: aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}
+      become_user: ubuntu
+      tags: [deploy, ecr]
+
+    - name: Fetch latest secrets
+      shell: "{{ app_dir }}/fetch-secrets.sh"
+      become_user: ubuntu
+      environment:
+        PROJECT_NAME: "{{ project_name }}"
+        ENVIRONMENT: "{{ environment }}"
+        REGION: "{{ aws_region }}"
+      tags: [deploy, secrets]
+
+    - name: Pull latest Docker image
+      docker_image:
+        name: "{{ ecr_registry }}/{{ ecr_repository }}:latest"
+        source: pull
+      become_user: ubuntu
+      tags: [deploy, docker]
+
+    - name: Stop current services
+      shell: docker-compose down
+      args:
+        chdir: "{{ app_dir }}"
+      become_user: ubuntu
+      ignore_errors: yes
+      tags: [deploy, stop]
+
+    - name: Start services with new image
+      shell: docker-compose up -d
+      args:
+        chdir: "{{ app_dir }}"
+      become_user: ubuntu
+      tags: [deploy, start]
+
+    - name: Wait for backend to be ready
+      uri:
+        url: "http://localhost:5000/health"
+        method: GET
+        status_code: 200
+      retries: 30
+      delay: 2
+      tags: [deploy, health]
+
+    - name: Display deployment status
+      shell: docker-compose ps
+      args:
+        chdir: "{{ app_dir }}"
+      become_user: ubuntu
+      register: deployment_status
+      changed_when: false
+      tags: [deploy, status]
+
+    - name: Show deployment status
+      debug:
+        msg: "{{ deployment_status.stdout_lines }}"
+      tags: [deploy, status]

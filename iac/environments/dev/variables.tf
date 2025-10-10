@@ -25,10 +25,7 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "backend_image" {
-  description = "Backend Docker image URI"
-  type        = string
-}
+# backend_image removed - Ansible handles Docker image configuration
 
 variable "mongodb_uri" {
   description = "MongoDB connection URI"
@@ -77,4 +74,22 @@ variable "github_repositories" {
   description = "List of GitHub repositories for OIDC access"
   type        = list(string)
   default     = []
+}
+
+# EC2 Configuration Variables
+variable "ami_id" {
+  description = "AMI ID for EC2 instance"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "key_pair_name" {
+  description = "EC2 Key Pair name for SSH access"
+  type        = string
+  default     = "mama-app-key"
 }

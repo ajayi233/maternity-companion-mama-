@@ -1,0 +1,76 @@
+---
+# Main Ansible Playbook for MAMA App Infrastructure
+- name: Configure MAMA App Backend Server
+  hosts: mama_backend
+  become: yes
+  gather_facts: yes
+
+  vars:
+    app_dir: "{{ app_directory }}"
+    nginx_conf_dir: "/etc/nginx"
+
+  pre_tasks:
+    - name: Update system packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+      tags: [system, packages]
+
+    - name: Install required system packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - software-properties-common
+          - python3-pip
+          - jq
+          - unzip
+          - htop
+          - nano
+          - git
+        state: present
+      tags: [system, packages]
+
+  roles:
+    - role: docker
+      tags: [docker]
+
+    - role: aws_cli
+      tags: [aws]
+
+    - role: nginx
+      tags: [nginx]
+
+    - role: certbot
+      tags: [ssl, certbot]
+
+    - role: mama_app
+      tags: [app, deployment]
+
+  post_tasks:
+    - name: Ensure all services are running
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - docker
+        - nginx
+      tags: [services]
+
+    - name: Display deployment information
+      debug:
+        msg: |
+          ========================================
+          MAMA App Deployment Complete!
+          ========================================
+          Application URL: https://{{ app_domain }}
+          Application Directory: {{ app_dir }}
+          Docker Compose Status: Check with 'docker-compose ps'
+          SSL Certificate: Check with 'certbot certificates'
+          Nginx Status: systemctl status nginx
+          ========================================
+      tags: [info]

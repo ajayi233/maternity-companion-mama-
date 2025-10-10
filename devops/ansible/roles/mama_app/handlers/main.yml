@@ -1,0 +1,18 @@
+---
+# MAMA App Handlers
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  tags: [systemd]
+
+- name: enable mama-app service
+  systemd:
+    name: mama-app
+    enabled: yes
+  tags: [systemd]
+
+- name: restart mama-app service
+  systemd:
+    name: mama-app
+    state: restarted
+  tags: [app, restart]

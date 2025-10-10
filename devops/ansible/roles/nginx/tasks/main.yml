@@ -1,0 +1,99 @@
+---
+# Nginx Installation and Configuration
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  tags: [nginx, install]
+
+- name: Create application directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+  loop:
+    - "{{ app_directory }}"
+    - "{{ app_directory }}/logs"
+    - "{{ app_directory }}/webroot"
+  tags: [nginx, directories]
+
+- name: Create webroot index file
+  copy:
+    content: |
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>MAMA App - SSL Certificate Verification</title>
+      </head>
+      <body>
+          <h1>MAMA App - SSL Certificate Verification</h1>
+          <p>This is used for Let's Encrypt certificate validation.</p>
+      </body>
+      </html>
+    dest: "{{ app_directory }}/webroot/index.html"
+    owner: ubuntu
+    group: ubuntu
+    mode: "0644"
+  tags: [nginx, webroot]
+
+- name: Check if SSL certificates exist
+  stat:
+    path: "/etc/letsencrypt/live/{{ app_domain }}/fullchain.pem"
+  register: ssl_cert_check
+  tags: [nginx, ssl_check]
+
+- name: Set SSL certificates exist variable
+  set_fact:
+    ssl_certificates_exist: "{{ ssl_cert_check.stat.exists }}"
+  tags: [nginx, ssl_check]
+
+- name: Configure Nginx for MAMA App
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    backup: yes
+  notify: restart nginx
+  tags: [nginx, config]
+
+- name: Create Nginx site configuration
+  template:
+    src: mama-app.conf.j2
+    dest: /etc/nginx/sites-available/mama-app
+    backup: yes
+  notify: restart nginx
+  tags: [nginx, config]
+
+- name: Enable Nginx site
+  file:
+    src: /etc/nginx/sites-available/mama-app
+    dest: /etc/nginx/sites-enabled/mama-app
+    state: link
+  notify: restart nginx
+  tags: [nginx, config]
+
+- name: Remove default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+  tags: [nginx, config]
+
+- name: Test Nginx configuration
+  command: nginx -t
+  register: nginx_test
+  changed_when: false
+  tags: [nginx, test]
+
+- name: Start and enable Nginx
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+  tags: [nginx, service]
+
+- name: Display Nginx status
+  debug:
+    msg: "Nginx configuration test: {{ nginx_test.stdout_lines }}"
+  tags: [nginx, test]

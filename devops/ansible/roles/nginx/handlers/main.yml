@@ -1,0 +1,13 @@
+---
+# Nginx Handlers
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+  tags: [nginx, restart]
+
+- name: reload nginx
+  systemd:
+    name: nginx
+    state: reloaded
+  tags: [nginx, reload]

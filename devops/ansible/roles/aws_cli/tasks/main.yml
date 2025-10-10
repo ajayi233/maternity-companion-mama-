@@ -1,0 +1,58 @@
+---
+# AWS CLI Installation and Configuration
+- name: Install AWS CLI v2
+  get_url:
+    url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+    dest: /tmp/awscliv2.zip
+    mode: "0644"
+  tags: [aws, install]
+
+- name: Unzip AWS CLI
+  unarchive:
+    src: /tmp/awscliv2.zip
+    dest: /tmp/
+    remote_src: yes
+  tags: [aws, install]
+
+- name: Install AWS CLI
+  shell: /tmp/aws/install
+  args:
+    creates: /usr/local/bin/aws
+  tags: [aws, install]
+
+- name: Create AWS config directory
+  file:
+    path: "{{ ansible_env.HOME }}/.aws"
+    state: directory
+    mode: "0700"
+  tags: [aws, config]
+
+# AWS credentials not needed - using IAM role attached to EC2 instance
+# The EC2 instance automatically has AWS permissions via IAM role
+
+- name: Configure AWS region
+  template:
+    src: config.j2
+    dest: "{{ ansible_env.HOME }}/.aws/config"
+    mode: "0644"
+  tags: [aws, config]
+
+- name: Clean up AWS CLI installation files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/awscliv2.zip
+    - /tmp/aws
+  tags: [aws, cleanup]
+
+- name: Verify AWS CLI installation
+  command: aws --version
+  register: aws_version
+  changed_when: false
+  tags: [aws, verify]
+
+- name: Display AWS CLI version
+  debug:
+    msg: "AWS CLI Version: {{ aws_version.stdout }}"
+  tags: [aws, verify]

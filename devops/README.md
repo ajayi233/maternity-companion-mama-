@@ -1,38 +1,105 @@
-# DevOps Quick Reference
+# DevOps Infrastructure Management
 
-This is a simplified reference for the DevOps/Cloud infrastructure. 
+This directory contains all DevOps and infrastructure management tools for the MAMA App.
 
-**For complete documentation, see the main [README.md](../README.md#devopscloud) in the project root.**
+## 📁 Directory Structure
 
-## Quick Commands
+```
+devops/
+├── ansible/                    # Configuration management
+│   ├── ansible.cfg            # Ansible configuration
+│   ├── requirements.yml       # Ansible collections
+│   ├── inventory/             # Server inventory
+│   ├── playbooks/             # Deployment playbooks
+│   └── roles/                 # Reusable Ansible roles
+├── README.md                  # This file
+└── ANSIBLE_SETUP_GUIDE.md     # Complete Ansible documentation
+```
 
+## 🚀 Quick Commands
+
+### Infrastructure Deployment
 ```bash
 # Bootstrap infrastructure
-cd iac/state-bootstrap && terraform init && terraform apply
+cd ../iac/state-bootstrap && terraform init && terraform apply
 
-# Deploy in phases
-cd ../environments/dev
-terraform init && terraform apply  # Foundation
-# Uncomment modules one by one and apply
+# Deploy EC2 infrastructure
+cd ../iac/environments/dev
+terraform init && terraform apply
 
-# Build and deploy
+# Setup server with Ansible
+cd ../../scripts
+./ansible-deploy.sh setup
+```
+
+### Application Deployment
+```bash
+# Deploy application updates
+./ansible-deploy.sh deploy
+
+# Check status
+./ansible-deploy.sh status
+
+# View logs
+./ansible-deploy.sh logs
+```
+
+### Build and Deploy
+```bash
+# Build and push Docker images
 ./scripts/build-and-push.sh
+
+# Deploy frontend
 ./scripts/deploy-frontend.sh
 
 # Verify deployment
-curl https://api.auto-hive.site/api/health
+curl https://api.auto-hive.site/health
 ```
 
-## Useful Commands
+## 🔧 DevOps Tools
+
+### **Terraform** (`../iac/`)
+- Infrastructure as Code
+- AWS resource provisioning
+- Environment management
+
+### **Ansible** (`ansible/`)
+- Configuration management
+- Application deployment
+- Server automation
+
+### **Docker**
+- Container orchestration
+- Application packaging
+- ECR integration
+
+## 📚 Documentation
+
+- **[Ansible Setup Guide](ANSIBLE_SETUP_GUIDE.md)** - Complete Ansible configuration management
+- **[Main README](../README.md#devopscloud)** - Full infrastructure setup instructions
+
+## 🛠️ Useful Commands
+
 ```bash
 # Get AWS Account ID
 aws sts get-caller-identity --query Account --output text
 
-# Get outputs
-terraform output
+# Get Terraform outputs
+cd ../iac/environments/dev && terraform output
 
-# Check logs
-aws logs tail /ecs/mama-app-dev --follow
+# Check Ansible connectivity
+cd ansible && ansible mama_backend -m ping
+
+# View application logs
+cd ../scripts && ./ansible-deploy.sh logs
 ```
 
-**See [main README](../README.md#devopscloud) for detailed setup instructions.**
+## 🎯 Architecture
+
+**Current Setup: EC2 + Ansible + Docker**
+```
+Frontend (CloudFront) → EC2 Instance → Nginx → Backend Container
+api.auto-hive.site → Elastic IP → EC2 → Docker Compose → Node.js App
+```
+
+**Cost Optimization**: ~$25-35/month savings compared to ECS + ALB setup.

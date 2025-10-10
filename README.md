@@ -265,11 +265,20 @@ Production-ready AWS infrastructure for the MAMA platform built with Terraform f
 
 - **Cloud Provider**: AWS
 - **Infrastructure as Code**: Terraform
-- **Container Orchestration**: ECS Fargate
-- **Load Balancing**: Application Load Balancer
+- **Compute**: EC2 (t3.micro) with Elastic IP
+- **Configuration Management**: Ansible
+- **Container Orchestration**: Docker Compose
+- **Reverse Proxy**: Nginx with SSL termination
+- **SSL/TLS**: Let's Encrypt (Certbot)
 - **CDN**: CloudFront
 - **Secrets Management**: AWS Parameter Store
 - **Monitoring**: CloudWatch
+
+### Cost Optimization
+
+- **Previous Setup**: ECS Fargate + ALB (~$35-45/month)
+- **Current Setup**: EC2 + Ansible (~$10-12/month)
+- **Savings**: ~$25-35/month (60-80% reduction)
 
 ### Quick Start
 
@@ -277,8 +286,14 @@ Production-ready AWS infrastructure for the MAMA platform built with Terraform f
 
 1. [**Prerequisites**](#prerequisites) - Install required tools
 2. [**Bootstrap**](#bootstrap-setup) - Initialize Terraform state
-3. [**Deploy**](#deployment-phases) - Launch infrastructure
-4. [**Verify**](#verification) - Test everything works
+3. [**Deploy Infrastructure**](#deployment-phases) - Launch EC2 infrastructure
+4. [**Configure with Ansible**](#ansible-setup) - Setup server configuration
+5. [**Verify**](#verification) - Test everything works
+
+### 📚 Documentation
+
+- **[DevOps README](devops/README.md)** - Quick reference and commands
+- **[Ansible Setup Guide](devops/ANSIBLE_SETUP_GUIDE.md)** - Complete configuration management
 
 ### 🚀 Deployment Quick Reference
 
@@ -496,6 +511,35 @@ terraform output
 
 # Test endpoints
 curl https://api.auto-hive.site/api/health  # Backend
+```
+
+### Ansible Setup
+
+After deploying the EC2 infrastructure, use Ansible for configuration management:
+
+```bash
+# Install Ansible
+pip install ansible
+
+# Setup server configuration
+cd scripts
+./ansible-deploy.sh setup
+
+# Deploy application updates
+./ansible-deploy.sh deploy
+
+# Check status
+./ansible-deploy.sh status
+```
+
+**Benefits of Ansible over user-data scripts:**
+- ✅ **Idempotent deployments** - Run multiple times safely
+- ✅ **Easy updates** - Deploy new versions with single command
+- ✅ **Environment consistency** - Same configuration every time
+- ✅ **Rollback capability** - Easy to revert changes
+- ✅ **Audit trail** - Track all configuration changes
+
+For complete Ansible documentation, see [devops/ANSIBLE_SETUP_GUIDE.md](devops/ANSIBLE_SETUP_GUIDE.md).
 curl https://auto-hive.site                # Frontend
 ```
 

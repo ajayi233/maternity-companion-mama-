@@ -1,0 +1,88 @@
+---
+# MAMA App Deployment and Configuration
+- name: Create application environment file
+  template:
+    src: app.env.j2
+    dest: "{{ app_directory }}/.env"
+    owner: ubuntu
+    group: ubuntu
+    mode: "0600"
+  tags: [app, config]
+
+- name: Create secrets fetcher script
+  template:
+    src: fetch-secrets.sh.j2
+    dest: "{{ app_directory }}/fetch-secrets.sh"
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+  tags: [app, scripts]
+
+- name: Create Docker Compose configuration
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ app_directory }}/docker-compose.yml"
+    owner: ubuntu
+    group: ubuntu
+    mode: "0644"
+  tags: [app, config]
+
+- name: Create application startup script
+  template:
+    src: startup.sh.j2
+    dest: "{{ app_directory }}/startup.sh"
+    owner: ubuntu
+    group: ubuntu
+    mode: "0755"
+  tags: [app, scripts]
+
+# Systemd service removed - using Docker Compose with restart: unless-stopped instead
+
+- name: Login to ECR
+  shell: aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}
+  become_user: ubuntu
+  tags: [app, ecr]
+
+- name: Fetch secrets from Parameter Store
+  shell: "{{ app_directory }}/fetch-secrets.sh"
+  become_user: ubuntu
+  tags: [app, secrets]
+
+- name: Pull latest Docker image
+  docker_image:
+    name: "{{ ecr_registry }}/{{ ecr_repository }}:latest"
+    source: pull
+  become_user: ubuntu
+  tags: [app, docker]
+
+- name: Start MAMA app services
+  docker_compose:
+    project_src: "{{ app_directory }}"
+    state: present
+    pull: no
+    recreate: always
+  become_user: ubuntu
+  tags: [app, startup]
+
+- name: Wait for backend to be ready
+  uri:
+    url: "http://localhost:5000/health"
+    method: GET
+    status_code: 200
+  retries: 30
+  delay: 2
+  tags: [app, health]
+
+- name: Display application status
+  shell: docker-compose ps
+  args:
+    chdir: "{{ app_directory }}"
+  become_user: ubuntu
+  register: app_status
+  changed_when: false
+  tags: [app, status]
+
+- name: Show application status
+  debug:
+    msg: "{{ app_status.stdout_lines }}"
+  tags: [app, status]

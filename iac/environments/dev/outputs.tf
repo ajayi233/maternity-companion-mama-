@@ -3,21 +3,25 @@ output "ecr_repository_url" {
   value       = module.ecr.repository_url
 }
 
-# Uncomment after ALB module is deployed
-output "alb_dns_name" {
-  description = "ALB DNS name for backend API"
-  value       = module.alb.alb_dns_name
+# EC2 outputs (replaces ALB/ECS)
+output "ec2_public_ip" {
+  description = "EC2 instance public IP"
+  value       = module.ec2.public_ip
+}
+
+output "ec2_elastic_ip" {
+  description = "Elastic IP address for backend"
+  value       = module.ec2.elastic_ip
 }
 
 output "backend_url" {
   description = "Backend API URL"
-  value       = "http://${module.alb.alb_dns_name}/api"
+  value       = "https://api.auto-hive.site"
 }
 
-# Uncomment after ECS module is deployed
-output "ecs_cluster_name" {
-  description = "ECS cluster name"
-  value       = module.ecs.cluster_name
+output "ec2_instance_id" {
+  description = "EC2 instance ID"
+  value       = module.ec2.instance_id
 }
 
 # CloudFront outputs - uncomment after CloudFront module is deployed

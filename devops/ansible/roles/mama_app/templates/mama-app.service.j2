@@ -1,0 +1,20 @@
+[Unit]
+Description=MAMA App Backend
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory={{ app_directory }}
+ExecStart={{ app_directory }}/startup.sh
+TimeoutStartSec=300
+User=ubuntu
+Group=ubuntu
+
+# Environment variables
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/home/ubuntu
+
+[Install]
+WantedBy=multi-user.target
