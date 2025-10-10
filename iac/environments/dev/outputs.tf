@@ -20,7 +20,7 @@ output "ecs_cluster_name" {
   value       = module.ecs.cluster_name
 }
 
-# CloudFront outputs
+# CloudFront outputs - uncomment after CloudFront module is deployed
 output "frontend_url" {
   description = "Frontend CloudFront URL"
   value       = "https://${module.cloudfront.cloudfront_domain_name}"
@@ -36,10 +36,10 @@ output "s3_bucket_name" {
   value       = module.cloudfront.s3_bucket_name
 }
 
-output "cloudfront_distribution_id" {
-  description = "CloudFront distribution ID"
-  value       = module.cloudfront.cloudfront_distribution_id
-}
+# output "cloudfront_distribution_id" {
+#   description = "CloudFront distribution ID"
+#   value       = module.cloudfront.cloudfront_distribution_id
+# }
 
 output "github_actions_role_arn" {
   description = "ARN of the GitHub Actions IAM role for OIDC"

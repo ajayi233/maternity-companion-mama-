@@ -14,39 +14,45 @@ interface HomepageResponse {
   };
 }
 
-const HOMEPAGE_API_URL = 'https://oxbgdezcxzrkuxo2vqunbuttd40tlqin.lambda-url.us-west-2.on.aws/';
+const HOMEPAGE_API_URL =
+  "https://3rvb3irkgfdffgcjbfh3jzqdgi0qzxzc.lambda-url.eu-west-1.on.aws/";
 
-export const getHomepageInsights = async (dueDate: string): Promise<HomepageResponse> => {
+export const getHomepageInsights = async (
+  dueDate: string
+): Promise<HomepageResponse> => {
   try {
     const due = new Date(dueDate);
     const payload: HomepageRequest = {
       due_month: due.getMonth() + 1, // JavaScript months are 0-indexed
-      due_year: due.getFullYear()
+      due_year: due.getFullYear(),
     };
 
-    console.log('Homepage API - Sending payload:', payload);
+    console.log("Homepage API - Sending payload:", payload);
 
     const response = await fetch(HOMEPAGE_API_URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      throw new Error(`Homepage API request failed: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Homepage API request failed: ${response.status} ${response.statusText}`
+      );
     }
 
     const data = await response.json();
-    console.log('Homepage API - Response:', data);
+    console.log("Homepage API - Response:", data);
 
     // Parse the body if it's a string (Lambda response format)
-    const insights = typeof data.body === 'string' ? JSON.parse(data.body) : data;
-    
+    const insights =
+      typeof data.body === "string" ? JSON.parse(data.body) : data;
+
     return insights;
   } catch (error) {
-    console.error('Homepage API error:', error);
+    console.error("Homepage API error:", error);
     throw error;
   }
 };

@@ -25,3 +25,5 @@ Allow: /
 
 # Sitemap location
 Sitemap: https://mama-health-ghana.com/sitemap.xml
+
+

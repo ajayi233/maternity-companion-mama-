@@ -19,11 +19,11 @@ MAMA is a comprehensive maternal health companion application designed to suppor
 
 ### Technology Stack
 
-| Component | Technology | Documentation |
-|-----------|------------|---------------|
-| **Frontend** | React 18 + TypeScript + Vite | [Frontend Guide](#frontendreact) |
-| **Backend** | Node.js 18 + Express + MongoDB | [Backend Guide](#backendexpress-mongoose) |
-| **Infrastructure** | AWS + Terraform | [DevOps Guide](#devopscloud) |
+| Component          | Technology                     | Documentation                             |
+| ------------------ | ------------------------------ | ----------------------------------------- |
+| **Frontend**       | React 18 + TypeScript + Vite   | [Frontend Guide](#frontendreact)          |
+| **Backend**        | Node.js 18 + Express + MongoDB | [Backend Guide](#backendexpress-mongoose) |
+| **Infrastructure** | AWS + Terraform                | [DevOps Guide](#devopscloud)              |
 
 ### Quick Start
 
@@ -39,9 +39,11 @@ Choose your development area:
 ## Frontend/React
 
 ### Overview
+
 Modern React application built with TypeScript, Vite, and Tailwind CSS for the MAMA platform frontend.
 
 ### Tech Stack
+
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS + shadcn/ui components
@@ -58,6 +60,7 @@ npm run dev
 ```
 
 ### Project Structure
+
 ```
 frontend/
 ├── src/
@@ -76,12 +79,14 @@ frontend/
 ### Configuration
 
 **Frontend Environment (.env)**
+
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
 VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
 ```
 
 ### Key Features
+
 - **Responsive Design**: Mobile-first approach for Ghana's mobile-heavy market
 - **AI Chat Interface**: Real-time chat with maternal health AI assistant
 - **Pregnancy Tracking**: Week-by-week pregnancy progress monitoring
@@ -90,6 +95,7 @@ VITE_GOOGLE_MAPS_API_KEY=your_google_maps_key
 - **Multilingual Support**: English and local Ghanaian languages
 
 ### Development Commands
+
 ```bash
 # Development server
 npm run dev
@@ -111,6 +117,7 @@ npm run test
 ```
 
 ### Component Guidelines
+
 - Use TypeScript for all components
 - Follow shadcn/ui component patterns
 - Implement proper error boundaries
@@ -122,9 +129,11 @@ npm run test
 ## Backend/Express-Mongoose
 
 ### Overview
+
 RESTful API server built with Node.js, Express, and MongoDB for the MAMA platform backend.
 
 ### Tech Stack
+
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js
 - **Database**: MongoDB with Mongoose ODM
@@ -144,6 +153,7 @@ npm run dev
 ```
 
 ### Project Structure
+
 ```
 backend/
 ├── src/
@@ -159,19 +169,20 @@ backend/
 
 ### API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | User registration |
-| POST | `/api/auth/login` | User login |
-| GET | `/api/auth/profile` | Get user profile |
-| POST | `/api/pregnancy/track` | Track pregnancy progress |
-| GET | `/api/clinics/nearby` | Find nearby clinics |
-| POST | `/api/emergency/alert` | Send emergency alert |
-| POST | `/api/chat/message` | AI chat interaction |
+| Method | Endpoint               | Description              |
+| ------ | ---------------------- | ------------------------ |
+| POST   | `/api/auth/register`   | User registration        |
+| POST   | `/api/auth/login`      | User login               |
+| GET    | `/api/auth/profile`    | Get user profile         |
+| POST   | `/api/pregnancy/track` | Track pregnancy progress |
+| GET    | `/api/clinics/nearby`  | Find nearby clinics      |
+| POST   | `/api/emergency/alert` | Send emergency alert     |
+| POST   | `/api/chat/message`    | AI chat interaction      |
 
 ### Configuration
 
 **Backend Environment (.env)**
+
 ```env
 # Database
 MONGODB_URI=mongodb://localhost:27017/mama-app
@@ -215,6 +226,7 @@ npm audit
 ```
 
 ### Key Features
+
 - **Authentication**: JWT-based auth with refresh tokens
 - **User Management**: Profile management and preferences
 - **Pregnancy Tracking**: Week-by-week progress monitoring
@@ -224,6 +236,7 @@ npm audit
 - **Clinic Management**: Healthcare facility information and booking
 
 ### Database Models
+
 - **User**: User profiles and authentication
 - **Pregnancy**: Pregnancy tracking and milestones
 - **ChatMessage**: AI chat conversation history
@@ -232,6 +245,7 @@ npm audit
 - **Reminder**: Appointment and medication reminders
 
 ### Security Features
+
 - Password hashing with bcrypt
 - JWT token authentication
 - Rate limiting and request validation
@@ -244,9 +258,11 @@ npm audit
 ## DevOps/Cloud
 
 ### Overview
+
 Production-ready AWS infrastructure for the MAMA platform built with Terraform following industry best practices for healthcare applications.
 
 ### Infrastructure Stack
+
 - **Cloud Provider**: AWS
 - **Infrastructure as Code**: Terraform
 - **Container Orchestration**: ECS Fargate
@@ -264,15 +280,28 @@ Production-ready AWS infrastructure for the MAMA platform built with Terraform f
 3. [**Deploy**](#deployment-phases) - Launch infrastructure
 4. [**Verify**](#verification) - Test everything works
 
+### 🚀 Deployment Quick Reference
+
+| Phase       | Duration | What to Uncomment                          | Expected Resources                            |
+| ----------- | -------- | ------------------------------------------ | --------------------------------------------- |
+| **Phase 1** | 15 min   | Basic modules only                         | 48 resources (VPC, IAM, ECR, Parameter Store) |
+| **Phase 2** | 5 min    | `module "alb"` + ALB outputs               | ALB + SSL certificate                         |
+| **Phase 3** | 15 min   | `module "ecs"` + ECS outputs               | ECS cluster + backend service                 |
+| **Phase 4** | 10 min   | `module "cloudfront"` + CloudFront outputs | S3 + CloudFront distribution                  |
+| **Phase 5** | 5 min    | Update IAM dependencies                    | Complete infrastructure                       |
+
+> **💡 Pro Tip**: Always run `terraform plan` before `terraform apply` to catch issues early!
+
 ### Prerequisites
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| **Terraform** | ≥ 1.0 | Infrastructure provisioning |
-| **AWS CLI** | ≥ 2.0 | AWS service interaction |
-| **Docker** | ≥ 20.0 | Container building |
+| Tool          | Version | Purpose                     |
+| ------------- | ------- | --------------------------- |
+| **Terraform** | ≥ 1.0   | Infrastructure provisioning |
+| **AWS CLI**   | ≥ 2.0   | AWS service interaction     |
+| **Docker**    | ≥ 20.0  | Container building          |
 
 **Installation:**
+
 ```bash
 # macOS
 brew install terraform awscli docker
@@ -284,12 +313,14 @@ sudo apt-get update && sudo apt-get install terraform
 ```
 
 **AWS Configuration:**
+
 ```bash
 aws configure
 # Enter your AWS credentials and region
 ```
 
 ### Project Structure
+
 ```
 iac/
 ├── environments/
@@ -319,63 +350,177 @@ terraform apply -auto-approve
 
 ### Deployment Phases
 
-#### Phase 1: Foundation (10 minutes)
+> **⚠️ Important**: Deploy modules in the correct sequence to avoid dependency issues.
+
+#### Phase 1: Basic Infrastructure (15 minutes)
+
+**Deploy foundational components first:**
+
 ```bash
 cd ../environments/dev
 
-# Comment out dependent modules in main.tf:
-# module "alb", module "ecs", module "cloudfront"
+# 1. Ensure only basic modules are uncommented in main.tf:
+# ✅ module "parameter_store"
+# ✅ module "iam"
+# ✅ module "ecr"
+# ✅ module "shared"
+# ❌ module "alb" (commented out)
+# ❌ module "ecs" (commented out)
+# ❌ module "cloudfront" (commented out)
 
+# 2. Deploy basic infrastructure
 terraform init
-terraform apply
+terraform plan
+terraform apply -auto-approve
 ```
+
+**Expected Output:**
+
+- ✅ 48 resources created
+- ✅ ECR repository: `615299752577.dkr.ecr.eu-west-1.amazonaws.com/mama-app-dev-backend`
+- ✅ GitHub Actions role: `arn:aws:iam::615299752577:role/mama-app-dev-github-actions-role`
+- ✅ VPC, subnets, IAM roles, Parameter Store configured
 
 #### Phase 2: Load Balancer (5 minutes)
+
+**Add Application Load Balancer:**
+
 ```bash
-# Uncomment module "alb" in main.tf
-terraform apply
+# 1. Uncomment ALB module in main.tf:
+# module "alb" {
+#   source = "../../modules/alb"
+#   ...
+# }
+
+# 2. Uncomment ALB outputs in outputs.tf:
+# output "alb_dns_name" { ... }
+# output "backend_url" { ... }
+
+# 3. Deploy ALB
+terraform plan
+terraform apply -auto-approve
 ```
 
-#### Phase 3: Backend Application (10 minutes)
+**Expected Output:**
+
+- ✅ ALB created with SSL certificate
+- ✅ Target group configured
+- ✅ Backend URL available
+
+#### Phase 3: Backend Application (15 minutes)
+
+**Deploy ECS service with backend:**
+
 ```bash
-# Build and push backend image
+# 1. Build and push backend Docker image
 cd ../../../scripts
 ./build-and-push.sh
 
-# Update terraform.tfvars with image URI
-# Uncomment module "ecs" in main.tf
+# 2. Update terraform.tfvars with the new image URI:
+# backend_image = "615299752577.dkr.ecr.eu-west-1.amazonaws.com/mama-app-dev-backend:latest"
+
+# 3. Uncomment ECS module in main.tf:
+# module "ecs" {
+#   source = "../../modules/ecs"
+#   ...
+# }
+
+# 4. Uncomment ECS outputs in outputs.tf:
+# output "ecs_cluster_name" { ... }
+
+# 5. Deploy ECS service
 cd ../iac/environments/dev
-terraform apply
+terraform plan
+terraform apply -auto-approve
 ```
 
-#### Phase 4: Frontend Application (5 minutes)
-```bash
-# Uncomment module "cloudfront" in main.tf
-terraform apply
+**Expected Output:**
 
-# Deploy frontend
+- ✅ ECS cluster and service created
+- ✅ Backend running on ECS Fargate
+- ✅ Health checks passing
+- ✅ Backend API accessible via ALB
+
+#### Phase 4: Frontend Application (10 minutes)
+
+**Deploy CloudFront and S3 for frontend:**
+
+```bash
+# 1. Uncomment CloudFront module in main.tf:
+# module "cloudfront" {
+#   source = "../../modules/cloudfront"
+#   ...
+# }
+
+# 2. Uncomment CloudFront outputs in outputs.tf:
+# output "frontend_url" { ... }
+# output "cloudfront_domain_name" { ... }
+# output "s3_bucket_name" { ... }
+# output "cloudfront_distribution_id" { ... }
+
+# 3. Deploy CloudFront
+terraform plan
+terraform apply -auto-approve
+
+# 4. Deploy frontend to S3
 cd ../../../scripts
 ./deploy-frontend.sh
+```
+
+**Expected Output:**
+
+- ✅ S3 bucket for frontend static files
+- ✅ CloudFront distribution created
+- ✅ Frontend accessible via CloudFront URL
+- ✅ SSL certificate configured
+
+#### Phase 5: Update IAM Dependencies (5 minutes)
+
+**Connect IAM to CloudFront:**
+
+```bash
+# 1. Update IAM module in main.tf to use CloudFront bucket:
+# frontend_bucket_arn = module.cloudfront.s3_bucket_arn
+# depends_on = [module.cloudfront]
+
+# 2. Apply the IAM policy updates
+terraform plan
+terraform apply -auto-approve
+```
+
+**Final Verification:**
+
+```bash
+# Check all outputs
+terraform output
+
+# Test endpoints
+curl https://api.auto-hive.site/api/health  # Backend
+curl https://auto-hive.site                # Frontend
 ```
 
 ### Infrastructure Components
 
 **ECS (Elastic Container Service)**
+
 - Serverless container orchestration
 - Auto-scaling based on demand
 - Health checks and automatic recovery
 
 **ALB (Application Load Balancer)**
+
 - HTTP/HTTPS load balancing
 - SSL termination with ACM certificates
 - Health checks for backend services
 
 **CloudFront (CDN)**
+
 - Global content delivery
 - SSL certificate for custom domain
 - Caching optimization for SPA
 
 **Parameter Store**
+
 - Secure configuration management
 - Encrypted secrets storage
 - Environment-specific values
@@ -383,6 +528,7 @@ cd ../../../scripts
 ### Configuration
 
 **Required Secrets:**
+
 ```bash
 # In terraform.tfvars
 mongodb_uri = "your-mongodb-atlas-uri"
@@ -395,23 +541,76 @@ google_maps_api_key = "your-maps-key"
 ### Monitoring & Operations
 
 **Health Checks:**
+
 - Backend: `https://api.auto-hive.site/api/health`
 - Frontend: `https://auto-hive.site`
 
 **CloudWatch Logs:**
+
 - Application logs: `/ecs/mama-app-dev`
 - Access logs: ALB access logs in S3
 
 **Metrics:**
+
 - ECS service CPU/memory utilization
 - ALB request count and latency
 - CloudFront cache hit ratio
 
 ### Troubleshooting
 
+**Deployment Phase Issues:**
+
+_Phase 1 - Basic Infrastructure Fails:_
+
+```bash
+# Check if all required variables are set
+terraform plan
+
+# Verify AWS credentials
+aws sts get-caller-identity
+
+# Check for resource conflicts
+terraform state list
+```
+
+_Phase 2 - ALB Module Errors:_
+
+```bash
+# Ensure VPC and subnets exist first
+terraform output | grep vpc_id
+terraform output | grep subnet
+
+# Check ALB module dependencies
+terraform plan -target=module.alb
+```
+
+_Phase 3 - ECS Service Won't Start:_
+
+```bash
+# Check ECS task logs
+aws logs tail /ecs/mama-app-dev --follow
+
+# Verify container image exists
+aws ecr describe-images --repository-name mama-app-dev-backend
+
+# Check service status
+aws ecs describe-services --cluster mama-app-dev --services mama-app-dev-backend
+```
+
+_Phase 4 - CloudFront Issues:_
+
+```bash
+# Check S3 bucket exists
+aws s3 ls | grep mama-app-dev
+
+# Verify CloudFront distribution
+aws cloudfront list-distributions --query 'DistributionList.Items[?Comment==`mama-app-dev-frontend`]'
+```
+
 **Common Issues:**
 
-*ECS Task Fails to Start:*
+_ECS Task Fails to Start:_
+
 ```bash
 # Check logs
 aws logs tail /ecs/mama-app-dev --follow
@@ -420,7 +619,8 @@ aws logs tail /ecs/mama-app-dev --follow
 aws ecs describe-services --cluster mama-app-dev --services mama-app-dev-backend
 ```
 
-*Application Not Accessible:*
+_Application Not Accessible:_
+
 ```bash
 # Check target health
 aws elbv2 describe-target-health --target-group-arn <arn>
@@ -429,19 +629,31 @@ aws elbv2 describe-target-health --target-group-arn <arn>
 curl https://api.auto-hive.site/api/health
 ```
 
+_Module Dependency Errors:_
+
+```bash
+# If you get "undeclared module" errors, check main.tf:
+# - Ensure modules are uncommented in correct order
+# - Check outputs.tf for references to undeclared modules
+# - Run terraform plan to see dependency issues
+```
+
 ### Security
 
 **Network Security:**
+
 - VPC with private subnets
 - Security groups with least privilege
 - No direct internet access to backend
 
 **Data Protection:**
+
 - All data encrypted in transit (TLS 1.2+)
 - Secrets encrypted at rest in Parameter Store
 - MongoDB Atlas encryption enabled
 
 **Access Control:**
+
 - JWT-based authentication
 - Role-based authorization
 - API rate limiting
@@ -462,6 +674,7 @@ curl https://api.auto-hive.site/api/health
 ### Code Standards
 
 **All Areas:**
+
 - Use consistent formatting and linting
 - Write comprehensive tests
 - Document new features
@@ -471,21 +684,26 @@ curl https://api.auto-hive.site/api/health
 **Adding New Sections:**
 To add a new development area (e.g., Mobile/React Native), follow this pattern:
 
-```markdown
+````markdown
 ## Mobile/React Native
 
 ### Overview
+
 Brief description of the mobile application component.
 
 ### Tech Stack
+
 - List of technologies used
 
 ### Quick Start
+
 ```bash
 # Setup commands
 ```
+````
 
 ### Project Structure
+
 ```
 mobile/
 ├── src/
@@ -493,27 +711,31 @@ mobile/
 ```
 
 ### Development Commands
+
 ```bash
 # Common commands
 ```
 
 ### Key Features
+
 - Feature list
 
 ### Configuration
-Environment and setup details
 
+Environment and setup details
 
 ---
 
 ## Support
 
 **Documentation:**
+
 - [AWS Documentation](https://docs.aws.amazon.com/)
 - [React Documentation](https://reactjs.org/docs/)
 - [Node.js Documentation](https://nodejs.org/docs/)
 
 **Getting Help:**
+
 - Create detailed issue reports
 - Include logs and error messages
 - Specify which component (Frontend/Backend/Infrastructure)
@@ -523,5 +745,4 @@ Environment and setup details
 
 **Built with ❤️ for maternal health in Ghana**
 
-*Empowering expectant mothers with AI-powered health guidance and support.*
-
+_Empowering expectant mothers with AI-powered health guidance and support._

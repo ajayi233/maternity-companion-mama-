@@ -198,6 +198,7 @@ resource "aws_iam_policy" "github_actions_ecs_policy" {
 
 # S3 and CloudFront Policy for GitHub Actions
 resource "aws_iam_policy" "github_actions_frontend_policy" {
+  count = var.frontend_bucket_arn != "" ? 1 : 0
   name = "${var.project_name}-${var.environment}-github-actions-frontend-policy"
   
   policy = jsonencode({
@@ -245,8 +246,9 @@ resource "aws_iam_role_policy_attachment" "github_actions_ecs_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "github_actions_frontend_policy" {
+  count      = var.frontend_bucket_arn != "" ? 1 : 0
   role       = aws_iam_role.github_actions_role.name
-  policy_arn = aws_iam_policy.github_actions_frontend_policy.arn
+  policy_arn = aws_iam_policy.github_actions_frontend_policy[0].arn
 }
 
 # Policy for Parameter Store access

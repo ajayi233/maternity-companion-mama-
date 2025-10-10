@@ -24,7 +24,7 @@ module "parameter_store" {
      "bcrypt-rounds"                = "12"
      "rate-limit-window-ms"         = "900000"
      "rate-limit-max-requests"      = "100"
-     "mnotify-sender-id"            = "mama-app"
+     "mnotify-sender-id"            = "MAMA AI APP"
      "mnotify-base-url"             = "https://api.mnotify.com/api"
      "sms-simulation-mode"          = "false"
      "cors-origin"                  = "https://auto-hive.site"
@@ -55,9 +55,9 @@ module "iam" {
   region              = data.aws_region.current.name
   account_id          = data.aws_caller_identity.current.account_id
   github_repositories = var.github_repositories
-  frontend_bucket_arn = module.cloudfront.s3_bucket_arn
+  # frontend_bucket_arn = module.cloudfront.s3_bucket_arn
 
-  depends_on = [module.cloudfront]
+  # depends_on = [module.cloudfront]
 }
 
 # ECR repository
@@ -89,7 +89,7 @@ module "alb" {
   public_subnet_ids = module.shared.public_subnet_ids
 }
 
-# # ECS with Spot instances
+# ECS with Spot instances
 module "ecs" {
   source = "../../modules/ecs"
   project_name         = var.project_name
@@ -110,7 +110,7 @@ module "ecs" {
   depends_on = [module.parameter_store]
 }
 
-# # CloudFront for frontend
+# # # CloudFront for frontend
 module "cloudfront" {
   source = "../../modules/cloudfront"
 

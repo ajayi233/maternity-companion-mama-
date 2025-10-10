@@ -22,7 +22,7 @@ jobs:
       with:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: GitHubActions-Frontend
-        aws-region: us-west-2
+        aws-region: eu-west-1
     
     - name: Setup Node.js
       uses: actions/setup-node@v4

@@ -27,4 +27,5 @@ variable "github_repositories" {
 variable "frontend_bucket_arn" {
   description = "ARN of the frontend S3 bucket"
   type        = string
+  default     = ""
 }

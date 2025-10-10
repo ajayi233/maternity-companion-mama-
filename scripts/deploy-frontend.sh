@@ -5,7 +5,7 @@ set -e
 # Configuration
 PROJECT_NAME="mama-app"
 ENVIRONMENT="dev"
-REGION="us-west-2"
+REGION="eu-west-1"
 PROFILE="cloud-crew-profile"
 
 # Colors for output

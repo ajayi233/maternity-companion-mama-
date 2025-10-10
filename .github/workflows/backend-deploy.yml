@@ -22,7 +22,7 @@ jobs:
       with:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: GitHubActions-Backend
-        aws-region: us-west-2
+        aws-region: eu-west-1
     
     - name: Login to Amazon ECR
       id: login-ecr
@@ -46,4 +46,4 @@ jobs:
           --cluster mama-app-dev-cluster \
           --service mama-app-dev-backend \
           --force-new-deployment \
-          --region us-west-2
+          --region eu-west-1
