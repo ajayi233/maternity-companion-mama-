@@ -1,0 +1,62 @@
+[1mProject:[22m ajayi233/maternity-companion-mama-/iac/environments/dev/tfplan.binary
+
+ [4mName[24m                                                                                         [4mMonthly Qty[24m  [4mUnit[24m                    [4mMonthly Cost[24m   
+                                                                                                                                                  
+ [1mmodule.ec2.aws_instance.backend[22m                                                                                                                  
+ [2m├─[22m Instance usage (Linux/UNIX, on-demand, t3.micro)                                                  730  hours                          $8.32   
+ [2m└─[22m root_block_device                                                                                                                             
+ [2m   └─[22m Storage (general purpose SSD, gp3)                                                              20  GB                             $1.76   
+                                                                                                                                                  
+ [1mmodule.cloudfront.aws_cloudfront_distribution.frontend[22m                                                                                           
+ [2m├─[22m Invalidation requests (first 1k)                                                    Monthly cost depends on usage: $0.00 per paths            
+ [2m└─[22m US, Mexico, Canada                                                                                                                            
+ [2m   ├─[22m Data transfer out to internet (first 10TB)                                       Monthly cost depends on usage: $0.085 per GB              
+ [2m   ├─[22m Data transfer out to origin                                                      Monthly cost depends on usage: $0.02 per GB               
+ [2m   ├─[22m HTTP requests                                                                    Monthly cost depends on usage: $0.0075 per 10k requests   
+ [2m   └─[22m HTTPS requests                                                                   Monthly cost depends on usage: $0.01 per 10k requests     
+                                                                                                                                                  
+ [1mmodule.cloudfront.aws_route53_record.cloudfront_cert_validation["auto-hive.site"][22m                                                                
+ [2m├─[22m Standard queries (first 1B)                                                         Monthly cost depends on usage: $0.40 per 1M queries       
+ [2m├─[22m Latency based routing queries (first 1B)                                            Monthly cost depends on usage: $0.60 per 1M queries       
+ [2m└─[22m Geo DNS queries (first 1B)                                                          Monthly cost depends on usage: $0.70 per 1M queries       
+                                                                                                                                                  
+ [1mmodule.cloudfront.aws_route53_record.cloudfront_cert_validation["www.auto-hive.site"][22m                                                            
+ [2m├─[22m Standard queries (first 1B)                                                         Monthly cost depends on usage: $0.40 per 1M queries       
+ [2m├─[22m Latency based routing queries (first 1B)                                            Monthly cost depends on usage: $0.60 per 1M queries       
+ [2m└─[22m Geo DNS queries (first 1B)                                                          Monthly cost depends on usage: $0.70 per 1M queries       
+                                                                                                                                                  
+ [1mmodule.cloudfront.aws_s3_bucket.frontend[22m                                                                                                         
+ [2m└─[22m Standard                                                                                                                                      
+ [2m   ├─[22m Storage                                                                          Monthly cost depends on usage: $0.023 per GB              
+ [2m   ├─[22m PUT, COPY, POST, LIST requests                                                   Monthly cost depends on usage: $0.005 per 1k requests     
+ [2m   ├─[22m GET, SELECT, and all other requests                                              Monthly cost depends on usage: $0.0004 per 1k requests    
+ [2m   ├─[22m Select data scanned                                                              Monthly cost depends on usage: $0.002 per GB              
+ [2m   └─[22m Select data returned                                                             Monthly cost depends on usage: $0.0007 per GB             
+                                                                                                                                                  
+ [1mmodule.ec2.aws_cloudwatch_log_group.backend[22m                                                                                                      
+ [2m├─[22m Data ingested                                                                       Monthly cost depends on usage: $0.57 per GB               
+ [2m├─[22m Archival Storage                                                                    Monthly cost depends on usage: $0.03 per GB               
+ [2m└─[22m Insights queries data scanned                                                       Monthly cost depends on usage: $0.0057 per GB             
+                                                                                                                                                  
+ [1mmodule.ec2.aws_route53_record.api[22m                                                                                                                
+ [2m├─[22m Standard queries (first 1B)                                                         Monthly cost depends on usage: $0.40 per 1M queries       
+ [2m├─[22m Latency based routing queries (first 1B)                                            Monthly cost depends on usage: $0.60 per 1M queries       
+ [2m└─[22m Geo DNS queries (first 1B)                                                          Monthly cost depends on usage: $0.70 per 1M queries       
+                                                                                                                                                  
+ [1mmodule.ecr.aws_ecr_repository.backend[22m                                                                                                            
+ [2m└─[22m Storage                                                                             Monthly cost depends on usage: $0.10 per GB               
+                                                                                                                                                  
+[1m OVERALL TOTAL[22m                                                                                                                          $10.08 
+
+*Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
+
+──────────────────────────────────
+70 cloud resources were detected:
+∙ 8 were estimated
+∙ 62 were free
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Project                                                          ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
+┃ ajayi233/maternity-companion-ma...environments/dev/tfplan.binary ┃           $10 ┃           - ┃        $10 ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛
