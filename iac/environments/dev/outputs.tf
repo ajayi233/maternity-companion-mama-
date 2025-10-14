@@ -40,6 +40,11 @@ output "s3_bucket_name" {
   value       = module.cloudfront.s3_bucket_name
 }
 
+output "cloudfront_distribution_id" {
+  description = "CloudFront distribution ID"
+  value       = module.cloudfront.cloudfront_distribution_id
+}
+
 # output "cloudfront_distribution_id" {
 #   description = "CloudFront distribution ID"
 #   value       = module.cloudfront.cloudfront_distribution_id
