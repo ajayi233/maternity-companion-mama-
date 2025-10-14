@@ -44,6 +44,8 @@ module "parameter_store" {
 
   frontend_secrets = {
     "google-maps-api-key" = var.google_maps_api_key
+    "ghana-nlp-api-base-url" = var.ghana_nlp_api_base_url
+    "ghana-nlp-subscription-key" = var.ghana_nlp_subscription_key
   }
 }
 

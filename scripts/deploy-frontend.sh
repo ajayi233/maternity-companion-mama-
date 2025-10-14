@@ -36,6 +36,8 @@ VITE_APP_VERSION=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}
 VITE_APP_DESCRIPTION=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/frontend/app-description" --profile ${PROFILE} --query 'Parameter.Value' --output text 2>/dev/null || echo "AI-powered maternal health companion")
 VITE_API_VERSION=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/frontend/api-version" --profile ${PROFILE} --query 'Parameter.Value' --output text 2>/dev/null || echo "v1")
 VITE_GOOGLE_MAPS_API_KEY=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/frontend/google-maps-api-key" --with-decryption --profile ${PROFILE} --query 'Parameter.Value' --output text 2>/dev/null || echo "")
+VITE_GHANA_NLP_API_BASE_URL=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/frontend/ghana-nlp-api-base-url" --profile ${PROFILE} --query 'Parameter.Value' --output text 2>/dev/null || echo "https://translation-api.ghananlp.org")
+VITE_GHANA_NLP_SUBSCRIPTION_KEY=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/frontend/ghana-nlp-subscription-key" --with-decryption --profile ${PROFILE} --query 'Parameter.Value' --output text 2>/dev/null || echo "")
 
 # Build frontend with environment variables
 cd ../frontend
@@ -50,6 +52,8 @@ export VITE_APP_DESCRIPTION="$VITE_APP_DESCRIPTION"
 export VITE_API_BASE_URL="${API_URL}"
 export VITE_API_VERSION="$VITE_API_VERSION"
 export VITE_GOOGLE_MAPS_API_KEY="$VITE_GOOGLE_MAPS_API_KEY"
+export VITE_GHANA_NLP_API_BASE_URL="$VITE_GHANA_NLP_API_BASE_URL"
+export VITE_GHANA_NLP_SUBSCRIPTION_KEY="$VITE_GHANA_NLP_SUBSCRIPTION_KEY"
 export NODE_ENV="production"
 npm run build
 

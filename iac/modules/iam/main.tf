@@ -288,3 +288,36 @@ resource "aws_iam_role_policy_attachment" "github_actions_parameter_store_policy
   role       = aws_iam_role.github_actions_role.name
   policy_arn = aws_iam_policy.parameter_store_policy.arn
 }
+
+# SSM Policy for GitHub Actions (to run commands on EC2)
+resource "aws_iam_policy" "github_actions_ssm_policy" {
+  name = "${var.project_name}-${var.environment}-github-actions-ssm-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:SendCommand",
+          "ssm:GetCommandInvocation",
+          "ssm:DescribeInstanceInformation",
+          "ssm:ListCommandInvocations"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# Attach SSM policy to GitHub Actions role
+resource "aws_iam_role_policy_attachment" "github_actions_ssm_policy" {
+  role       = aws_iam_role.github_actions_role.name
+  policy_arn = aws_iam_policy.github_actions_ssm_policy.arn
+}

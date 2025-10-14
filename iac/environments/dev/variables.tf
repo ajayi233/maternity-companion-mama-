@@ -93,3 +93,14 @@ variable "key_pair_name" {
   type        = string
   default     = "mama-app-key"
 }
+
+variable "ghana_nlp_api_base_url" {
+  description = "Ghana NLP API base URL for translation services"
+  type        = string
+}
+
+variable "ghana_nlp_subscription_key" {
+  description = "Ghana NLP API subscription key"
+  type        = string
+  sensitive   = true
+}

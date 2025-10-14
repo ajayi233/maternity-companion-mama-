@@ -155,6 +155,29 @@ resource "aws_iam_role_policy" "ec2_ssm_policy" {
   })
 }
 
+# IAM Policy for SSM Command execution
+resource "aws_iam_role_policy" "ec2_ssm_command_policy" {
+  name = "${var.project_name}-${var.environment}-ec2-ssm-command-policy"
+  role = aws_iam_role.ec2_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:UpdateInstanceInformation",
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 # IAM Instance Profile
 resource "aws_iam_instance_profile" "ec2_ecr" {
   name = "${var.project_name}-${var.environment}-ec2-instance-profile"
