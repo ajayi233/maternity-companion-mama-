@@ -25,8 +25,30 @@ interface AudioResponse {
   audio_base64: string;
 }
 
+interface GhanaNLPTranscribeResponse {
+  transcript: string;
+}
+
+interface GhanaNLPTranslateRequest {
+  in: string;
+  lang: string;
+}
+
+interface GhanaNLPTranslateResponse {
+  translation: string;
+}
+
+interface GhanaNLPTTSRequest {
+  text: string;
+  language: string;
+  speaker_id: string;
+}
+
 const API_URL =
   "https://is3v3ljqmbprnlleccmwgsgu7e0kkumt.lambda-url.eu-west-1.on.aws/";
+
+const GHANA_NLP_BASE_URL = import.meta.env.VITE_GHANA_NLP_API_BASE_URL;
+const GHANA_NLP_SUBSCRIPTION_KEY = import.meta.env.VITE_GHANA_NLP_SUBSCRIPTION_KEY;
 
 export const sendTextQuery = async (
   text: string,
@@ -60,10 +82,197 @@ export const sendTextQuery = async (
   return await response.json();
 };
 
+// Test function to verify the subscription key works
+const testGhanaNLPKey = async (): Promise<boolean> => {
+  try {
+    const testPayload = {
+      in: "Hello",
+      lang: "en-tw"
+    };
+    
+    const response = await fetch(`${GHANA_NLP_BASE_URL}/v1/translate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key': GHANA_NLP_SUBSCRIPTION_KEY,
+      },
+      body: JSON.stringify(testPayload),
+    });
+    
+    console.log('Key test response status:', response.status);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Key test error:', errorText);
+    }
+    return response.ok;
+  } catch (error) {
+    console.error('Key test failed:', error);
+    return false;
+  }
+};
+
+const transcribeAudioWithGhanaNLP = async (
+  audioBlob: Blob,
+  language: string
+): Promise<string> => {
+  console.log('Ghana NLP Base URL:', GHANA_NLP_BASE_URL);
+  console.log('Ghana NLP Key exists:', !!GHANA_NLP_SUBSCRIPTION_KEY);
+  console.log('Ghana NLP Key value:', GHANA_NLP_SUBSCRIPTION_KEY);
+  
+  // Test the key first
+  const keyValid = await testGhanaNLPKey();
+  console.log('Key validation result:', keyValid);
+  
+  const response = await fetch(
+    `${GHANA_NLP_BASE_URL}/asr/v1/transcribe?language=${language}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'audio/mpeg',
+        'Ocp-Apim-Subscription-Key': GHANA_NLP_SUBSCRIPTION_KEY,
+        'Cache-Control': 'no-cache',
+      },
+      body: audioBlob,
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Ghana NLP ASR Error:', response.status, errorText);
+    throw new Error(`Ghana NLP transcription failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  console.log('ASR Response:', data);
+  // Ghana NLP ASR returns the transcript as a direct string
+  return typeof data === 'string' ? data : (data.transcript || data.text || data.result);
+};
+
+const translateTextWithGhanaNLP = async (
+  text: string,
+  langPair: string
+): Promise<string> => {
+  const payload: GhanaNLPTranslateRequest = {
+    in: text,
+    lang: langPair,
+  };
+
+  console.log('Translation request:', { text, langPair, payload });
+  
+  const response = await fetch(`${GHANA_NLP_BASE_URL}/v1/translate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Ocp-Apim-Subscription-Key': GHANA_NLP_SUBSCRIPTION_KEY,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Translation error details:', response.status, errorText);
+    throw new Error(`Ghana NLP translation failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  console.log('Translation Response:', data);
+  // Handle both string response and object response
+  return typeof data === 'string' ? data : (data.translation || data.out || data.result);
+};
+
+const synthesizeSpeechWithGhanaNLP = async (
+  text: string,
+  language: string,
+  speakerId: string
+): Promise<string> => {
+  const payload: GhanaNLPTTSRequest = {
+    text,
+    language,
+    speaker_id: speakerId,
+  };
+
+  console.log('TTS request:', payload);
+  
+  const response = await fetch(`${GHANA_NLP_BASE_URL}/tts/v1/synthesize`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Ocp-Apim-Subscription-Key': GHANA_NLP_SUBSCRIPTION_KEY,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('TTS error details:', response.status, errorText);
+    throw new Error(`Ghana NLP TTS failed: ${response.status}`);
+  }
+
+  const audioBlob = await response.blob();
+  console.log('TTS audio blob size:', audioBlob.size, 'type:', audioBlob.type);
+  console.log('TTS response is .wav format from Ghana NLP API');
+  
+  // Create a proper audio blob with correct MIME type
+  const properAudioBlob = new Blob([audioBlob], { type: 'audio/wav' });
+  const arrayBuffer = await properAudioBlob.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  const binaryString = Array.from(uint8Array, (byte) =>
+    String.fromCharCode(byte)
+  ).join('');
+  const base64Audio = btoa(binaryString);
+  console.log('TTS base64 audio length:', base64Audio.length);
+  return base64Audio;
+};
+
 export const sendAudioQuery = async (
   audioBlob: Blob,
-  dueDate?: string
+  dueDate?: string,
+  selectedLocalLanguage?: string | null
 ): Promise<AudioResponse> => {
+  // If Twi is selected, use Ghana NLP pipeline
+  if (selectedLocalLanguage === 'Twi') {
+    try {
+      // Step 1: Transcribe Twi audio to text
+      const twiTranscript = await transcribeAudioWithGhanaNLP(audioBlob, 'tw');
+      console.log('Transcribed Twi text:', twiTranscript);
+      
+      if (!twiTranscript || twiTranscript.trim() === '') {
+        throw new Error('Empty transcription result');
+      }
+      
+      // Step 2: Translate Twi text to English
+      const englishText = await translateTextWithGhanaNLP(twiTranscript, 'tw-en');
+      console.log('Translated English text:', englishText);
+      
+      // Step 3: Send English text to Lambda function
+      const englishResponse = await sendTextQuery(englishText, dueDate);
+      console.log('Lambda response:', englishResponse);
+      
+      // Step 4: Translate English response back to Twi
+      const responseText = englishResponse.text || englishResponse.response || englishResponse.message;
+      console.log('Response text to translate:', responseText);
+      const twiResponse = await translateTextWithGhanaNLP(responseText, 'en-tw');
+      
+      // Step 5: Synthesize Twi response to audio
+      const twiAudioBase64 = await synthesizeSpeechWithGhanaNLP(
+        twiResponse,
+        'tw',
+        'twi_speaker_4'
+      );
+      
+      return {
+        transcript: twiTranscript,
+        text_response: twiResponse,
+        language: 'tw',
+        audio_base64: twiAudioBase64,
+      };
+    } catch (error) {
+      console.error('Ghana NLP pipeline failed:', error);
+      // Fallback to original Lambda function
+    }
+  }
+
+  // Original Lambda function flow for international languages
   const arrayBuffer = await audioBlob.arrayBuffer();
   const uint8Array = new Uint8Array(arrayBuffer);
   const binaryString = Array.from(uint8Array, (byte) =>
@@ -110,15 +319,42 @@ export const playAudioResponse = (audioBase64: string): void => {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
-    const blob = new Blob([bytes], { type: "audio/mp3" });
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
+    // Prioritize .wav format since Ghana NLP TTS returns .wav
+    const audioFormats = ["audio/wav", "audio/wave", "audio/x-wav", "audio/mp3", "audio/mpeg", "audio/ogg"];
+    let audioPlayed = false;
+    
+    const tryPlayAudio = (formatIndex: number) => {
+      if (formatIndex >= audioFormats.length || audioPlayed) return;
+      
+      const blob = new Blob([bytes], { type: audioFormats[formatIndex] });
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
 
-    audio.onended = () => {
-      URL.revokeObjectURL(url);
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        audioPlayed = true;
+      };
+      
+      audio.onerror = (e) => {
+        URL.revokeObjectURL(url);
+        console.log(`Failed to play as ${audioFormats[formatIndex]}, trying next format...`, e);
+        tryPlayAudio(formatIndex + 1);
+      };
+
+      audio.oncanplaythrough = () => {
+        console.log(`Audio can play through as ${audioFormats[formatIndex]}`);
+      };
+
+      audio.play().then(() => {
+        console.log(`Successfully playing audio as ${audioFormats[formatIndex]}`);
+        audioPlayed = true;
+      }).catch((e) => {
+        console.log(`Play failed for ${audioFormats[formatIndex]}:`, e);
+        tryPlayAudio(formatIndex + 1);
+      });
     };
-
-    audio.play().catch(console.error);
+    
+    tryPlayAudio(0);
   } catch (error) {
     console.error("Error playing audio response:", error);
   }

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { Mic, MicOff, Volume2, VolumeX, Phone, Send, Globe, MessageSquare, ChevronUp, ChevronDown, User, Bot } from "lucide-react";
 import { sendAudioQuery, playAudioResponse } from "@/lib/aiService";
 
@@ -28,12 +29,21 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
   const audioChunksRef = useRef<Blob[]>([]);
   const [conversationHistory, setConversationHistory] = useState<Array<{id: string, type: 'user' | 'ai', text: string, timestamp: Date}>>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [selectedLocalLanguage, setSelectedLocalLanguage] = useState<string | null>(null);
 
   const supportedLanguages = [
     'English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese',
     'Arabic', 'Chinese', 'Japanese', 'Korean', 'Hindi', 'Urdu',
     'Swahili', 'Hausa', 'Yoruba', 'Igbo', 'Amharic', 'Somali'
   ];
+
+  const localLanguages = ['Twi'];
+
+  const toggleLocalLanguage = (language: string) => {
+    setSelectedLocalLanguage(prev => 
+      prev === language ? null : language
+    );
+  };
 
   const responses = {
     en: {
@@ -138,10 +148,15 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
       mediaRecorderRef.current.start();
       console.log('Audio recording started');
       
-      // Also start speech recognition for transcript display
+      // Set listening state immediately
+      setIsListening(true);
       setCurrentTranscript("");
-      if (recognitionRef.current) {
+      
+      // Only start browser speech recognition for international languages (not Twi)
+      if (recognitionRef.current && selectedLocalLanguage !== 'Twi') {
         recognitionRef.current.start();
+      } else if (selectedLocalLanguage === 'Twi') {
+        setCurrentTranscript("Speaking in Twi...");
       }
     } catch (error) {
       console.error('Failed to start recording:', error);
@@ -159,9 +174,14 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
           console.log('Audio recording stopped');
         }
         
-        // Stop speech recognition
-        if (recognitionRef.current) {
+        // Stop speech recognition only if it was started (not for Twi)
+        if (recognitionRef.current && selectedLocalLanguage !== 'Twi') {
           recognitionRef.current.stop();
+        }
+        
+        // Set listening state to false immediately for Twi
+        if (selectedLocalLanguage === 'Twi') {
+          setIsListening(false);
         }
       } catch (error) {
         console.error('Failed to stop recording:', error);
@@ -203,8 +223,8 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
       console.log('Sending audio to Lambda:', audioBlob.size, 'bytes');
       console.log('User transcript:', userTranscript);
       
-      // Send actual audio to Lambda function
-      const response = await sendAudioQuery(audioBlob, user?.dueDate);
+      // Send actual audio to appropriate service - Ghana NLP for Twi, Lambda for international
+      const response = await sendAudioQuery(audioBlob, user?.dueDate, selectedLocalLanguage);
       console.log('Lambda response:', response);
       
       setIsProcessing(false);
@@ -391,17 +411,36 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
               </div>
               <p className="text-blue-800 text-sm mb-2">Speak in any language - AI auto-detects and responds accordingly</p>
               <div className="text-xs text-blue-700">
-                Supports: {supportedLanguages.slice(0, 6).join(', ')}, and many more...
+                {selectedLocalLanguage
+                  ? `Selected Local: ${selectedLocalLanguage}`
+                  : `International: ${supportedLanguages.slice(0, 6).join(', ')}, and more...`
+                }
               </div>
             </div>
 
-            <Button
-              onClick={startConversation}
-              className="w-full bg-primary hover:bg-primary/90 text-white py-4 text-lg"
-            >
-              <Mic className="w-6 h-6 mr-2" />
-              Start Conversation
-            </Button>
+            <div className="space-y-4">
+              <div className="bg-white/10 rounded-lg p-3 border border-white/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Globe className="w-4 h-4 text-foreground" />
+                  <span className="text-sm font-medium text-foreground">Local Language</span>
+                </div>
+                <div className="flex items-center justify-between bg-white/5 rounded p-2">
+                  <span className="text-sm text-foreground">Twi</span>
+                  <Switch
+                    checked={selectedLocalLanguage === 'Twi'}
+                    onCheckedChange={() => toggleLocalLanguage('Twi')}
+                  />
+                </div>
+              </div>
+              
+              <Button
+                onClick={startConversation}
+                className="w-full bg-primary hover:bg-primary/90 text-white py-4 text-lg"
+              >
+                <Mic className="w-6 h-6 mr-2" />
+                Start Conversation
+              </Button>
+            </div>
 
             <div className="text-xs text-muted-foreground">
               🎤 Speak naturally - the AI will listen and respond
