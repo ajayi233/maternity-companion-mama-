@@ -20,6 +20,7 @@ node_modules/
 .env
 .env.local
 .env.*.local
+frontend/.env
 
 # Dependencies
 node_modules/

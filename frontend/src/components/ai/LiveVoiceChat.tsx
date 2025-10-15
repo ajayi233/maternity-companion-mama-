@@ -37,7 +37,7 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
     'Swahili', 'Hausa', 'Yoruba', 'Igbo', 'Amharic', 'Somali'
   ];
 
-  const localLanguages = ['Twi'];
+  const localLanguages = ['Twi', 'Eve'];
 
   const toggleLocalLanguage = (language: string) => {
     setSelectedLocalLanguage(prev => 
@@ -152,11 +152,11 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
       setIsListening(true);
       setCurrentTranscript("");
       
-      // Only start browser speech recognition for international languages (not Twi)
-      if (recognitionRef.current && selectedLocalLanguage !== 'Twi') {
+      // Only start browser speech recognition for international languages (not local languages)
+      if (recognitionRef.current && !localLanguages.includes(selectedLocalLanguage || '')) {
         recognitionRef.current.start();
-      } else if (selectedLocalLanguage === 'Twi') {
-        setCurrentTranscript("Speaking in Twi...");
+      } else if (localLanguages.includes(selectedLocalLanguage || '')) {
+        setCurrentTranscript(`Speaking in ${selectedLocalLanguage}...`);
       }
     } catch (error) {
       console.error('Failed to start recording:', error);
@@ -174,13 +174,13 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
           console.log('Audio recording stopped');
         }
         
-        // Stop speech recognition only if it was started (not for Twi)
-        if (recognitionRef.current && selectedLocalLanguage !== 'Twi') {
+        // Stop speech recognition only if it was started (not for local languages)
+        if (recognitionRef.current && !localLanguages.includes(selectedLocalLanguage || '')) {
           recognitionRef.current.stop();
         }
         
-        // Set listening state to false immediately for Twi
-        if (selectedLocalLanguage === 'Twi') {
+        // Set listening state to false immediately for local languages
+        if (localLanguages.includes(selectedLocalLanguage || '')) {
           setIsListening(false);
         }
       } catch (error) {
@@ -208,6 +208,11 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
   };
 
   const startGreeting = () => {
+    // Skip greeting audio for local languages (Twi/Eve)
+    if (localLanguages.includes(selectedLocalLanguage || '')) {
+      return;
+    }
+    
     setTimeout(() => {
       speakResponse("Hello! I'm your AI pregnancy assistant. I can understand and respond in multiple languages. Please speak naturally.");
     }, 1000);
@@ -253,9 +258,9 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
       
       console.log('Audio base64 available:', !!response.audio_base64);
       
-      // Play AI audio response
-      if (response.audio_base64) {
-        console.log('Playing audio response');
+      // Play AI audio response for local languages only
+      if (response.audio_base64 && localLanguages.includes(selectedLocalLanguage || '')) {
+        console.log('Playing Ghana NLP audio response');
         setIsAISpeaking(true);
         playAudioResponse(response.audio_base64);
         
@@ -267,8 +272,8 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
           setTimeout(() => setAiResponse(""), 2000); // Keep text visible for 2 more seconds
         }, estimatedDuration);
       } else {
-        console.log('No audio response, using text-to-speech fallback');
-        // Fallback to text-to-speech
+        console.log('Using text-to-speech for response');
+        // Use text-to-speech for international languages or when no audio
         speakResponse(responseText);
       }
     } catch (error) {
@@ -387,7 +392,8 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
 
   const makeEmergencyCall = () => {
     endConversation();
-    window.location.href = 'tel:193';
+    setError('Emergency: Call 193 for immediate medical assistance');
+    setTimeout(() => setError(null), 5000);
   };
 
   if (!conversationActive) {
@@ -422,14 +428,23 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
               <div className="bg-white/10 rounded-lg p-3 border border-white/20">
                 <div className="flex items-center gap-2 mb-3">
                   <Globe className="w-4 h-4 text-foreground" />
-                  <span className="text-sm font-medium text-foreground">Local Language</span>
+                  <span className="text-sm font-medium text-foreground">Local Languages</span>
                 </div>
-                <div className="flex items-center justify-between bg-white/5 rounded p-2">
-                  <span className="text-sm text-foreground">Twi</span>
-                  <Switch
-                    checked={selectedLocalLanguage === 'Twi'}
-                    onCheckedChange={() => toggleLocalLanguage('Twi')}
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between bg-white/5 rounded p-2">
+                    <span className="text-sm text-foreground">Twi</span>
+                    <Switch
+                      checked={selectedLocalLanguage === 'Twi'}
+                      onCheckedChange={() => toggleLocalLanguage('Twi')}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between bg-white/5 rounded p-2">
+                    <span className="text-sm text-foreground">Ewe</span>
+                    <Switch
+                      checked={selectedLocalLanguage === 'Eve'}
+                      onCheckedChange={() => toggleLocalLanguage('Eve')}
+                    />
+                  </div>
                 </div>
               </div>
               

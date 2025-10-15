@@ -8,6 +8,10 @@ export default defineConfig(() => ({
   //   host: "::",
   //   port: 8080,
   // },
+  define: {
+    'import.meta.env.VITE_GHANA_NLP_API_BASE_URL': JSON.stringify(process.env.VITE_GHANA_NLP_API_BASE_URL || 'https://translation-api.ghananlp.org'),
+    'import.meta.env.VITE_GHANA_NLP_SUBSCRIPTION_KEY': JSON.stringify(process.env.VITE_GHANA_NLP_SUBSCRIPTION_KEY || '8e7005744e6d4483a8dd5665c5a8c0f4'),
+  },
   plugins: [
     react(),
   ],

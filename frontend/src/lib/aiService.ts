@@ -229,42 +229,48 @@ export const sendAudioQuery = async (
   dueDate?: string,
   selectedLocalLanguage?: string | null
 ): Promise<AudioResponse> => {
-  // If Twi is selected, use Ghana NLP pipeline
-  if (selectedLocalLanguage === 'Twi') {
+  // If Twi or Eve is selected, use Ghana NLP pipeline
+  if (selectedLocalLanguage === 'Twi' || selectedLocalLanguage === 'Eve') {
     try {
-      // Step 1: Transcribe Twi audio to text
-      const twiTranscript = await transcribeAudioWithGhanaNLP(audioBlob, 'tw');
-      console.log('Transcribed Twi text:', twiTranscript);
+      const isEve = selectedLocalLanguage === 'Eve';
+      const langCode = isEve ? 'ee' : 'tw';
+      const langPair = isEve ? 'ee-en' : 'tw-en';
+      const reverseLangPair = isEve ? 'en-ee' : 'en-tw';
+      const speakerId = isEve ? 'ewe_speaker_3' : 'twi_speaker_7';
       
-      if (!twiTranscript || twiTranscript.trim() === '') {
+      // Step 1: Transcribe audio to text
+      const transcript = await transcribeAudioWithGhanaNLP(audioBlob, langCode);
+      console.log(`Transcribed ${selectedLocalLanguage} text:`, transcript);
+      
+      if (!transcript || transcript.trim() === '') {
         throw new Error('Empty transcription result');
       }
       
-      // Step 2: Translate Twi text to English
-      const englishText = await translateTextWithGhanaNLP(twiTranscript, 'tw-en');
+      // Step 2: Translate to English
+      const englishText = await translateTextWithGhanaNLP(transcript, langPair);
       console.log('Translated English text:', englishText);
       
       // Step 3: Send English text to Lambda function
       const englishResponse = await sendTextQuery(englishText, dueDate);
       console.log('Lambda response:', englishResponse);
       
-      // Step 4: Translate English response back to Twi
+      // Step 4: Translate English response back to local language
       const responseText = englishResponse.text || englishResponse.response || englishResponse.message;
       console.log('Response text to translate:', responseText);
-      const twiResponse = await translateTextWithGhanaNLP(responseText, 'en-tw');
+      const localResponse = await translateTextWithGhanaNLP(responseText, reverseLangPair);
       
-      // Step 5: Synthesize Twi response to audio
-      const twiAudioBase64 = await synthesizeSpeechWithGhanaNLP(
-        twiResponse,
-        'tw',
-        'twi_speaker_4'
+      // Step 5: Synthesize response to audio
+      const audioBase64 = await synthesizeSpeechWithGhanaNLP(
+        localResponse,
+        langCode,
+        speakerId
       );
       
       return {
-        transcript: twiTranscript,
-        text_response: twiResponse,
-        language: 'tw',
-        audio_base64: twiAudioBase64,
+        transcript: transcript,
+        text_response: localResponse,
+        language: langCode,
+        audio_base64: audioBase64,
       };
     } catch (error) {
       console.error('Ghana NLP pipeline failed:', error);
@@ -313,48 +319,57 @@ export const sendAudioQuery = async (
 
 export const playAudioResponse = (audioBase64: string): void => {
   try {
+    // Validate base64 string
+    if (!audioBase64 || audioBase64.length < 100) {
+      console.error('Invalid or too short audio base64 data');
+      return;
+    }
+
     const binaryString = atob(audioBase64);
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
-    // Prioritize .wav format since Ghana NLP TTS returns .wav
-    const audioFormats = ["audio/wav", "audio/wave", "audio/x-wav", "audio/mp3", "audio/mpeg", "audio/ogg"];
-    let audioPlayed = false;
+    console.log('Audio data size:', bytes.length, 'bytes');
     
-    const tryPlayAudio = (formatIndex: number) => {
-      if (formatIndex >= audioFormats.length || audioPlayed) return;
-      
-      const blob = new Blob([bytes], { type: audioFormats[formatIndex] });
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
+    // Check if it's a valid audio file by looking at headers
+    const header = Array.from(bytes.slice(0, 4)).map(b => b.toString(16).padStart(2, '0')).join('');
+    console.log('Audio header:', header);
+    
+    // Create audio blob with detected format
+    let mimeType = 'audio/wav'; // Default
+    if (header.startsWith('52494646')) { // RIFF (WAV)
+      mimeType = 'audio/wav';
+    } else if (header.startsWith('494433') || header.startsWith('fffb') || header.startsWith('fff3')) { // MP3
+      mimeType = 'audio/mpeg';
+    }
+    
+    const blob = new Blob([bytes], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
 
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-        audioPlayed = true;
-      };
-      
-      audio.onerror = (e) => {
-        URL.revokeObjectURL(url);
-        console.log(`Failed to play as ${audioFormats[formatIndex]}, trying next format...`, e);
-        tryPlayAudio(formatIndex + 1);
-      };
-
-      audio.oncanplaythrough = () => {
-        console.log(`Audio can play through as ${audioFormats[formatIndex]}`);
-      };
-
-      audio.play().then(() => {
-        console.log(`Successfully playing audio as ${audioFormats[formatIndex]}`);
-        audioPlayed = true;
-      }).catch((e) => {
-        console.log(`Play failed for ${audioFormats[formatIndex]}:`, e);
-        tryPlayAudio(formatIndex + 1);
-      });
+    audio.onended = () => {
+      URL.revokeObjectURL(url);
+      console.log('Audio playback completed');
     };
     
-    tryPlayAudio(0);
+    audio.onerror = (e) => {
+      URL.revokeObjectURL(url);
+      console.error('Audio playback failed:', e);
+    };
+
+    audio.oncanplaythrough = () => {
+      console.log(`Audio ready to play as ${mimeType}`);
+    };
+
+    audio.play().then(() => {
+      console.log(`Successfully started playing audio as ${mimeType}`);
+    }).catch((e) => {
+      console.error(`Audio play failed:`, e);
+      URL.revokeObjectURL(url);
+    });
+    
   } catch (error) {
     console.error("Error playing audio response:", error);
   }
