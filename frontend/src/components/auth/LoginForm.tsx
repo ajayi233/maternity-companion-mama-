@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Phone, Lock, Heart, Star, Quote } from "lucide-react";
 import { apiService } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
+import { UserAgreementModal } from "./UserAgreementModal";
 
 interface LoginFormProps {
   onLogin?: (phone: string, password: string) => void;
@@ -214,6 +215,10 @@ export const LoginForm = ({ onLogin, onSwitchToRegister, onForgotPassword }: Log
             >
               Create New Account
             </Button>
+            
+            <div className="mt-4">
+              <UserAgreementModal />
+            </div>
           </div>
         </div>
       </div>
