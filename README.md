@@ -15,7 +15,7 @@ MAMA is a comprehensive maternal health companion application designed to suppor
 
 ## System Architecture
 
-![System Architecture](../devops/infrastructure/v2/white-diagram-preview.png)
+![System Architecture](devops/infrastructure/v2/white-diagram-preview.png)
 
 ### Technology Stack
 
