@@ -439,7 +439,7 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
                     />
                   </div>
                   <div className="flex items-center justify-between bg-white/5 rounded p-2">
-                    <span className="text-sm text-foreground">Eve</span>
+                    <span className="text-sm text-foreground">Ewe</span>
                     <Switch
                       checked={selectedLocalLanguage === 'Eve'}
                       onCheckedChange={() => toggleLocalLanguage('Eve')}
