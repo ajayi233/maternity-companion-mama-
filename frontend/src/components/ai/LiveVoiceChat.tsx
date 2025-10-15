@@ -208,6 +208,11 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
   };
 
   const startGreeting = () => {
+    // Skip greeting audio for local languages (Twi/Eve)
+    if (localLanguages.includes(selectedLocalLanguage || '')) {
+      return;
+    }
+    
     setTimeout(() => {
       speakResponse("Hello! I'm your AI pregnancy assistant. I can understand and respond in multiple languages. Please speak naturally.");
     }, 1000);
@@ -253,9 +258,9 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
       
       console.log('Audio base64 available:', !!response.audio_base64);
       
-      // Play AI audio response
-      if (response.audio_base64) {
-        console.log('Playing audio response');
+      // Play AI audio response for local languages only
+      if (response.audio_base64 && localLanguages.includes(selectedLocalLanguage || '')) {
+        console.log('Playing Ghana NLP audio response');
         setIsAISpeaking(true);
         playAudioResponse(response.audio_base64);
         
@@ -267,8 +272,8 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
           setTimeout(() => setAiResponse(""), 2000); // Keep text visible for 2 more seconds
         }, estimatedDuration);
       } else {
-        console.log('No audio response, using text-to-speech fallback');
-        // Fallback to text-to-speech
+        console.log('Using text-to-speech for response');
+        // Use text-to-speech for international languages or when no audio
         speakResponse(responseText);
       }
     } catch (error) {
@@ -387,7 +392,8 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
 
   const makeEmergencyCall = () => {
     endConversation();
-    window.location.href = 'tel:193';
+    setError('Emergency: Call 193 for immediate medical assistance');
+    setTimeout(() => setError(null), 5000);
   };
 
   if (!conversationActive) {
