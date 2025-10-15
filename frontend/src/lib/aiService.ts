@@ -229,42 +229,48 @@ export const sendAudioQuery = async (
   dueDate?: string,
   selectedLocalLanguage?: string | null
 ): Promise<AudioResponse> => {
-  // If Twi is selected, use Ghana NLP pipeline
-  if (selectedLocalLanguage === 'Twi') {
+  // If Twi or Eve is selected, use Ghana NLP pipeline
+  if (selectedLocalLanguage === 'Twi' || selectedLocalLanguage === 'Eve') {
     try {
-      // Step 1: Transcribe Twi audio to text
-      const twiTranscript = await transcribeAudioWithGhanaNLP(audioBlob, 'tw');
-      console.log('Transcribed Twi text:', twiTranscript);
+      const isEve = selectedLocalLanguage === 'Eve';
+      const langCode = isEve ? 'ee' : 'tw';
+      const langPair = isEve ? 'ee-en' : 'tw-en';
+      const reverseLangPair = isEve ? 'en-ee' : 'en-tw';
+      const speakerId = isEve ? 'eve_speaker_3' : 'twi_speaker_7';
       
-      if (!twiTranscript || twiTranscript.trim() === '') {
+      // Step 1: Transcribe audio to text
+      const transcript = await transcribeAudioWithGhanaNLP(audioBlob, langCode);
+      console.log(`Transcribed ${selectedLocalLanguage} text:`, transcript);
+      
+      if (!transcript || transcript.trim() === '') {
         throw new Error('Empty transcription result');
       }
       
-      // Step 2: Translate Twi text to English
-      const englishText = await translateTextWithGhanaNLP(twiTranscript, 'tw-en');
+      // Step 2: Translate to English
+      const englishText = await translateTextWithGhanaNLP(transcript, langPair);
       console.log('Translated English text:', englishText);
       
       // Step 3: Send English text to Lambda function
       const englishResponse = await sendTextQuery(englishText, dueDate);
       console.log('Lambda response:', englishResponse);
       
-      // Step 4: Translate English response back to Twi
+      // Step 4: Translate English response back to local language
       const responseText = englishResponse.text || englishResponse.response || englishResponse.message;
       console.log('Response text to translate:', responseText);
-      const twiResponse = await translateTextWithGhanaNLP(responseText, 'en-tw');
+      const localResponse = await translateTextWithGhanaNLP(responseText, reverseLangPair);
       
-      // Step 5: Synthesize Twi response to audio
-      const twiAudioBase64 = await synthesizeSpeechWithGhanaNLP(
-        twiResponse,
-        'tw',
-        'twi_speaker_4'
+      // Step 5: Synthesize response to audio
+      const audioBase64 = await synthesizeSpeechWithGhanaNLP(
+        localResponse,
+        langCode,
+        speakerId
       );
       
       return {
-        transcript: twiTranscript,
-        text_response: twiResponse,
-        language: 'tw',
-        audio_base64: twiAudioBase64,
+        transcript: transcript,
+        text_response: localResponse,
+        language: langCode,
+        audio_base64: audioBase64,
       };
     } catch (error) {
       console.error('Ghana NLP pipeline failed:', error);

@@ -37,7 +37,7 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
     'Swahili', 'Hausa', 'Yoruba', 'Igbo', 'Amharic', 'Somali'
   ];
 
-  const localLanguages = ['Twi'];
+  const localLanguages = ['Twi', 'Eve'];
 
   const toggleLocalLanguage = (language: string) => {
     setSelectedLocalLanguage(prev => 
@@ -152,11 +152,11 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
       setIsListening(true);
       setCurrentTranscript("");
       
-      // Only start browser speech recognition for international languages (not Twi)
-      if (recognitionRef.current && selectedLocalLanguage !== 'Twi') {
+      // Only start browser speech recognition for international languages (not local languages)
+      if (recognitionRef.current && !localLanguages.includes(selectedLocalLanguage || '')) {
         recognitionRef.current.start();
-      } else if (selectedLocalLanguage === 'Twi') {
-        setCurrentTranscript("Speaking in Twi...");
+      } else if (localLanguages.includes(selectedLocalLanguage || '')) {
+        setCurrentTranscript(`Speaking in ${selectedLocalLanguage}...`);
       }
     } catch (error) {
       console.error('Failed to start recording:', error);
@@ -174,13 +174,13 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
           console.log('Audio recording stopped');
         }
         
-        // Stop speech recognition only if it was started (not for Twi)
-        if (recognitionRef.current && selectedLocalLanguage !== 'Twi') {
+        // Stop speech recognition only if it was started (not for local languages)
+        if (recognitionRef.current && !localLanguages.includes(selectedLocalLanguage || '')) {
           recognitionRef.current.stop();
         }
         
-        // Set listening state to false immediately for Twi
-        if (selectedLocalLanguage === 'Twi') {
+        // Set listening state to false immediately for local languages
+        if (localLanguages.includes(selectedLocalLanguage || '')) {
           setIsListening(false);
         }
       } catch (error) {
@@ -422,14 +422,23 @@ export const LiveVoiceChat = ({ user }: LiveVoiceChatProps) => {
               <div className="bg-white/10 rounded-lg p-3 border border-white/20">
                 <div className="flex items-center gap-2 mb-3">
                   <Globe className="w-4 h-4 text-foreground" />
-                  <span className="text-sm font-medium text-foreground">Local Language</span>
+                  <span className="text-sm font-medium text-foreground">Local Languages</span>
                 </div>
-                <div className="flex items-center justify-between bg-white/5 rounded p-2">
-                  <span className="text-sm text-foreground">Twi</span>
-                  <Switch
-                    checked={selectedLocalLanguage === 'Twi'}
-                    onCheckedChange={() => toggleLocalLanguage('Twi')}
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between bg-white/5 rounded p-2">
+                    <span className="text-sm text-foreground">Twi</span>
+                    <Switch
+                      checked={selectedLocalLanguage === 'Twi'}
+                      onCheckedChange={() => toggleLocalLanguage('Twi')}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between bg-white/5 rounded p-2">
+                    <span className="text-sm text-foreground">Eve</span>
+                    <Switch
+                      checked={selectedLocalLanguage === 'Eve'}
+                      onCheckedChange={() => toggleLocalLanguage('Eve')}
+                    />
+                  </div>
                 </div>
               </div>
               
