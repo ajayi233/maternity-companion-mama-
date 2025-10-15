@@ -15,7 +15,7 @@ MAMA is a comprehensive maternal health companion application designed to suppor
 
 ## System Architecture
 
-![System Architecture](Sys-Arch.png)
+![System Architecture](../devops/infrastructure/v2/white-diagram-preview.png)
 
 ### Technology Stack
 
@@ -533,6 +533,7 @@ cd scripts
 ```
 
 **Benefits of Ansible over user-data scripts:**
+
 - ✅ **Idempotent deployments** - Run multiple times safely
 - ✅ **Easy updates** - Deploy new versions with single command
 - ✅ **Environment consistency** - Same configuration every time
@@ -540,8 +541,9 @@ cd scripts
 - ✅ **Audit trail** - Track all configuration changes
 
 For complete Ansible documentation, see [devops/ANSIBLE_SETUP_GUIDE.md](devops/ANSIBLE_SETUP_GUIDE.md).
-curl https://auto-hive.site                # Frontend
-```
+curl https://auto-hive.site # Frontend
+
+````
 
 ### Infrastructure Components
 
@@ -580,7 +582,7 @@ jwt_secret = "your-jwt-secret"
 jwt_refresh_secret = "your-refresh-secret"
 mnotify_api_key = "your-mnotify-key"
 google_maps_api_key = "your-maps-key"
-```
+````
 
 ### Monitoring & Operations
 

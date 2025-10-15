@@ -1,0 +1,74 @@
+Architecture Justification – MAMA Prototype (Cost-Optimized)
+
+This infrastructure was redesigned to maximize cost efficiency while maintaining functionality. We eliminated expensive managed services (ALB + ECS) in favor of a single EC2 instance, reducing monthly costs by ~$25-35 while keeping all core features.
+
+External Access
+
+Route53 + Custom Domain: Easy to use domain names instead of raw IPs.
+
+CloudFront CDN: Delivers frontend quickly to users worldwide, handles HTTPS.
+
+Direct EC2 Access: Backend API connects directly to EC2 instance via Elastic IP, eliminating ALB costs.
+
+Networking
+
+VPC + Single Public Subnet: Simplified network design, using only one AZ to minimize costs.
+
+Internet Gateway: Enables public access for frontend and backend.
+
+EC2 Instance: Single t3.micro instance runs Docker Compose stack, replacing expensive ECS Fargate.
+
+Security & Certificates
+
+ACM SSL: Free, automated certificates for HTTPS (CloudFront only).
+
+Security Groups: Restrict access to only required ports and services.
+
+Certbot: Handles SSL certificates for API subdomain, eliminating need for ALB SSL termination.
+
+Backend Support
+
+ECR: Stores Docker images, integrates directly with EC2 deployment.
+
+Parameter Store: Keeps secrets and configuration out of code.
+
+Docker Compose: Container orchestration on EC2, replacing ECS service management.
+
+IAM Roles
+
+EC2 Instance Role: Provides least-privilege access to ECR, Parameter Store, and SSM commands.
+
+GitHub Actions Role: OIDC-based access for CI/CD without static credentials.
+
+CI/CD
+
+GitHub Actions + OIDC: Automates build and deploy with no credential management.
+
+AWS Systems Manager: Deploys to EC2 via SSM commands, eliminating SSH key management.
+
+Frontend
+
+S3 Bucket: Low-cost static hosting.
+
+CloudFront: Adds performance and HTTPS support.
+
+External Services
+
+MongoDB Atlas: Fully managed database, free tier fits production needs.
+
+Mnotify API: Provides SMS delivery without building messaging infrastructure.
+
+SerpAPI: Supplies healthcare data for production use.
+
+Ghana NLP API: Translation services for multilingual support.
+
+Cost Optimization
+
+ALB Removal: Saves ~$16/month (no load balancer costs).
+
+ECS Fargate Removal: Saves ~$10-20/month (no container service costs).
+
+Single EC2: ~$10/month for t3.micro vs ~$25-35/month for ECS + ALB.
+
+Simplified Architecture: Reduced complexity while maintaining all functionality.
+

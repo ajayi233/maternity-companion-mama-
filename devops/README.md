@@ -2,7 +2,7 @@
 
 This directory contains all DevOps and infrastructure management tools for the MAMA App.
 
-## 📁 Directory Structure
+##  Directory Structure
 
 ```
 devops/
@@ -16,7 +16,7 @@ devops/
 └── ANSIBLE_SETUP_GUIDE.md     # Complete Ansible documentation
 ```
 
-## 🚀 Quick Commands
+##  Quick Commands
 
 ### Infrastructure Deployment
 ```bash
@@ -56,7 +56,7 @@ cd ../../scripts
 curl https://api.auto-hive.site/health
 ```
 
-## 🔧 DevOps Tools
+##  DevOps Tools
 
 ### **Terraform** (`../iac/`)
 - Infrastructure as Code
@@ -73,12 +73,12 @@ curl https://api.auto-hive.site/health
 - Application packaging
 - ECR integration
 
-## 📚 Documentation
+##  Documentation
 
 - **[Ansible Setup Guide](ANSIBLE_SETUP_GUIDE.md)** - Complete Ansible configuration management
 - **[Main README](../README.md#devopscloud)** - Full infrastructure setup instructions
 
-## 🛠️ Useful Commands
+##  Useful Commands
 
 ```bash
 # Get AWS Account ID
@@ -94,7 +94,7 @@ cd ansible && ansible mama_backend -m ping
 cd ../scripts && ./ansible-deploy.sh logs
 ```
 
-## 🎯 Architecture
+##  Architecture
 
 **Current Setup: EC2 + Ansible + Docker**
 ```
