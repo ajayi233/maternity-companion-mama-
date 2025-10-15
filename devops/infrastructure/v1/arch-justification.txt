@@ -1,0 +1,55 @@
+Architecture Justification – MAMA Prototype (AI Hackathon)
+
+This infrastructure was chosen to balance speed, simplicity, and realism. It avoids heavy production overhead while demonstrating a scalable cloud-ready design.
+
+External Access
+
+Route53 + Custom Domain: Easy to use domain names instead of raw IPs.
+
+CloudFront CDN: Delivers frontend quickly to users worldwide, handles HTTPS.
+
+Application Load Balancer (ALB): Routes backend traffic securely with HTTP/HTTPS.
+
+Networking
+
+VPC + Public Subnets: Provides an isolated network environment, showing good practice without complexity.
+
+Internet Gateway: Enables public access for frontend and backend.
+
+ECS Cluster (Fargate): Runs containers serverlessly, saving setup time and scaling easily.
+
+Security & Certificates
+
+ACM SSL: Free, automated certificates for HTTPS.
+
+Security Groups: Restrict access to only required ports and services.
+
+Backend Support
+
+ECR: Stores Docker images, integrates directly with ECS.
+
+Parameter Store: Keeps secrets and configuration out of code.
+
+CloudWatch Logs: Simple logging for debugging and monitoring during the hackathon.
+
+IAM Roles
+
+ECS Execution/Task Roles: Provide least-privilege access to ECR, Parameter Store, and logs without using static credentials.
+
+CI/CD
+
+GitHub Actions + OIDC: Automates build and deploy with no credential management, ensuring fast iteration.
+
+Frontend
+
+S3 Bucket: Low-cost static hosting.
+
+CloudFront: Adds performance and HTTPS support.
+
+External Services
+
+MongoDB Atlas: Fully managed database, free tier fits hackathon needs.
+
+Mnotify API: Provides SMS delivery without building messaging infrastructure.
+
+SerpAPI: Supplies healthcare data for rapid prototyping.

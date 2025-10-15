@@ -3,8 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User, Phone, Lock, Calendar, Heart, ArrowRight, ArrowLeft, Star, Quote } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { User, Phone, Lock, Calendar, Heart, ArrowRight, ArrowLeft, Star, Quote, HelpCircle } from "lucide-react";
 import { apiService } from "@/lib/api";
+import { UserAgreementModal } from "./UserAgreementModal";
 
 interface RegisterFormProps {
   onRegister: (userData: {
@@ -26,6 +29,7 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
     dueDate: ""
   });
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleNext = () => {
     if (!formData.name || !formData.phone || !formData.dueDate) {
@@ -73,6 +77,16 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
       import('sonner').then(({ toast }) => {
         toast.error('Passwords do not match', {
           description: 'Please make sure both passwords are identical.',
+          duration: 4000,
+        });
+      });
+      return;
+    }
+    
+    if (!agreedToTerms) {
+      import('sonner').then(({ toast }) => {
+        toast.error('Agreement required', {
+          description: 'Please read and accept the user agreement to continue.',
           duration: 4000,
         });
       });
@@ -242,9 +256,19 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="dueDate" className="text-sm font-medium text-gray-700">
-                  Expected Due Date
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="dueDate" className="text-sm font-medium text-gray-700">
+                    Expected Due Date
+                  </Label>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="w-4 h-4 text-gray-400 hover:text-pink-500 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>When do you expect to give birth?</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
                 <Input
                   id="dueDate"
                   type="date"
@@ -297,6 +321,33 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
                 />
               </div>
               
+              <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <Checkbox
+                  id="terms"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                  className="mt-1"
+                />
+                <div className="flex-1">
+                  <div className="text-sm text-gray-700 leading-relaxed">
+                    <label htmlFor="terms" className="cursor-pointer">
+                      I have read and agree to the{" "}
+                    </label>
+                    <UserAgreementModal
+                      trigger={
+                        <button
+                          type="button"
+                          className="text-pink-600 hover:text-pink-700 underline font-medium inline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          User Agreement
+                        </button>
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              
               <div className="flex gap-3">
                 <Button 
                   type="button"
@@ -310,7 +361,7 @@ export const RegisterForm = ({ onRegister, onSwitchToLogin }: RegisterFormProps)
                   type="submit"
                   variant="gradient"
                   className="flex-1 h-12 font-semibold rounded-xl"
-                  disabled={loading}
+                  disabled={loading || !agreedToTerms}
                 >
                   {loading ? "Creating..." : "Create Account"}
                 </Button>

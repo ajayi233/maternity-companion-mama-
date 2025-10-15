@@ -321,3 +321,71 @@ resource "aws_iam_role_policy_attachment" "github_actions_ssm_policy" {
   role       = aws_iam_role.github_actions_role.name
   policy_arn = aws_iam_policy.github_actions_ssm_policy.arn
 }
+
+# S3 Policy for GitHub Actions (for frontend deployment)
+resource "aws_iam_policy" "github_actions_s3_policy" {
+  name = "${var.project_name}-${var.environment}-github-actions-s3-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.project_name}-${var.environment}-frontend-*",
+          "arn:aws:s3:::${var.project_name}-${var.environment}-frontend-*/*"
+        ]
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# Attach S3 policy to GitHub Actions role
+resource "aws_iam_role_policy_attachment" "github_actions_s3_policy" {
+  role       = aws_iam_role.github_actions_role.name
+  policy_arn = aws_iam_policy.github_actions_s3_policy.arn
+}
+
+# CloudFront Policy for GitHub Actions (for cache invalidation)
+resource "aws_iam_policy" "github_actions_cloudfront_policy" {
+  name = "${var.project_name}-${var.environment}-github-actions-cloudfront-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudfront:CreateInvalidation",
+          "cloudfront:GetInvalidation",
+          "cloudfront:ListInvalidations"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+    ManagedBy   = "Terraform"
+  }
+}
+
+# Attach CloudFront policy to GitHub Actions role
+resource "aws_iam_role_policy_attachment" "github_actions_cloudfront_policy" {
+  role       = aws_iam_role.github_actions_role.name
+  policy_arn = aws_iam_policy.github_actions_cloudfront_policy.arn
+}
