@@ -15,7 +15,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Use custom domain for API - no parameters needed
-API_URL="https://api.auto-hive.site/api"
+API_URL="https://dev-api.auto-hive.site/api"
 S3_BUCKET=$(cd ../iac/environments/dev && terraform output -raw s3_bucket_name 2>/dev/null || echo "")
 CLOUDFRONT_ID=$(cd ../iac/environments/dev && terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
 

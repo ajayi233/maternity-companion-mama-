@@ -129,7 +129,7 @@ setup_server() {
     ansible-playbook playbooks/site.yml -v
     
     log "Initial server setup completed!"
-    info "Application should be available at: https://api.auto-hive.site"
+    info "Application should be available at: https://dev-api.auto-hive.site"
     
     cd - > /dev/null
 }
