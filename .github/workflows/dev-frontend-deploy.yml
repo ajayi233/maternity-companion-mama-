@@ -50,7 +50,8 @@ jobs:
           VITE_APP_NAME: ${{ steps.config.outputs.app_name }}
           VITE_APP_VERSION: ${{ steps.config.outputs.app_version }}
           VITE_APP_DESCRIPTION: ${{ steps.config.outputs.app_description }}
-          VITE_API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          # VITE_API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          VITE_API_BASE_URL: https://dev-api.auto-hive.site/api
           VITE_API_VERSION: ${{ steps.config.outputs.api_version }}
           VITE_GOOGLE_MAPS_API_KEY: ${{ steps.config.outputs.google_maps_key }}
           VITE_GHANA_NLP_API_BASE_URL: ${{secrets.VITE_GHANA_NLP_API_BASE_URL }}
@@ -67,5 +68,5 @@ jobs:
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --distribution-id  E3BS61AUEOWGCL\
             --paths "/*"
