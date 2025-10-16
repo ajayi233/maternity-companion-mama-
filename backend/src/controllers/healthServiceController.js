@@ -76,10 +76,10 @@ class HealthcareFacilitiesController {
       
 
       console.log("🏥 [Backend] getFacilities called with query params:", req.query);
-      console.log("🏥 [Backend] Processed params:", { userCoords, searchLocation });
+      console.log("🏥 [Backend] Processed params:", { userCoords, location });
 
       
-      console.log("🏥 [Backend] Calling HealthcareFacilitiesService with:", { userCoords, searchLocation });
+      console.log("🏥 [Backend] Calling HealthcareFacilitiesService with:", { userCoords, location });
       const facilities = await this.healthcareService.getHealthcareFacilities(
         userCoords, 
         location

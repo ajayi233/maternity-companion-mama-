@@ -65,7 +65,21 @@ export const ClinicLocator = () => {
       
       setFacilities(transformedFacilities);
     } catch (error) {
-      console.error('Failed to fetch facilities:', error);
+      console.error('🚨 [Frontend] Failed to fetch facilities:', error);
+      console.error('🚨 [Frontend] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        params: { lat, lng, locationString },
+        apiUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      });
+      
+      // Test API connectivity
+      try {
+        const healthCheck = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/healthcare/health`);
+        console.log('📡 [Frontend] Health check after error:', healthCheck.status, healthCheck.statusText);
+      } catch (healthError) {
+        console.error('🚨 [Frontend] Health check failed:', healthError);
+      }
       toast.error('Failed to load healthcare facilities', {
         description: 'Please try again later'
       });
@@ -208,10 +222,12 @@ export const ClinicLocator = () => {
             } else {
               console.warn('🌍 [Frontend] Reverse geocoding failed with status:', response.status);
               setLocationName(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
+              fetchFacilities(latitude, longitude);
             }
           } catch (error) {
             console.warn('🌍 [Frontend] Reverse geocoding error:', error);
             setLocationName(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
+            fetchFacilities(latitude, longitude);
           }
         },
         (error) => {
