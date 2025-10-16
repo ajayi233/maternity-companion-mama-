@@ -16,7 +16,7 @@ output "ec2_elastic_ip" {
 
 output "backend_url" {
   description = "Backend API URL"
-  value       = "https://api.auto-hive.site"
+  value       = "https://dev-api.auto-hive.site"
 }
 
 output "ec2_instance_id" {

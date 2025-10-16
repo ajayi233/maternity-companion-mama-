@@ -209,7 +209,7 @@ data "aws_route53_zone" "main" {
 
 resource "aws_route53_record" "api" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = "api.auto-hive.site"
+  name    = var.api_domain_name
   type    = "A"
   ttl     = 300
   records = [aws_eip.backend.public_ip]

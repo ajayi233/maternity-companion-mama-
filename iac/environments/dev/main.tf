@@ -28,7 +28,7 @@ module "parameter_store" {
      "mnotify-sender-id"            = "MAMA AI APP"
      "mnotify-base-url"             = "https://api.mnotify.com/api"
      "sms-simulation-mode"          = "false"
-     "cors-origin"                  = "https://auto-hive.site"
+     "cors-origin"                  = "https://dev.auto-hive.site"
      "password-reset-expires-minutes" = "10"
      "cookie-expires-in"            = "7"
     "default-location"             = "Ahodwo, Ashanti Region, Ghana"
@@ -95,6 +95,7 @@ module "ec2" {
   ami_id          = var.ami_id
   instance_type   = var.instance_type
   key_pair_name   = var.key_pair_name
+  api_domain_name = "dev-api.auto-hive.site"
 
   depends_on = [module.parameter_store]
 }
@@ -105,6 +106,7 @@ module "cloudfront" {
 
   project_name = var.project_name
   environment  = var.environment
-  # alb_dns_name removed - frontend will connect directly to EC2 via api.auto-hive.site
+  domain_name  = "dev.auto-hive.site"
+  # alb_dns_name removed - frontend will connect directly to EC2 via dev-api.auto-hive.site
 }
 

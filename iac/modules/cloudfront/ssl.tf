@@ -1,8 +1,8 @@
 # SSL Certificate for CloudFront (must be in us-east-1)
 resource "aws_acm_certificate" "cloudfront" {
   provider          = aws.us_east_1
-  domain_name       = "auto-hive.site"
-  subject_alternative_names = ["www.auto-hive.site"]
+  domain_name       = var.domain_name
+  subject_alternative_names = ["www.${var.domain_name}"]
   validation_method = "DNS"
   
   lifecycle {
@@ -41,7 +41,7 @@ data "aws_route53_zone" "main" {
 # Root domain A record
 resource "aws_route53_record" "root" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = "auto-hive.site"
+  name    = var.domain_name
   type    = "A"
 
   alias {
@@ -54,7 +54,7 @@ resource "aws_route53_record" "root" {
 # WWW subdomain A record
 resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = "www.auto-hive.site"
+  name    = "www.${var.domain_name}"
   type    = "A"
 
   alias {

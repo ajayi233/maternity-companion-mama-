@@ -61,3 +61,9 @@ variable "ssh_cidr_blocks" {
   type        = list(string)
   default     = ["0.0.0.0/0"] # Change this to your IP for security
 }
+
+variable "api_domain_name" {
+  description = "API domain name for Route53 record"
+  type        = string
+  default     = "api.auto-hive.site"
+}
