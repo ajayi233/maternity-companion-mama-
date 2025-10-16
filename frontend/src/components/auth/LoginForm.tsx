@@ -147,7 +147,7 @@ export const LoginForm = ({ onLogin, onSwitchToRegister, onForgotPassword }: Log
           </div>
 
           <div className="hidden lg:block mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back.</h2>
             <p className="text-gray-600">Please sign into your account</p>
           </div>
 
