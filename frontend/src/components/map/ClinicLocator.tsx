@@ -41,7 +41,7 @@ export const ClinicLocator = () => {
       // Store API data for direction links
       setApiData(response.facilities);
       
-      // Transform API response to match component interface
+      // Transform API response to match component interface.
       const transformedFacilities: HealthFacility[] = response.facilities.map((facility, index) => ({
         id: `api-${index}`,
         name: facility.name,
