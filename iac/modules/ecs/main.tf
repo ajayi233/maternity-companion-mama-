@@ -34,16 +34,7 @@ resource "aws_ecs_task_definition" "backend" {
         }
       ]
 
-      environment = [
-        {
-          name  = "NODE_ENV"
-          value = "production"
-        },
-        {
-          name  = "PORT"
-          value = "5000"
-        }
-      ]
+      environment = []
 
       secrets = concat(
         [
@@ -82,7 +73,7 @@ resource "aws_ecs_task_definition" "backend" {
 
 resource "aws_cloudwatch_log_group" "backend" {
   name              = "/ecs/${var.project_name}-${var.environment}-backend"
-  retention_in_days = 7
+  retention_in_days = 3
 
   tags = {
     Environment = var.environment
@@ -91,30 +82,7 @@ resource "aws_cloudwatch_log_group" "backend" {
   }
 }
 
-resource "aws_security_group" "ecs_tasks" {
-  name_prefix = "${var.project_name}-${var.environment}-ecs-tasks-"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    from_port       = 5000
-    to_port         = 5000
-    protocol        = "tcp"
-    security_groups = [var.alb_security_group_id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project_name
-    ManagedBy   = "Terraform"
-  }
-}
+# Security group is now managed by the security-groups module
 
 resource "aws_ecs_service" "backend" {
   name            = "${var.project_name}-${var.environment}-backend"
@@ -135,7 +103,7 @@ resource "aws_ecs_service" "backend" {
   }
 
   network_configuration {
-    security_groups  = [aws_security_group.ecs_tasks.id]
+    security_groups  = [var.security_group_id]
     subnets          = var.subnet_ids
     assign_public_ip = true
   }
@@ -152,5 +120,36 @@ resource "aws_ecs_service" "backend" {
     Environment = var.environment
     Project     = var.project_name
     ManagedBy   = "Terraform"
+  }
+}
+
+# Auto-scaling target
+resource "aws_appautoscaling_target" "ecs_target" {
+  max_capacity       = var.backend_max_count
+  min_capacity       = var.backend_min_count
+  resource_id        = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.backend.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+}
+
+# CPU-based scaling policy
+resource "aws_appautoscaling_policy" "ecs_cpu_policy" {
+  name               = "${var.project_name}-${var.environment}-cpu-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.ecs_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.ecs_target.service_namespace
+  
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+    target_value       = 70.0
+    scale_in_cooldown  = 300
+    #  ECS waits for 5minutes after last scale-in action.
+    
+    scale_out_cooldown = 60
+    # After ECS adds more tasks (to handle higher load), it waits 60 seconds before allowing another scale-out action.
+
   }
 }

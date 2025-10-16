@@ -1,10 +1,11 @@
 #!/bin/bash
+# Deploy frontend to production S3 and CloudFront
 
 set -e
 
 # Configuration
 PROJECT_NAME="mama-app"
-ENVIRONMENT="dev"
+ENVIRONMENT="prod"
 REGION="eu-west-1"
 PROFILE="cloud-crew-profile"
 
@@ -14,10 +15,10 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Use custom domain for API - no parameters needed
-API_URL="https://dev-api.auto-hive.site/api"
-S3_BUCKET=$(cd ../../iac/environments/dev && terraform output -raw s3_bucket_name 2>/dev/null || echo "")
-CLOUDFRONT_ID=$(cd ../../iac/environments/dev && terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
+# Use production domain for API
+API_URL="https://api.auto-hive.site/api"
+S3_BUCKET=$(cd ../../iac/environments/prod && terraform output -raw s3_bucket_name 2>/dev/null || echo "")
+CLOUDFRONT_ID=$(cd ../../iac/environments/prod && terraform output -raw cloudfront_distribution_id 2>/dev/null || echo "")
 
 if [ -z "$S3_BUCKET" ]; then
     echo -e "${RED}❌ Error: Could not get S3 bucket name from Terraform outputs${NC}"
@@ -25,7 +26,7 @@ if [ -z "$S3_BUCKET" ]; then
     exit 1
 fi
 
-echo -e "${GREEN}🚀 Deploying frontend to S3 and CloudFront${NC}"
+echo -e "${GREEN}🚀 Deploying frontend to production S3 and CloudFront${NC}"
 echo -e "${YELLOW}📡 API URL: ${API_URL}${NC}"
 echo -e "${YELLOW}🪣 S3 Bucket: ${S3_BUCKET}${NC}"
 
@@ -40,7 +41,7 @@ VITE_GHANA_NLP_API_BASE_URL=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${E
 VITE_GHANA_NLP_SUBSCRIPTION_KEY=$(aws ssm get-parameter --name "/${PROJECT_NAME}/${ENVIRONMENT}/frontend/ghana-nlp-subscription-key" --with-decryption --profile ${PROFILE} --query 'Parameter.Value' --output text 2>/dev/null || echo "")
 
 # Build frontend with environment variables
-cd ../frontend
+cd ../../frontend
 echo -e "${YELLOW}📦 Installing frontend dependencies...${NC}"
 npm install
 
@@ -48,7 +49,7 @@ echo -e "${YELLOW}🏗️  Building frontend with configuration from Parameter S
 export VITE_APP_NAME="$VITE_APP_NAME"
 export VITE_APP_VERSION="$VITE_APP_VERSION"
 export VITE_APP_DESCRIPTION="$VITE_APP_DESCRIPTION"
-# Use custom domain for API calls
+# Use production domain for API calls
 export VITE_API_BASE_URL="${API_URL}"
 export VITE_API_VERSION="$VITE_API_VERSION"
 export VITE_GOOGLE_MAPS_API_KEY="$VITE_GOOGLE_MAPS_API_KEY"
@@ -70,4 +71,4 @@ fi
 cd ../scripts
 
 echo -e "${GREEN}✅ Frontend deployment completed!${NC}"
-echo -e "${GREEN}🌐 Frontend URL: https://$(cd ../../iac/environments/dev && terraform output -raw cloudfront_domain_name)${NC}"
+echo -e "${GREEN}🌐 Frontend URL: https://auto-hive.site${NC}"

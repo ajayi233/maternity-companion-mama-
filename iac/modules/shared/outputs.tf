@@ -13,19 +13,12 @@ output "public_subnet_ids" {
   value       = aws_subnet.public[*].id
 }
 
-# Removed private subnets and service discovery for simplified deployment
+output "private_subnet_ids" {
+  description = "List of private subnet IDs"
+  value       = var.create_private_subnets ? aws_subnet.private[*].id : []
+}
 
-# output "frontend_bucket_name" {
-#   description = "Name of the frontend S3 bucket"
-#   value       = aws_s3_bucket.frontend.bucket
-# }
-
-# output "cloudfront_distribution_domain_name" {
-#   description = "Domain name of the CloudFront distribution"
-#   value       = aws_cloudfront_distribution.frontend.domain_name
-# }
-
-# output "cloudfront_distribution_id" {
-#   description = "ID of the CloudFront distribution"
-#   value       = aws_cloudfront_distribution.frontend.id
-# } 
+output "nat_gateway_id" {
+  description = "NAT Gateway ID"  
+  value       = var.create_private_subnets ? (length(aws_nat_gateway.main) > 0 ? aws_nat_gateway.main[0].id : null) : null
+} 

@@ -56,10 +56,9 @@ variable "root_volume_size" {
 # Variables removed - Ansible handles application configuration
 # backend_image, secrets, config, domain_name, email are now managed by Ansible
 
-variable "ssh_cidr_blocks" {
-  description = "CIDR blocks allowed for SSH access"
-  type        = list(string)
-  default     = ["0.0.0.0/0"] # Change this to your IP for security
+variable "security_group_id" {
+  description = "Security group ID for EC2 instance"
+  type        = string
 }
 
 variable "api_domain_name" {

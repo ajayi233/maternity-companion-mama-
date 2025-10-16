@@ -4,7 +4,7 @@ variable "project_name" {
 }
 
 variable "environment" {
-  description = "Environment name"
+  description = "Environment name (dev, prod, etc.)"
   type        = string
 }
 
@@ -16,4 +16,9 @@ variable "vpc_id" {
 variable "public_subnet_ids" {
   description = "List of public subnet IDs"
   type        = list(string)
+}
+
+variable "security_group_id" {
+  description = "Security group ID for ALB"
+  type        = string
 }

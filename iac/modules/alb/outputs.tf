@@ -13,7 +13,16 @@ output "target_group_arn" {
   value       = aws_lb_target_group.backend.arn
 }
 
-output "alb_security_group_id" {
-  description = "Security group ID of the ALB"
-  value       = aws_security_group.alb.id
+# Security group ID is now provided by the security-groups module
+
+output "listener_arn" {
+  description = "ARN of the HTTPS listener"
+  value       = aws_lb_listener.https.arn
+}
+
+# Security group ID is now provided by the security-groups module
+
+output "dns_name" {
+  description = "ALB DNS name"
+  value       = aws_lb.main.dns_name
 }

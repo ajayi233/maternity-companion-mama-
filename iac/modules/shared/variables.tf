@@ -24,4 +24,10 @@ variable "availability_zones" {
   description = "List of availability zones to use"
   type        = list(string)
   default     = ["eu-west-1a", "eu-west-1b"]
+}
+
+variable "create_private_subnets" {
+  description = "Whether to create private subnets and NAT Gateway"
+  type        = bool
+  default     = false
 } 

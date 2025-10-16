@@ -78,12 +78,24 @@ variable "target_group_arn" {
   type        = string
 }
 
-variable "alb_security_group_id" {
-  description = "ALB security group ID"
+variable "security_group_id" {
+  description = "ECS tasks security group ID"
   type        = string
 }
 
 variable "alb_listener_arn" {
   description = "ALB listener ARN"
   type        = string
+}
+
+variable "backend_min_count" {
+  description = "Minimum number of backend tasks"
+  type        = number
+  default     = 1
+}
+
+variable "backend_max_count" {
+  description = "Maximum number of backend tasks"
+  type        = number
+  default     = 4
 }
