@@ -1,8 +1,8 @@
-name: Backend Deploy
+name: Backend Deploy Dev
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
     paths: ["backend/**"]
 
 permissions:
