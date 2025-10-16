@@ -90,19 +90,26 @@ class HealthcareFacilitiesService {
    * @returns {Promise<Array>} Array of formatted facility objects
    */
   async getHealthcareFacilities(userCoords, location = null) {
+    console.log("🔍 [HealthcareService] Called with:", { userCoords, location, defaultLocation: this.defaultLocation });
+    
     if (!this.apiKey) {
       throw new Error('SERPAPI_KEY environment variable is required');
     }
     
     const searchLocation = location || this.defaultLocation;
+    console.log("🔍 [HealthcareService] Using search location:", searchLocation);
     
     return new Promise((resolve, reject) => {
-      getJson({
+      const searchParams = {
         engine: "google_local",
         q: "Pharmacy,Hospital,Clinic",
         location: searchLocation,
         api_key: this.apiKey
-      }, (json) => {
+      };
+      console.log("🔍 [HealthcareService] SerpAPI search params:", searchParams);
+      
+      getJson(searchParams, (json) => {
+        console.log("🔍 [HealthcareService] SerpAPI response:", json ? { hasResults: !!json.local_results, resultCount: json.local_results?.length || 0, error: json.error } : 'null response');
         if (json && json.error) {
           reject(json.error);
           return;

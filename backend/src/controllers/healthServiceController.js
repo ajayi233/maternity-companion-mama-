@@ -74,12 +74,17 @@ class HealthcareFacilitiesController {
         };
       }
       
-      console.log("Fetching healthcare facilities for:", userCoords);
+
+      console.log("🏥 [Backend] getFacilities called with query params:", req.query);
+      console.log("🏥 [Backend] Processed params:", { userCoords, searchLocation });
+
       
+      console.log("🏥 [Backend] Calling HealthcareFacilitiesService with:", { userCoords, searchLocation });
       const facilities = await this.healthcareService.getHealthcareFacilities(
         userCoords, 
         location
       );
+      console.log("🏥 [Backend] Service returned", facilities.length, "facilities");
       
       return res.status(200).json({
         success: true,
