@@ -33,10 +33,10 @@ export const ClinicLocator = () => {
   const [apiData, setApiData] = useState<HealthcareFacility[]>([]);
 
   // Fetch facilities from API
-  const fetchFacilities = async (lat?: number, lng?: number, locationString?: string) => {
+  const fetchFacilities = async (lat?: number, lng?: number) => {
     try {
       setFacilitiesLoading(true);
-      const response = await apiService.getHealthcareFacilities(lat, lng, locationString);
+      const response = await apiService.getHealthcareFacilities(lat, lng);
       
       // Store API data for direction links
       setApiData(response.facilities);
@@ -179,26 +179,23 @@ export const ClinicLocator = () => {
           setUserLocation({ lat: latitude, lng: longitude });
           setLocationStatus('success');
           
-          // Get location name using reverse geocoding first
+          // Fetch facilities with user location
+          fetchFacilities(latitude, longitude);
+          
+          // Get location name using reverse geocoding
           try {
             const response = await fetch(
               `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
             );
             if (response.ok) {
               const data = await response.json();
-              const locationString = `${data.city || data.locality || 'Your Location'}, ${data.countryName || data.country || 'Ghana'}`;
-              setLocationName(locationString);
-              
-              // Fetch facilities with both coordinates and location string
-              fetchFacilities(latitude, longitude, locationString);
+              setLocationName(`${data.city || data.locality || 'Your Location'}, ${data.countryName || data.country || 'Ghana'}`);
             } else {
               setLocationName(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
-              fetchFacilities(latitude, longitude);
             }
           } catch (error) {
             console.warn('Reverse geocoding failed:', error);
             setLocationName(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
-            fetchFacilities(latitude, longitude);
           }
         },
         (error) => {
@@ -230,7 +227,7 @@ export const ClinicLocator = () => {
           
           setUserLocation({ lat: 5.6037, lng: -0.1870 });
           // Fetch facilities with default location
-          fetchFacilities(5.6037, -0.1870, 'Accra, Ghana');
+          fetchFacilities(5.6037, -0.1870);
         },
         {
           enableHighAccuracy: false,
