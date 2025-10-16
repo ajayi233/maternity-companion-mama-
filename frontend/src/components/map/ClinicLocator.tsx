@@ -240,8 +240,6 @@ export const ClinicLocator = () => {
           console.log('❌ [Frontend] Using fallback location: Accra');
           setUserLocation({ lat: 5.6037, lng: -0.1870 });
           // Fetch facilities with default location
-          fetchFacilities(5.6037, -0.1870, 'Accra, Ghana');37, lng: -0.1870 });
-          // Fetch facilities with default location
           fetchFacilities(5.6037, -0.1870, 'Accra, Ghana');
         },
         {
