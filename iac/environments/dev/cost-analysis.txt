@@ -15,12 +15,7 @@
  [2m   ├─[22m HTTP requests                                                                    Monthly cost depends on usage: $0.0075 per 10k requests   
  [2m   └─[22m HTTPS requests                                                                   Monthly cost depends on usage: $0.01 per 10k requests     
                                                                                                                                                   
- [1mmodule.cloudfront.aws_route53_record.cloudfront_cert_validation["auto-hive.site"][22m                                                                
- [2m├─[22m Standard queries (first 1B)                                                         Monthly cost depends on usage: $0.40 per 1M queries       
- [2m├─[22m Latency based routing queries (first 1B)                                            Monthly cost depends on usage: $0.60 per 1M queries       
- [2m└─[22m Geo DNS queries (first 1B)                                                          Monthly cost depends on usage: $0.70 per 1M queries       
-                                                                                                                                                  
- [1mmodule.cloudfront.aws_route53_record.cloudfront_cert_validation["www.auto-hive.site"][22m                                                            
+ [1mmodule.cloudfront.aws_route53_record.cloudfront_cert_validation["dev.auto-hive.site"][22m                                                            
  [2m├─[22m Standard queries (first 1B)                                                         Monthly cost depends on usage: $0.40 per 1M queries       
  [2m├─[22m Latency based routing queries (first 1B)                                            Monthly cost depends on usage: $0.60 per 1M queries       
  [2m└─[22m Geo DNS queries (first 1B)                                                          Monthly cost depends on usage: $0.70 per 1M queries       
@@ -51,9 +46,9 @@
 *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
 
 ──────────────────────────────────
-70 cloud resources were detected:
-∙ 8 were estimated
-∙ 62 were free
+78 cloud resources were detected:
+∙ 7 were estimated
+∙ 71 were free
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
 ┃ Project                                                          ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃

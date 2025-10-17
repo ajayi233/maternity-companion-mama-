@@ -75,32 +75,48 @@ module "ecr" {
 module "shared" {
   source = "../../modules/shared"
 
-  project_name       = var.project_name
-  environment        = var.environment
-  region             = data.aws_region.current.name
-  vpc_cidr           = var.vpc_cidr
-  availability_zones = var.availability_zones
+  project_name           = var.project_name
+  environment            = var.environment
+  region                 = data.aws_region.current.name
+  vpc_cidr               = var.vpc_cidr
+  availability_zones     = var.availability_zones
+  create_private_subnets = false  # Dev uses public subnets only
+}
+
+# Security Groups
+module "security_groups" {
+  source = "../../modules/security-groups"
+
+  project_name     = var.project_name
+  environment      = var.environment
+  vpc_id           = module.shared.vpc_id
+  create_ec2_sg    = true
+  create_alb_sg    = false  # Dev doesn't use ALB
+  create_ecs_sg    = false  # Dev doesn't use ECS
+  ssh_cidr_blocks  = ["0.0.0.0/0"]  # TODO: Restrict to your IP
+  ec2_app_port     = 5000
 }
 
 # EC2 Instance for Backend (replaces ECS + ALB)
 module "ec2" {
   source = "../../modules/ec2"
   
-  project_name    = var.project_name
-  environment     = var.environment
-  region          = data.aws_region.current.name
-  account_id      = data.aws_caller_identity.current.account_id
-  vpc_id          = module.shared.vpc_id
-  subnet_id       = module.shared.public_subnet_ids[0]
-  ami_id          = var.ami_id
-  instance_type   = var.instance_type
-  key_pair_name   = var.key_pair_name
-  api_domain_name = "dev-api.auto-hive.site"
+  project_name      = var.project_name
+  environment       = var.environment
+  region            = data.aws_region.current.name
+  account_id        = data.aws_caller_identity.current.account_id
+  vpc_id            = module.shared.vpc_id
+  subnet_id         = module.shared.public_subnet_ids[0]
+  security_group_id = module.security_groups.ec2_security_group_id
+  ami_id            = var.ami_id
+  instance_type     = var.instance_type
+  key_pair_name     = var.key_pair_name
+  api_domain_name   = "dev-api.auto-hive.site"
 
-  depends_on = [module.parameter_store]
+  depends_on = [module.parameter_store, module.security_groups]
 }
 
-# CloudFront for frontend (no longer needs ALB DNS)
+# CloudFront for fzrontend (no longer needs ALB DNS)
 module "cloudfront" {
   source = "../../modules/cloudfront"
 

@@ -33,15 +33,20 @@ export const ClinicLocator = () => {
   const [apiData, setApiData] = useState<HealthcareFacility[]>([]);
 
   // Fetch facilities from API
+
   const fetchFacilities = async (lat?: number, lng?: number, locationString?: string) => {
+    console.log('🔍 [Frontend] fetchFacilities called with:', { lat, lng, locationString });
     try {
       setFacilitiesLoading(true);
+      console.log('📡 [Frontend] Calling API with params:', { lat, lng, locationString });
       const response = await apiService.getHealthcareFacilities(lat, lng, locationString);
+      console.log('✅ [Frontend] API response received:', response);
+
       
       // Store API data for direction links
       setApiData(response.facilities);
       
-      // Transform API response to match component interface
+      // Transform API response to match component interface.
       const transformedFacilities: HealthFacility[] = response.facilities.map((facility, index) => ({
         id: `api-${index}`,
         name: facility.name,
@@ -60,7 +65,21 @@ export const ClinicLocator = () => {
       
       setFacilities(transformedFacilities);
     } catch (error) {
-      console.error('Failed to fetch facilities:', error);
+      console.error('🚨 [Frontend] Failed to fetch facilities:', error);
+      console.error('🚨 [Frontend] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        params: { lat, lng, locationString },
+        apiUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+      });
+      
+      // Test API connectivity
+      try {
+        const healthCheck = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/healthcare/health`);
+        console.log('📡 [Frontend] Health check after error:', healthCheck.status, healthCheck.statusText);
+      } catch (healthError) {
+        console.error('🚨 [Frontend] Health check failed:', healthError);
+      }
       toast.error('Failed to load healthcare facilities', {
         description: 'Please try again later'
       });
@@ -179,24 +198,34 @@ export const ClinicLocator = () => {
           setUserLocation({ lat: latitude, lng: longitude });
           setLocationStatus('success');
           
+
+          console.log('📍 [Frontend] Got user coordinates:', { latitude, longitude });
+          
           // Get location name using reverse geocoding first
+
           try {
+            console.log('🌍 [Frontend] Starting reverse geocoding...');
             const response = await fetch(
               `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
             );
             if (response.ok) {
               const data = await response.json();
+
+              console.log('🌍 [Frontend] Reverse geocoding data:', data);
               const locationString = `${data.city || data.locality || 'Your Location'}, ${data.countryName || data.country || 'Ghana'}`;
+              console.log('📍 [Frontend] Generated location string:', locationString);
               setLocationName(locationString);
               
               // Fetch facilities with both coordinates and location string
               fetchFacilities(latitude, longitude, locationString);
+
             } else {
+              console.warn('🌍 [Frontend] Reverse geocoding failed with status:', response.status);
               setLocationName(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
               fetchFacilities(latitude, longitude);
             }
           } catch (error) {
-            console.warn('Reverse geocoding failed:', error);
+            console.warn('🌍 [Frontend] Reverse geocoding error:', error);
             setLocationName(`${latitude.toFixed(3)}, ${longitude.toFixed(3)}`);
             fetchFacilities(latitude, longitude);
           }
@@ -228,9 +257,11 @@ export const ClinicLocator = () => {
               break;
           }
           
+          console.log('❌ [Frontend] Using fallback location: Accra');
           setUserLocation({ lat: 5.6037, lng: -0.1870 });
           // Fetch facilities with default location
           fetchFacilities(5.6037, -0.1870, 'Accra, Ghana');
+
         },
         {
           enableHighAccuracy: false,

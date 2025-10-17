@@ -29,3 +29,9 @@ variable "frontend_bucket_arn" {
   type        = string
   default     = ""
 }
+
+variable "create_oidc_provider" {
+  description = "Whether to create the GitHub Actions OIDC provider"
+  type        = bool
+  default     = true
+}

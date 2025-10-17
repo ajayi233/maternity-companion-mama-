@@ -1,14 +1,18 @@
-[1mProject:[22m ajayi233/maternity-companion-mama-/iac/environments/dev/tfplan.binary
+[1mProject:[22m ajayi233/maternity-companion-mama-/iac/environments/prod/tfplan.binary
 
  [4mName[24m                                                                                         [4mMonthly Qty[24m  [4mUnit[24m                    [4mMonthly Cost[24m   
+                                                                                                                                                  
+ [1mmodule.ecs.aws_ecs_service.backend[22m                                                                                                               
+ [2m├─[22m Per GB per hour                                                                                     2  GB                             $6.49   
+ [2m└─[22m Per vCPU per hour                                                                                   1  CPU                           $29.55   
+                                                                                                                                                  
+ [1mmodule.shared.aws_nat_gateway.main[0][22m                                                                                                            
+ [2m├─[22m NAT gateway                                                                                       730  hours                         $35.04   
+ [2m└─[22m Data processed                                                                      Monthly cost depends on usage: $0.048 per GB              
                                                                                                                                                   
  [1mmodule.alb.aws_lb.main[22m                                                                                                                           
  [2m├─[22m Application load balancer                                                                         730  hours                         $18.40   
  [2m└─[22m Load balancer capacity units                                                        Monthly cost depends on usage: $5.84 per LCU              
-                                                                                                                                                  
- [1mmodule.ecs.aws_ecs_service.backend[22m                                                                                                               
- [2m├─[22m Per GB per hour                                                                                   0.5  GB                             $1.62   
- [2m└─[22m Per vCPU per hour                                                                                0.25  CPU                            $7.39   
                                                                                                                                                   
  [1mmodule.alb.aws_route53_record.cert_validation["api.auto-hive.site"][22m                                                                              
  [2m├─[22m Standard queries (first 1B)                                                         Monthly cost depends on usage: $0.40 per 1M queries       
@@ -49,17 +53,17 @@
  [2m├─[22m Archival Storage                                                                    Monthly cost depends on usage: $0.03 per GB               
  [2m└─[22m Insights queries data scanned                                                       Monthly cost depends on usage: $0.0057 per GB             
                                                                                                                                                   
-[1m OVERALL TOTAL[22m                                                                                                                          $27.41 
+[1m OVERALL TOTAL[22m                                                                                                                          $89.48 
 
 *Usage costs can be estimated by updating Infracost Cloud settings, see docs for other options.
 
 ──────────────────────────────────
-74 cloud resources were detected:
-∙ 9 were estimated
-∙ 65 were free
+91 cloud resources were detected:
+∙ 11 were estimated
+∙ 80 were free
 
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
 ┃ Project                                                          ┃ Baseline cost ┃ Usage cost* ┃ Total cost ┃
 ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━╋━━━━━━━━━━━━┫
-┃ ajayi233/maternity-companion-ma...environments/dev/tfplan.binary ┃           $27 ┃           - ┃        $27 ┃
+┃ ajayi233/maternity-companion-ma...nvironments/prod/tfplan.binary ┃           $89 ┃           - ┃        $89 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━┻━━━━━━━━━━━━┛

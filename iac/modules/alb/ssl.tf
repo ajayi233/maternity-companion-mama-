@@ -4,7 +4,7 @@ data "aws_route53_zone" "main" {
 }
 
 resource "aws_acm_certificate" "alb" {
-  domain_name       = "api.auto-hive.site"
+  domain_name       = var.environment == "prod" ? "api.auto-hive.site" : "${var.environment}-api.auto-hive.site"
   validation_method = "DNS"
   
   lifecycle {
@@ -50,7 +50,7 @@ resource "aws_lb_listener" "https" {
 # A record for API subdomain
 resource "aws_route53_record" "api" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = "api.auto-hive.site"
+  name    = var.environment == "prod" ? "api.auto-hive.site" : "${var.environment}-api.auto-hive.site"
   type    = "A"
 
   alias {

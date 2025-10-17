@@ -1,12 +1,12 @@
 #!/bin/bash
 # Build and push backend image to ECR
-# for development environment
+# for production environment\
 
 set -e
 
 # Configuration
 PROJECT_NAME="mama-app"
-ENVIRONMENT="dev"
+ENVIRONMENT="prod"
 REGION="eu-west-1"
 PROFILE="cloud-crew-profile"
 ACCOUNT_ID=$(aws sts get-caller-identity --profile ${PROFILE} --query Account --output text)
@@ -40,5 +40,6 @@ cd ../scripts
 
 echo -e "${GREEN}✅ Backend build and push completed!${NC}"
 echo -e "${GREEN}Backend image: ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${BACKEND_REPO}:latest${NC}"
-echo -e "${YELLOW}📝 Update terraform.tfvars with:${NC}"
-echo -e "backend_image = \"${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/${BACKEND_REPO}:latest\""
+echo -e "${YELLOW}📝 The ECS service will automatically pull the new image${NC}"
+echo -e "${YELLOW}🔍 Check ECS service status with:${NC}"
+echo -e "aws ecs describe-services --cluster mama-app-prod-cluster --services mama-app-prod-backend --profile ${PROFILE}"

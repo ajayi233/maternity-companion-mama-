@@ -119,21 +119,31 @@ class ApiService {
   }
 
   async getHealthcareFacilities(latitude?: number, longitude?: number, location?: string) {
+    console.log('🌐 [API Service] getHealthcareFacilities called with:', { latitude, longitude, location });
+    
     const params = new URLSearchParams();
     if (latitude) params.append('latitude', latitude.toString());
     if (longitude) params.append('longitude', longitude.toString());
     if (location) params.append('location', location);
+    
+    const url = `${API_BASE_URL}/healthcare/facilities?${params}`;
+    console.log('🌐 [API Service] Making request to:', url);
 
-    const response = await fetch(`${API_BASE_URL}/healthcare/facilities?${params}`, {
+    const response = await fetch(url, {
       headers: this.getAuthHeaders()
     });
+    
+    console.log('🌐 [API Service] Response status:', response.status);
 
-    return this.handleResponse<{
+    const result = await this.handleResponse<{
       facilitiesCount: number;
       facilities: HealthcareFacility[];
       userLocation: { latitude: number; longitude: number };
       searchLocation: string;
     }>(response);
+    
+    console.log('🌐 [API Service] Response data:', result);
+    return result;
   }
 }
 

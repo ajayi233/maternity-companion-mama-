@@ -59,7 +59,6 @@ class HealthcareFacilitiesController {
       const { latitude, longitude, location } = req.query;
       
       let userCoords;
-      let searchLocation = location;
       
       if (latitude && longitude) {
         // Use provided coordinates
@@ -67,11 +66,6 @@ class HealthcareFacilitiesController {
           latitude: parseFloat(latitude),
           longitude: parseFloat(longitude)
         };
-        
-        // If coordinates provided but no location string, don't use default
-        if (!location) {
-          searchLocation = `${latitude},${longitude}`;
-        }
       } else {
         // Fallback to default coordinates
         userCoords = {
@@ -80,12 +74,17 @@ class HealthcareFacilitiesController {
         };
       }
       
-      console.log("Fetching healthcare facilities for:", userCoords, "Location:", searchLocation);
+
+      console.log("🏥 [Backend] getFacilities called with query params:", req.query);
+      console.log("🏥 [Backend] Processed params:", { userCoords, location });
+
       
+      console.log("🏥 [Backend] Calling HealthcareFacilitiesService with:", { userCoords, location });
       const facilities = await this.healthcareService.getHealthcareFacilities(
         userCoords, 
-        searchLocation
+        location
       );
+      console.log("🏥 [Backend] Service returned", facilities.length, "facilities");
       
       return res.status(200).json({
         success: true,

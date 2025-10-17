@@ -3,7 +3,7 @@ resource "aws_instance" "backend" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   key_name              = var.key_pair_name
-  vpc_security_group_ids = [aws_security_group.ec2.id]
+  vpc_security_group_ids = [var.security_group_id]
   subnet_id             = var.subnet_id
   iam_instance_profile  = aws_iam_instance_profile.ec2_ecr.name
 
@@ -39,52 +39,7 @@ resource "aws_eip" "backend" {
   }
 }
 
-# Security Group for EC2 instance
-resource "aws_security_group" "ec2" {
-  name_prefix = "${var.project_name}-${var.environment}-ec2-"
-  vpc_id      = var.vpc_id
-
-  # HTTP
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "HTTP"
-  }
-
-  # HTTPS
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    description = "HTTPS"
-  }
-
-  # SSH (restrict to your IP or VPC)
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = var.ssh_cidr_blocks
-    description = "SSH"
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name        = "${var.project_name}-${var.environment}-ec2-sg"
-    Environment = var.environment
-    Project     = var.project_name
-    ManagedBy   = "Terraform"
-  }
-}
+# Security group is now managed by the security-groups module
 
 # IAM Role for EC2 to access ECR and Parameter Store
 resource "aws_iam_role" "ec2_role" {

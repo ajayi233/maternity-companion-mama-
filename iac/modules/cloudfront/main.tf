@@ -91,31 +91,18 @@ resource "aws_cloudfront_distribution" "frontend" {
 
   
 
-  # custom_error_response {
-  #   error_code         = 404
-  #   response_code      = 200
-  #   response_page_path = "/index.html"
-  # }
-  # Problem, if Client tries accessing a valid endpoint directly on our frotend,
-# it returns 403(Access denied), preventing user from accessing the endpoint
-# it makes because its literally  serving static files with s3, and our
-# s3 bucket is only accessible through cloudfront only as the bucket itself aint
-# publicly accessible so inorder to handle this well
-
-# in case you try accessing an endpoint and even though it exists but 
-# you aint allowed to access it, we will just route you to index.html cus that 
-# is the entry point to our app from Angular and from here angular will take care of the routing semlessly
-# without us doing anything
-
-  # Configures custom error handling for specific HTTP error codes.
   custom_error_response {
-    # Targets the 403 (Forbidden) error code for custom handling.
     error_code         = 403
-    # Returns a 200 (OK) status code to the client for a seamless user experience.
     response_code      = 200
-    # Serves the index.html page for 404 errors, ideal for single-page applications (SPAs).
     response_page_path = "/index.html"
   }
+  
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
+
 
  
 
@@ -125,7 +112,7 @@ resource "aws_cloudfront_distribution" "frontend" {
     }
   }
 
-  aliases = [var.domain_name, "www.${var.domain_name}"]
+  aliases = var.environment == "prod" ? [var.domain_name, "www.${var.domain_name}"] : [var.domain_name]
 
   viewer_certificate {
     acm_certificate_arn      = aws_acm_certificate_validation.cloudfront.certificate_arn

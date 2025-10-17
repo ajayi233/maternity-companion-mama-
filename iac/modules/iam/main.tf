@@ -87,6 +87,8 @@ resource "aws_iam_role_policy_attachment" "ecs_ecr_policy" {
 
 # OIDC Provider for GitHub Actions
 resource "aws_iam_openid_connect_provider" "github_actions" {
+  count = var.create_oidc_provider ? 1 : 0
+  
   url = "https://token.actions.githubusercontent.com"
   
   client_id_list = [
@@ -115,7 +117,7 @@ resource "aws_iam_role" "github_actions_role" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.github_actions.arn
+          Federated = var.create_oidc_provider ? aws_iam_openid_connect_provider.github_actions[0].arn : "arn:aws:iam::${var.account_id}:oidc-provider/token.actions.githubusercontent.com"
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
