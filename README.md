@@ -15,7 +15,17 @@ MAMA is a comprehensive maternal health companion application designed to suppor
 
 ## System Architecture
 
-![System Architecture](devops/infrastructure/v3/Hackathon-Page-u1.jpg)
+### When Input-type = Text
+
+![System Architecture - Overview](devops/infrastructure/v3/main/Hackathon-Page-u1.jpg)
+
+### When Input-type = Audio
+
+![System Architecture - Request Flow](devops/infrastructure/v3/main/Hackathon-Page-u2.jpg)
+
+### When Input-type = Local Lang, Audio or Text
+
+![System Architecture - AI Pipeline](devops/infrastructure/v3/main/Hackathon-Page-u3.jpg)
 
 ### 📹 Project Demo Video
 
@@ -28,6 +38,11 @@ MAMA is a comprehensive maternal health companion application designed to suppor
 [![MAMA AI Pitch Deck](https://img.shields.io/badge/View%20Pitch%20Deck-Presentations.ai-FF6B6B?style=for-the-badge&logo=slideshare)](https://app.presentations.ai/view/3qiLDmHp5D)
 
 **[View the complete pitch deck →](https://app.presentations.ai/view/3qiLDmHp5D)**
+
+**Live Environments:**
+
+- [FRONTEND: https://dev.auto-hive.site](https://dev.auto-hive.site)
+- [BACKEND: https://dev-api.auto-hive.site](https://dev-api.auto-hive.site)
 
 ### Technology Stack
 
@@ -553,7 +568,6 @@ cd scripts
 - ✅ **Audit trail** - Track all configuration changes
 
 For complete Ansible documentation, see [devops/ANSIBLE_SETUP_GUIDE.md](devops/ANSIBLE_SETUP_GUIDE.md).
-curl https://dev.auto-hive.site # Frontend
 
 ````
 
