@@ -522,7 +522,7 @@ terraform apply -auto-approve
 terraform output
 
 # Test endpoints
-curl https://api.auto-hive.site/api/health  # Backend
+curl https://dev-api.auto-hive.site/health  # Backend
 ```
 
 ### Ansible Setup
@@ -553,7 +553,7 @@ cd scripts
 - ✅ **Audit trail** - Track all configuration changes
 
 For complete Ansible documentation, see [devops/ANSIBLE_SETUP_GUIDE.md](devops/ANSIBLE_SETUP_GUIDE.md).
-curl https://auto-hive.site # Frontend
+curl https://dev.auto-hive.site # Frontend
 
 ````
 
@@ -600,8 +600,8 @@ google_maps_api_key = "your-maps-key"
 
 **Health Checks:**
 
-- Backend: `https://api.auto-hive.site/api/health`
-- Frontend: `https://auto-hive.site`
+- Backend: `https://dev-api.auto-hive.site/health`
+- Frontend: `https://dev.auto-hive.site`
 
 **CloudWatch Logs:**
 
@@ -684,7 +684,7 @@ _Application Not Accessible:_
 aws elbv2 describe-target-health --target-group-arn <arn>
 
 # Test backend directly
-curl https://api.auto-hive.site/api/health
+curl https://dev-api.auto-hive.site/health
 ```
 
 _Module Dependency Errors:_
