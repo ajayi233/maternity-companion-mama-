@@ -15,7 +15,19 @@ MAMA is a comprehensive maternal health companion application designed to suppor
 
 ## System Architecture
 
-![System Architecture](devops/infrastructure/v2/white-diagram-preview.png)
+![System Architecture](devops/infrastructure/v3/Hackathon-Page-u1.jpg)
+
+### 📹 Project Demo Video
+
+[![MAMA - Maternal Health Companion Demo](https://img.youtube.com/vi/1lgDMoSw8x_tkLGfiLX4NYRO-ZrFVHra2/0.jpg)](https://drive.google.com/file/d/1lgDMoSw8x_tkLGfiLX4NYRO-ZrFVHra2/view?usp=sharing)
+
+**[Watch the full demo video →](https://drive.google.com/file/d/1lgDMoSw8x_tkLGfiLX4NYRO-ZrFVHra2/view?usp=sharing)**
+
+### 📊 Pitch Deck
+
+[![MAMA AI Pitch Deck](https://img.shields.io/badge/View%20Pitch%20Deck-Presentations.ai-FF6B6B?style=for-the-badge&logo=slideshare)](https://app.presentations.ai/view/3qiLDmHp5D)
+
+**[View the complete pitch deck →](https://app.presentations.ai/view/3qiLDmHp5D)**
 
 ### Technology Stack
 

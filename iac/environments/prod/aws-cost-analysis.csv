@@ -1,0 +1,30 @@
+Resource,Component,Monthly Qty,Unit,Monthly Cost,Cost Type
+ECS Service (Backend),Per GB per hour,2,GB,$6.49,Fixed
+ECS Service (Backend),Per vCPU per hour,1,CPU,$29.55,Fixed
+NAT Gateway,NAT gateway,730,hours,$35.04,Fixed
+Application Load Balancer,Application load balancer,730,hours,$18.40,Fixed
+,,,,,
+TOTAL FIXED COSTS,,,,$89.48,
+,,,,,
+VARIABLE COSTS,,,,,
+NAT Gateway,Data processed,Usage-based,per GB,$0.048 per GB,Variable
+Application Load Balancer,Load balancer capacity units,Usage-based,LCU,$5.84 per LCU,Variable
+Route53 Records,Standard queries (first 1B),Usage-based,1M queries,$0.40 per 1M queries,Variable
+,,,,,
+CloudFront Distribution,Invalidation requests (first 1k),Usage-based,paths,$0.00 per paths,Variable
+CloudFront Distribution,Data transfer out to internet,Usage-based,GB,$0.085 per GB,Variable
+CloudFront Distribution,Data transfer out to origin,Usage-based,GB,$0.02 per GB,Variable
+CloudFront Distribution,HTTPS requests,Usage-based,10k requests,$0.01 per 10k requests,Variable
+,,,,,
+S3 Bucket (Frontend),Storage,Usage-based,GB,$0.023 per GB,Variable
+S3 Bucket (Frontend),PUT COPY POST LIST requests,Usage-based,1k requests,$0.005 per 1k requests,Variable
+,,,,,
+ECR Repository,Storage,Usage-based,GB,$0.10 per GB,Variable
+,,,,,
+Cloud Watch Logs,Data ingested,Usage-based,GB,$0.57 per GB,Variable
+Cloud Watch Logs,Archival Storage (3 Days Retention Period),Usage-based,GB,$0.03 per GB,Variable
+,,,,,
+,,,,,
+TOTAL VARIABLE COSTS,,,,$0.00,Variable
+,,,,,
+OVERALL TOTAL,,,,$89.48,Total

@@ -120,3 +120,9 @@ resource "aws_security_group" "ec2" {
     Type = "EC2"
   })
 }
+
+
+
+
+
+

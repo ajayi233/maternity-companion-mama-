@@ -1,0 +1,115 @@
+graph TB
+    %% External Layer
+    Internet[🌐 Internet<br/>Global Users]
+    Route53[🌐 Route53<br/>DNS Management]
+    
+    %% Frontend Layer
+    CloudFront[☁️ CloudFront<br/>Global CDN<br/>Frontend Distribution]
+    S3[📦 S3 Bucket<br/>Static Website<br/>Frontend Assets]
+    
+    %% Network Layer
+    VPC[🏢 VPC<br/>10.0.0.0/16<br/>eu-west-1]
+    IGW[🌐 Internet Gateway]
+    
+    %% Subnets
+    PublicSubnetA[🏢 Public Subnet A<br/>10.0.1.0/24<br/>eu-west-1a]
+    PrivateSubnetA[🏢 Private Subnet A<br/>10.0.101.0/24<br/>eu-west-1a]
+    PublicSubnetB[🏢 Public Subnet B<br/>10.0.2.0/24<br/>eu-west-1b]
+    PrivateSubnetB[🏢 Private Subnet B<br/>10.0.102.0/24<br/>eu-west-1b]
+    
+    %% Load Balancer
+    ALB[⚖️ ALB<br/>Application Load Balancer<br/>Multi-AZ]
+    NATGateway[🌐 NAT Gateway<br/>Single AZ<br/>Cost Optimized]
+    
+    %% Compute Layer
+    ECSCluster[🐳 ECS Cluster<br/>Fargate Platform<br/>Auto Scaling]
+    ECSService[🐳 ECS Service<br/>Backend API<br/>2 Tasks]
+    
+    %% Storage & Registry
+    ECR[📦 ECR Repository<br/>Docker Images]
+    ParameterStore[🔐 Parameter Store<br/>Secrets & Config]
+    
+    %% Security
+    ECSTaskRole[🔑 ECS Task Role<br/>Application Permissions]
+    ECSExecutionRole[🔑 ECS Execution Role<br/>ECR + CloudWatch]
+    GitHubActionsRole[🔑 GitHub Actions Role<br/>OIDC Authentication]
+    
+    %% CI/CD
+    GitHubActions[🚀 GitHub Actions<br/>CI/CD Pipeline]
+    
+    %% External Services
+    MongoDB[🗄️ MongoDB Atlas<br/>Managed Database]
+    MnotifyAPI[📱 Mnotify API<br/>SMS Service]
+    SerpAPI[🏥 SerpAPI<br/>Healthcare Data]
+    GhanaNLP[🌍 Ghana NLP API<br/>Translation Services]
+    
+    %% Monitoring
+    CloudWatchLogs[📊 CloudWatch Logs<br/>ECS Application Logs]
+    
+    %% Connections
+    Internet --> Route53
+    Internet --> CloudFront
+    Internet --> ALB
+    
+    Route53 --> CloudFront
+    Route53 --> ALB
+    
+    CloudFront --> S3
+    
+    Internet --> IGW
+    IGW --> VPC
+    VPC --> PublicSubnetA
+    VPC --> PublicSubnetB
+    VPC --> PrivateSubnetA
+    VPC --> PrivateSubnetB
+    
+    ALB --> PublicSubnetA
+    ALB --> PublicSubnetB
+    
+    NATGateway --> PublicSubnetA
+    PrivateSubnetA --> NATGateway
+    PrivateSubnetB --> NATGateway
+    
+    ECSCluster --> PrivateSubnetA
+    ECSCluster --> PrivateSubnetB
+    ECSService --> ECSCluster
+    
+    ECSExecutionRole --> ECR
+    ECSService --> ECR
+    
+    ECSTaskRole --> ParameterStore
+    ECSExecutionRole --> ParameterStore
+    
+    ECSService --> MongoDB
+    ECSService --> MnotifyAPI
+    ECSService --> SerpAPI
+    ECSService --> GhanaNLP
+    
+    ECSService --> CloudWatchLogs
+    
+    GitHubActions --> ECR
+    GitHubActions --> S3
+    GitHubActions --> CloudFront
+    GitHubActions --> ParameterStore
+    GitHubActions --> ECSService
+    
+    %% Styling
+    classDef external fill:#e3f2fd
+    classDef frontend fill:#e8f5e8
+    classDef network fill:#fff3e0
+    classDef compute fill:#fce4ec
+    classDef storage fill:#f3e5f5
+    classDef security fill:#e0f2f1
+    classDef cicd fill:#fff8e1
+    classDef monitoring fill:#f1f8e9
+    
+    class Internet,Route53 external
+    class CloudFront,S3 frontend
+    class VPC,IGW,PublicSubnetA,PublicSubnetB,PrivateSubnetA,PrivateSubnetB,ALB,NATGateway network
+    class ECSCluster,ECSService compute
+    class ECR,ParameterStore storage
+    class ECSTaskRole,ECSExecutionRole,GitHubActionsRole security
+    class GitHubActions cicd
+    class MongoDB,MnotifyAPI,SerpAPI,GhanaNLP external
+    class CloudWatchLogs monitoring
+

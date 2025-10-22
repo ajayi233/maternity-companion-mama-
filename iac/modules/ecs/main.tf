@@ -105,7 +105,7 @@ resource "aws_ecs_service" "backend" {
   network_configuration {
     security_groups  = [var.security_group_id]
     subnets          = var.subnet_ids
-    assign_public_ip = true
+    assign_public_ip = false
   }
 
   load_balancer {

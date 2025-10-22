@@ -47,3 +47,9 @@ output "ecr_repository_url" {
   description = "ECR repository URL"
   value       = "615299752577.dkr.ecr.eu-west-1.amazonaws.com/mama-app-prod-backend"
 }
+
+
+
+
+
+
