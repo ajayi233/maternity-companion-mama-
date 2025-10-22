@@ -96,6 +96,18 @@ module "security_groups" {
   ssh_cidr_blocks  = ["0.0.0.0/0"]   #not needed for prod(used by ec2)
 }
 
+
+
+# CloudFront for frontend
+module "cloudfront" {
+  source = "../../modules/cloudfront"
+  
+  project_name = var.project_name
+  environment  = var.environment
+  domain_name  = "auto-hive.site"
+}
+
+
 # ALB for backend
 module "alb" {
   source = "../../modules/alb"
@@ -158,13 +170,4 @@ module "ecs" {
   ]
   
   depends_on = [module.parameter_store, module.alb, module.security_groups]
-}
-
-# CloudFront for frontend
-module "cloudfront" {
-  source = "../../modules/cloudfront"
-  
-  project_name = var.project_name
-  environment  = var.environment
-  domain_name  = "auto-hive.site"
 }

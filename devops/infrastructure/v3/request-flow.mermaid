@@ -1,0 +1,47 @@
+graph TD
+    %% Client Layer
+    Client[👤 Client<br/>User Browser]
+    
+    %% DNS Layer
+    Route53[🌐 Route53<br/>DNS Management<br/>auto-hive.site<br/>api.auto-hive.site]
+    
+    %% Frontend Layer
+    CloudFront[☁️ CloudFront<br/>Global CDN<br/>Frontend Distribution]
+    S3[📦 S3 Bucket<br/>Static Website<br/>Frontend Assets]
+    
+    %% Backend Layer
+    ALB[⚖️ ALB<br/>Application Load Balancer<br/>api.auto-hive.site]
+    ECS[🐳 ECS Tasks<br/>Backend API<br/>2 Tasks Running]
+    
+    %% External Services
+    MongoDB[🗄️ MongoDB Atlas<br/>Database]
+    APIs[🔌 External APIs<br/>SMS, Healthcare, NLP]
+    
+    %% Request Flows
+    %% Frontend Static Content Flow
+    Client -->|"1. Frontend Request<br/>(HTML, CSS, JS)"| Route53
+    Route53 -->|"2. DNS Resolution<br/>auto-hive.site"| CloudFront
+    CloudFront -->|"3. Static Content<br/>Cache Miss"| S3
+    
+    %% API Dynamic Content Flow
+    Client -->|"4. API Request<br/>(/api/*)"| Route53
+    Route53 -->|"5. DNS Resolution<br/>api.auto-hive.site"| ALB
+    ALB -->|"6. Load Balance<br/>Port 5000"| ECS
+    
+    %% Backend Data Flow
+    ECS -->|"7. Database Queries"| MongoDB
+    ECS -->|"8. External API Calls"| APIs
+    
+    %% Styling
+    classDef client fill:#e1f5fe
+    classDef dns fill:#f3e5f5
+    classDef frontend fill:#e8f5e8
+    classDef backend fill:#fff3e0
+    classDef external fill:#fce4ec
+    
+    class Client client
+    class Route53 dns
+    class CloudFront,S3 frontend
+    class ALB,ECS backend
+    class MongoDB,APIs external
+

@@ -1,0 +1,174 @@
+Architecture Justification – MAMA Production Environment (v3)
+============================================================
+
+This production architecture represents a scalable, secure, and cost-optimized deployment
+of the MAMA maternity companion application using AWS best practices.
+
+## ARCHITECTURE OVERVIEW
+
+### Multi-Tier Design
+- **Frontend Tier**: CloudFront + S3 (Global CDN)
+- **API Tier**: ALB + ECS Fargate (Containerized Backend)
+- **Data Tier**: MongoDB Atlas (Managed Database)
+- **Integration Tier**: External APIs (SMS, Healthcare Data, Translation)
+
+### High Availability & Scalability
+- **Multi-AZ Deployment**: eu-west-1a and eu-west-1b
+- **Auto-Scaling**: ECS service scales 1-4 tasks based on CPU (70% target)
+- **Load Balancing**: ALB distributes traffic across multiple ECS tasks
+- **Global CDN**: CloudFront provides worldwide content delivery
+
+## NETWORK ARCHITECTURE
+
+### VPC Design (10.0.0.0/16)
+- **Public Subnets**: ALB and NAT Gateway deployment
+  - eu-west-1a: 10.0.1.0/24 (ALB + NAT Gateway)
+  - eu-west-1b: 10.0.2.0/24 (ALB)
+- **Private Subnets**: ECS tasks for security
+  - eu-west-1a: 10.0.101.0/24 (ECS tasks)
+  - eu-west-1b: 10.0.102.0/24 (ECS tasks)
+
+### Security Model
+- **Private ECS Tasks**: No public IPs, internet access via NAT Gateway only
+- **Security Groups**: Restrictive ingress/egress rules
+- **Network Isolation**: Private subnets for backend workloads
+- **SSL/TLS**: End-to-end encryption with ACM certificates
+
+## COMPUTE ARCHITECTURE
+
+### ECS Fargate Benefits
+- **Serverless Containers**: No EC2 management overhead
+- **Auto-Scaling**: Built-in scaling based on metrics
+- **Cost Optimization**: Pay only for resources used
+- **Container Insights**: Enhanced monitoring and logging
+
+### Resource Configuration
+- **CPU**: 512 units (0.5 vCPU per task)
+- **Memory**: 1024 MB (1 GB per task)
+- **Desired Count**: 2 tasks (high availability)
+- **Scaling Range**: 1-4 tasks (cost optimization)
+
+## STORAGE & CDN
+
+### Frontend Delivery
+- **S3 Static Hosting**: Cost-effective static file storage
+- **CloudFront CDN**: Global content delivery with caching
+- **SSL Termination**: HTTPS for all frontend traffic
+- **Custom Domain**: auto-hive.site with www subdomain
+
+### Content Management
+- **Version Control**: S3 versioning for rollback capability
+- **Cache Invalidation**: Automated on deployment
+- **Compression**: CloudFront gzip compression enabled
+
+## SECURITY & COMPLIANCE
+
+### Identity & Access Management
+- **IAM Roles**: Least privilege access patterns
+- **OIDC Authentication**: GitHub Actions without static credentials
+- **Parameter Store**: Encrypted secrets management
+- **Role Separation**: Task, execution, and GitHub Actions roles
+
+### Data Protection
+- **Encryption at Rest**: S3, ECR, Parameter Store encryption
+- **Encryption in Transit**: HTTPS/TLS for all communications
+- **Secret Management**: SSM Parameter Store with KMS encryption
+- **Network Security**: Private subnets and security groups
+
+## MONITORING & OBSERVABILITY
+
+### CloudWatch Integration
+- **Application Logs**: ECS container logs with 3-day retention
+- **Container Insights**: Enhanced ECS monitoring
+- **Custom Metrics**: Application-specific monitoring
+- **Cost Optimization**: Short retention period for logs
+
+### Health Checks
+- **ALB Health Checks**: Target group health monitoring
+- **ECS Health Checks**: Container health verification
+- **Auto-Recovery**: Unhealthy tasks automatically replaced
+
+## COST OPTIMIZATION
+
+### Resource Efficiency
+- **NAT Gateway**: Single AZ deployment (cost optimization)
+- **ECS Fargate Spot**: 100% weight for cost savings
+- **Log Retention**: 3-day retention to minimize storage costs
+- **Auto-Scaling**: Right-size resources based on demand
+
+### Pricing Model
+- **Fixed Costs**: ~$89/month (ALB, NAT Gateway, ECS base)
+- **Variable Costs**: Usage-based (data transfer, requests)
+- **Predictable Scaling**: Auto-scaling prevents over-provisioning
+
+## CI/CD PIPELINE
+
+### GitHub Actions Integration
+- **OIDC Authentication**: Secure, credential-free deployments
+- **Automated Builds**: Docker image creation and ECR push
+- **Frontend Deployment**: S3 sync and CloudFront invalidation
+- **Backend Deployment**: ECS service updates with zero downtime
+
+### Deployment Strategy
+- **Blue-Green Deployment**: ECS service updates with health checks
+- **Rollback Capability**: Previous task definitions maintained
+- **Environment Separation**: Production-specific configurations
+
+## EXTERNAL INTEGRATIONS
+
+### Third-Party Services
+- **MongoDB Atlas**: Managed database with automatic backups
+- **Mnotify API**: Ghana SMS service for notifications
+- **SerpAPI**: Healthcare facility data aggregation
+- **Ghana NLP**: Local language translation services
+
+### API Management
+- **Rate Limiting**: Built-in API rate limiting
+- **CORS Configuration**: Secure cross-origin requests
+- **Authentication**: JWT-based user authentication
+- **Error Handling**: Comprehensive error responses
+
+## DISASTER RECOVERY
+
+### Backup Strategy
+- **Database**: MongoDB Atlas automatic backups
+- **Infrastructure**: Terraform state in S3 with versioning
+- **Application**: Git repository with full history
+- **Configuration**: Parameter Store with encryption
+
+### Recovery Procedures
+- **Infrastructure**: Terraform apply for complete rebuild
+- **Application**: ECS service rollback to previous version
+- **Data**: MongoDB Atlas point-in-time recovery
+- **DNS**: Route53 health checks and failover
+
+## PERFORMANCE OPTIMIZATION
+
+### Caching Strategy
+- **CloudFront**: Global edge caching for static assets
+- **ALB**: Connection pooling and keep-alive
+- **ECS**: Container-level caching and optimization
+- **Database**: MongoDB Atlas query optimization
+
+### Scalability Features
+- **Horizontal Scaling**: Multiple ECS tasks across AZs
+- **Vertical Scaling**: CPU and memory adjustments
+- **Load Distribution**: ALB traffic distribution
+- **CDN Acceleration**: CloudFront global edge locations
+
+## COMPLIANCE & GOVERNANCE
+
+### Security Standards
+- **AWS Well-Architected**: Security, reliability, performance pillars
+- **Data Privacy**: GDPR-compliant data handling
+- **Encryption**: End-to-end encryption for sensitive data
+- **Access Control**: Role-based access with audit trails
+
+### Operational Excellence
+- **Infrastructure as Code**: Terraform for reproducible deployments
+- **Monitoring**: CloudWatch for comprehensive observability
+- **Documentation**: Architecture and deployment guides
+- **Change Management**: Version-controlled infrastructure changes
+
+This production architecture provides a robust, scalable, and secure foundation for the MAMA maternity companion application, following AWS best practices while maintaining cost efficiency and operational excellence.
+

@@ -27,3 +27,9 @@ output "ec2_security_group_arn" {
   description = "ARN of the EC2 security group"
   value       = var.create_ec2_sg ? aws_security_group.ec2[0].arn : null
 }
+
+
+
+
+
+
